@@ -13,19 +13,23 @@ def play():
 	ms.player.play("tmp/test.mp3")
 	return str(ms.player.get_state())'''
 
-@app.route('/pause', methods=['GET'])
+@app.route('/pause', methods=['POST'])
 def pause():
 	return str(ms.player.pause())
 
 @app.route('/volume', methods=['POST'])
 def volume():
 	val = request.values.get('val')
-
 	return str(ms.player.set_volume(int(val)))
+
+@app.route('/skip', methods=['POST'])
+def skip():
+	return str(ms.play_next())
 
 @app.route('/stop', methods=['POST'])
 def stop():
 	return str(ms.player.stop())
 
+
 if __name__ == '__main__':
-	app.run(debug=True)
+	app.run(debug=True, use_reloader=False)

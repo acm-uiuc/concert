@@ -12,6 +12,7 @@ class MusicService:
 		self.queue = []
 		new_song = Song("tmp/test.mp3", "Title", "Artist")
 		self.queue.append(new_song)
+		self.current_track = new_song
 
 	#Implement this with downloader later
 	def add_song(self, url):
@@ -23,11 +24,11 @@ class MusicService:
 		if len(self.queue) > 0:
 			next_song = self.queue.pop(0)
 			self.player.play(next_song.mrl)
+			self.current_track = next_song
 
 	def player_thread(self):
 		while True:
-			cur_state = self.player.get_state()["audio_status"]
-			if cur_state in [vlc.State.Ended, vlc.State.Stopped, vlc.State.NothingSpecial, vlc.State.Error]:
+			if not self.player.is_playing():
 				self.play_next()
 			time.sleep(.30)
 
