@@ -41,7 +41,6 @@ class Player:
 	def is_playing(self):
 		audio_status = self.vlc_player.get_state()
 		if audio_status in {vlc.State.Ended, vlc.State.Stopped, vlc.State.NothingSpecial, vlc.State.Error}:
-			print("STOPPED")
 			return False
 		return True
 

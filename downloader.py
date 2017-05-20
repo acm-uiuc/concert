@@ -6,17 +6,11 @@ ydl_opts = {
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
         'preferredcodec': 'mp3',
-        'preferredquality': '192',
+        'preferredquality': '192'
     }],
 }
+ytdl = youtube_dl.YoutubeDL(ydl_opts)
 
-class Downloader:
-	def __init__(self, destination=None):
-		self.destination = destination
-		self.ytdl = youtube_dl.YoutubeDL(ydl_opts)
-
-	def downloader(self):
-		return self.ytdl
-
-	def download_song(self, url):
-		return self.ytdl.download([url])
+#Downloads a song
+def download_song(url):
+	ytdl.download([url])

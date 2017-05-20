@@ -1,17 +1,18 @@
 from flask import Flask, request, url_for
+from celery_tasks import async_download
 from service import MusicService
 
 app = Flask(__name__)
+
 ms = MusicService()
-#Start the continuous service
 ms.start()
 
-'''@app.route('/play', methods=['POST'])
+@app.route('/play', methods=['POST'])
 def play():
 	url = request.values.get('url')
 
 	ms.player.play("tmp/test.mp3")
-	return str(ms.player.get_state())'''
+	return str(ms.player.cur_state())
 
 @app.route('/pause', methods=['POST'])
 def pause():
@@ -30,6 +31,11 @@ def skip():
 def stop():
 	return str(ms.player.stop())
 
+@app.route('/dl', methods=['POST'])
+def download():
+	url = request.values.get('url')
+	async_download.apply_async(args=[url])
+	return str("DOWNLOADING")
 
 if __name__ == '__main__':
 	app.run(debug=True, use_reloader=False)

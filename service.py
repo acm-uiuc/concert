@@ -1,6 +1,6 @@
 from models import Song
 from player import Player
-from downloader import Downloader
+import downloader as dl
 import vlc
 import time
 import threading
@@ -8,7 +8,6 @@ import threading
 class MusicService:
 	def __init__(self):
 		self.player = Player()
-		self.dl = Downloader()
 		self.queue = []
 		new_song = Song("tmp/test.mp3", "Title", "Artist")
 		self.queue.append(new_song)
