@@ -9,7 +9,7 @@ class MusicService:
 	def __init__(self):
 		self.player = Player()
 		self.queue = []
-		new_song = Song("tmp/test.mp3", "Title", "Artist")
+		new_song = Song("id", "music/8mtA9GvpzwU.mp3", "Title")
 		self.queue.append(new_song)
 		self.current_track = new_song
 
