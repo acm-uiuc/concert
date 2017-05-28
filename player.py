@@ -9,6 +9,7 @@ class Player:
 		self.vlc_player = self.instance.media_player_new()
 		self.volume = 70
 		self.vlc_player.audio_set_volume(self.volume)
+		self.current_track = ''
 
 
 	def set_volume(self, value):
@@ -54,5 +55,6 @@ class Player:
 			state['media'] = vlc.bytes_to_str(media.get_mrl())
 			state['current_time'] = self.vlc_player.get_time()
 			state['duration'] = media.get_duration()
+			state['current_track'] = self.current_track
 
 		return state

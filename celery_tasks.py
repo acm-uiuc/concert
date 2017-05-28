@@ -9,4 +9,4 @@ celery = Celery(CELERY_NAME, backend=CELERY_RESULT_BACKEND, broker=CELERY_BROKER
 
 @celery.task
 def async_download(url):
-	dl.download_song('https://www.youtube.com/watch?v=8mtA9GvpzwU')
+	dl.download_song(url)

@@ -1,5 +1,6 @@
 import youtube_dl
 from models import Song
+from pymongo import MongoClient
 
 ydl_opts = {
     'format': 'bestaudio/best',
@@ -12,6 +13,9 @@ ydl_opts = {
 }
 ytdl = youtube_dl.YoutubeDL(ydl_opts)
 
+client = MongoClient()
+db = client.concert
+
 #Downloads a song
 def download_song(url):
 	info = ytdl.extract_info(url, download=True)
@@ -20,4 +24,5 @@ def download_song(url):
 
 	#This is jank for now
 	song_mrl = "music/" + str(song_id) + ".mp3"
-	new_song = Song(song_id, song_mrl, song_title)
+	new_song = Song(song_mrl, song_title)
+	db.Queue.insert_one(new_song.dictify())
