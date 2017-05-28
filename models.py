@@ -4,3 +4,10 @@ class Song:
 		self.id = id
 		self.mrl = mrl
 		self.title = title
+
+	def dictify(self):
+		return {
+			'id': self.id,
+			'mrl': self.mrl,
+			'title': self.title
+		}

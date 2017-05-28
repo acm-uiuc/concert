@@ -1,29 +1,40 @@
 from models import Song
 from player import Player
 import downloader as dl
+
 import vlc
 import time
 import threading
+from pymongo import MongoClient
+
+client = MongoClient()
+db = client.concert
 
 class MusicService:
 	def __init__(self):
 		self.player = Player()
-		self.queue = []
 		new_song = Song("id", "music/8mtA9GvpzwU.mp3", "Title")
-		self.queue.append(new_song)
 		self.current_track = new_song
 
 	#Implement this with downloader later
 	def add_song(self, url):
 		new_song = get_song(url)
-		queue.append(new_song)
+		self.get_queue().append(new_song)
 		return
 
 	def play_next(self):
-		if len(self.queue) > 0:
-			next_song = self.queue.pop(0)
-			self.player.play(next_song.mrl)
+		cur_queue = self.get_queue()
+		if len(cur_queue) > 0:
+			next_song = cur_queue.pop(0)
+			self.player.play(next_song['mrl'])
 			self.current_track = next_song
+
+	def get_queue(self):
+		queue = []
+		cur_queue = db.Queue.find()
+		for item in cur_queue:
+			queue.append(item)
+		return queue
 
 	def player_thread(self):
 		while True:
