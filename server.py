@@ -1,6 +1,7 @@
 from flask import Flask, request, url_for
 from celery_tasks import async_download
 from service import MusicService
+import validators
 
 app = Flask(__name__)
 
@@ -9,9 +10,6 @@ ms.start()
 
 @app.route('/play', methods=['POST'])
 def play():
-	url = request.values.get('url')
-
-	ms.player.play("tmp/test.mp3")
 	return str(ms.player.cur_state())
 
 @app.route('/pause', methods=['POST'])
@@ -34,8 +32,16 @@ def stop():
 @app.route('/dl', methods=['POST'])
 def download():
 	url = request.values.get('url')
+	if not validators.url(url):
+		return str("Invalid Url")
+
 	async_download.apply_async(args=[url])
-	return str("DOWNLOADING")
+	return str("Downloading Song")
+
+@app.route('/position', methods=['POST'])
+def set_position():
+	percentage = float(request.values.get('percentage'))
+	return ms.set_time(percentage)
 
 if __name__ == '__main__':
 	app.run(debug=True, use_reloader=False)

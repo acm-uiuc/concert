@@ -9,7 +9,7 @@ class Player:
 		self.vlc_player = self.instance.media_player_new()
 		self.volume = 70
 		self.vlc_player.audio_set_volume(self.volume)
-		self.current_track = ''
+		self.current_track = None
 
 
 	def set_volume(self, value):
@@ -36,6 +36,7 @@ class Player:
 
 	def stop(self):
 		self.vlc_player.stop()
+		self.current_track = None
 		return self.cur_state()
 
 
@@ -44,6 +45,10 @@ class Player:
 		if audio_status in {vlc.State.Ended, vlc.State.Stopped, vlc.State.NothingSpecial, vlc.State.Error}:
 			return False
 		return True
+
+	def set_time(self, percent):
+		duration = self.cur_state()['duration']
+		self.vlc_player.set_time(int(duration * percent))
 
 
 	def cur_state(self):
@@ -55,6 +60,9 @@ class Player:
 			state['media'] = vlc.bytes_to_str(media.get_mrl())
 			state['current_time'] = self.vlc_player.get_time()
 			state['duration'] = media.get_duration()
-			state['current_track'] = self.current_track
+			if self.current_track != None:
+				state['current_track'] = self.current_track['title']
+			else:
+				state['current_track'] = 'None'
 
 		return state
