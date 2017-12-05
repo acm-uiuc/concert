@@ -11,3 +11,6 @@ celery = Celery(CELERY_NAME, backend=CELERY_RESULT_BACKEND, broker=CELERY_BROKER
 def async_download(url):
 	#Hopefully some front end validation done for urls
 	dl.download_song(url)
+	
+if __name__ == '__main__':
+    celery.start()
