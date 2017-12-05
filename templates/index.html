@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>ACM Concert</title>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="{{ url_for('static',filename='app.js') }}" type="text/javascript"></script>
+        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+    </head>
+
+    <body>
+        <div id="page-wrapper">
+            <div id="form-wrapper">
+                <input type="text" id="url-textbox" placeholder="Type in a youtube playlist URL here"/>
+                <input type="submit" id="import-button" value="Import"/>
+            </div>         
+            
+            <div id="previous-button" class="button"></div>
+            <div id="play-pause-button" class="play button"></div>
+            <div id="skip-button" class="button"></div>
+            <div id="song-name">No Song Playing</div>
+            <div id="volume-slider-wrapper">
+                <input type="range" min="1" max="100" value="70" class="slider" id="volume-slider">
+            </div>
+        </div>
+    </body>
+</html>
