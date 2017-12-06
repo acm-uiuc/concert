@@ -65,6 +65,8 @@ class Player:
 				state['current_track'] = self.current_track['title']
 			else:
 				state['current_track'] = 'None'
+		else:
+			state['media'] = None
 		
 		json_str = json.dumps(state)
 		return json_str

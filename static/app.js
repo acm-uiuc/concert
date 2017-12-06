@@ -96,12 +96,20 @@ $(document).ready(function () {
         var jsonState = JSON.parse(state);
         if (jsonState != null)
         {
+            console.log(jsonState);
             $('#volume-slider').val(jsonState.volume.toString());
             $('#song-name').text(jsonState.current_track);
+
+            if(jsonState.media != "None"){
+                currentUrl = jsonState.media;
+            }
     
-            if (!jsonState.is_playing) {
+            if (jsonState.is_playing && jsonState.audio_status != "State.Paused") {
                 $('#play-pause-button').addClass('pause');
                 $('#play-pause-button').removeClass('play');
+            } else{
+                $('#play-pause-button').addClass('play');
+                $('#play-pause-button').removeClass('pause');
             }
         }
     }
