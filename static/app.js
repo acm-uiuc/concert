@@ -1,5 +1,6 @@
 var socket;
 var currentUrl;
+var currentSong;
 
 $(document).ready(function () {
     //socket = io.connect('http://' + document.domain + ':' + location.port);
@@ -9,9 +10,13 @@ $(document).ready(function () {
     });
 
     //playing sample music for testing
-    $('#play-pause-button').click(function(e) { 
-        if ($('#play-pause-button').hasClass('play'))
-            socket.emit('play', "music/-5slZHLSnow.mp3");
+    $('#play-pause-button').click(function(e) {
+        if ($('#play-pause-button').hasClass('play') && currentUrl == null)
+        {
+            //replace with actual current song
+            currentUrl = "music/-5slZHLSnow.mp3";
+            socket.emit('play', currentUrl);            
+        }
         else
             socket.emit('pause');
     });
@@ -56,8 +61,17 @@ $(document).ready(function () {
     });
 
     socket.on('pause', function() {
-        $('#play-pause-button').addClass('play');
-        $('#play-pause-button').removeClass('pause');
+        //change to toggle
+        if ($('#play-pause-button').hasClass('play'))
+        {
+            $('#play-pause-button').removeClass('play');
+            $('#play-pause-button').addClass('pause');    
+        }
+        else
+        {
+            $('#play-pause-button').removeClass('pause');
+            $('#play-pause-button').addClass('play');
+        }
     });
 
     socket.on('skip', function(state) {
