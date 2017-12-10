@@ -25,12 +25,14 @@ class Player:
 	def play(self, mrl):
 		m = self.instance.media_new(mrl)
 		self.vlc_player.set_media(m)
-		self.vlc_player.play()
+		status = self.vlc_player.play()
+		print("is_playing (called from play): %r \n\n\n\n" % self.is_playing())
 		return self.cur_state()
 
 
 	def pause(self):
 		self.vlc_player.pause()
+		time.sleep(0.1)
 		return self.cur_state()
 
 
@@ -43,6 +45,7 @@ class Player:
 	def is_playing(self):
 		audio_status = self.vlc_player.get_state()
 		if audio_status in {vlc.State.Ended, vlc.State.Stopped, vlc.State.NothingSpecial, vlc.State.Error}:
+			self.vlc_player.set_media(None)
 			return False
 		return True
 

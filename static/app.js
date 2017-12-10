@@ -11,13 +11,13 @@ $(document).ready(function () {
 
     //playing sample music for testing
     $('#play-pause-button').click(function(e) {
-        if ($('#play-pause-button').hasClass('play') && currentUrl == null)
+        /*if ($('#play-pause-button').hasClass('play') && currentUrl == null)
         {
             //replace with actual current song
             currentUrl = "music/-5slZHLSnow.mp3";
             socket.emit('play', currentUrl);            
         }
-        else
+        else*/
             socket.emit('pause');
     });
 
@@ -43,9 +43,9 @@ $(document).ready(function () {
             return false;
     });
 
-    socket.on('download', function(queue) {
-        console.log('bah');
-        console.log(queue);
+    socket.on('download', function(state) {
+        console.log("Download emitted");
+        updateClient(state);
     });
 
     socket.on('download_error', function() {
@@ -54,15 +54,14 @@ $(document).ready(function () {
     });
 
     socket.on('play', function(state) {
+        updateClient(state);
         $('#play-pause-button').addClass('pause');
         $('#play-pause-button').removeClass('play');
-        var jsonState = JSON.parse(state);
-        $('#song-name').text(jsonState.current_track);
     });
 
-    socket.on('pause', function() {
+    socket.on('pause', function(state) {
         //change to toggle
-        if ($('#play-pause-button').hasClass('play'))
+        /*if ($('#play-pause-button').hasClass('play'))
         {
             $('#play-pause-button').removeClass('play');
             $('#play-pause-button').addClass('pause');    
@@ -71,7 +70,8 @@ $(document).ready(function () {
         {
             $('#play-pause-button').removeClass('pause');
             $('#play-pause-button').addClass('play');
-        }
+        }*/
+        updateClient(state);
     });
 
     socket.on('skip', function(state) {
@@ -98,13 +98,16 @@ $(document).ready(function () {
         {
             console.log(jsonState);
             $('#volume-slider').val(jsonState.volume.toString());
-            $('#song-name').text(jsonState.current_track);
 
-            if(jsonState.media != "None"){
+            if(jsonState.media != null && jsonState.is_playing == true){
                 currentUrl = jsonState.media;
+                $('#song-name').text(jsonState.current_track);
+            } else{
+                currentUrl = null;
+                $('#song-name').text("None");
             }
     
-            if (jsonState.is_playing && jsonState.audio_status != "State.Paused") {
+            if (jsonState.is_playing && jsonState.audio_status == "State.Playing") {
                 $('#play-pause-button').addClass('pause');
                 $('#play-pause-button').removeClass('play');
             } else{

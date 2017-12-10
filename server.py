@@ -6,8 +6,10 @@ from flask_celery import make_celery
 from celery_tasks import async_download
 from service import MusicService
 from celery import Celery
+from pymongo import MongoClient
 import validators
 import sys
+import downloader as dl
 
 app = Flask(__name__)
 app.debug = True
@@ -18,8 +20,11 @@ app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
 celery = make_celery(app)
 socketio = SocketIO(app)
 
-ms = MusicService()
+ms = MusicService(socketio)
 ms.start()
+
+client = MongoClient()
+db = client.concert
 
 @socketio.on('connect')
 def handle_connection():
@@ -27,7 +32,8 @@ def handle_connection():
 
 @socketio.on('play')
 def handle_play(url):
-	socketio.emit('play', ms.player.play(url), include_self=True)
+	#socketio.emit('play', ms.player.play(url), include_self=True)
+	ms.play_next()
 
 @socketio.on('pause')
 def handle_pause():
@@ -49,9 +55,16 @@ def handle_stop():
 def handle_download(url):
 	if not validators.url(url):
 		emit('download_error')
-	
-	async_download.apply_async(args=[url])
-	socketio.emit('download', ms.get_queue(), include_self=True)
+
+	downloaded_songs = db.Downloaded
+	queried_song = downloaded_songs.find_one({'url': url})
+	if queried_song != None:
+		db.Queue.insert_one(queried_song)
+		if(not ms.player.is_playing()):
+			ms.play_next()
+	else:
+		async_download.apply_async(args=[url])
+		socketio.emit('download', ms.player.cur_state(), include_self=True)
 	
 
 @socketio.on('position')

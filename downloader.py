@@ -20,20 +20,14 @@ db = client.concert
 
 #Downloads a song
 def download_song(url):
-    #First check to see if we've already downloaded the song
-    downloaded_songs = db.Downloaded
-    queried_song = downloaded_songs.find_one({'url': url})
-    if queried_song != None:
-        db.Queue.insert_one(queried_song)
-    else:
-        info = ytdl.extract_info(url, download=True)
+    info = ytdl.extract_info(url, download=True)
 
-        song_id = info["id"]
-        song_title = info["title"]
+    song_id = info["id"]
+    song_title = info["title"]
 
-        #This is jank for now
-        song_mrl = "music/" + str(song_id) + ".mp3"
+    #This is jank for now
+    song_mrl = "music/" + str(song_id) + ".mp3"
 
-        new_song = Song(song_mrl, song_title, url)
-        db.Queue.insert_one(new_song.dictify())
-        db.Downloaded.insert_one(new_song.dictify())
+    new_song = Song(song_mrl, song_title, url)
+    db.Queue.insert_one(new_song.dictify())
+    db.Downloaded.insert_one(new_song.dictify())

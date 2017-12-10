@@ -14,18 +14,22 @@ client = MongoClient()
 db = client.concert
 
 class MusicService:
-	def __init__(self):
+	def __init__(self, socketio):
 		self.player = Player()
+		self.socketio = socketio
 
 	def play_next(self):
 		cur_queue = self.get_queue()
 		if len(cur_queue) > 0:
 			next_song = cur_queue.pop(0)
-			self.player.play(next_song['mrl'])
+			print(next_song['title'])
+			print("is_playing: %r" % self.player.is_playing())
 			self.player.current_track = next_song
 			self._remove_song(next_song['_id'])
+			self.socketio.emit('play', self.player.play(next_song['mrl']), include_self=True)
 		else:
 			self.player.stop()
+		return self.player.cur_state()
 
 	def get_queue(self):
 		queue = []
