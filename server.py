@@ -60,11 +60,9 @@ def handle_download(url):
 	queried_song = downloaded_songs.find_one({'url': url})
 	if queried_song != None:
 		db.Queue.insert_one(queried_song)
-		if(not ms.player.is_playing()):
-			ms.play_next()
 	else:
 		async_download.apply_async(args=[url])
-		socketio.emit('download', ms.player.cur_state(), include_self=True)
+	socketio.emit('download', ms.player.cur_state(), include_self=True)
 	
 
 @socketio.on('position')

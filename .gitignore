@@ -1,5 +1,6 @@
 /__pycache__
 /tmp
 /venv
+/music
 .DS_Store
 *.pyc
