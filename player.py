@@ -34,7 +34,7 @@ class Player:
 		print("mrl: %s" % mrl)
 		print("is_playing (called from play): %r" % self.is_playing())
 		print("------PLAYING------")
-		
+
 		return self.cur_state()
 
 
@@ -63,6 +63,7 @@ class Player:
 	def set_time(self, percent):
 		duration = self.cur_state()['duration']
 		self.vlc_player.set_time(int(duration * percent))
+		return self.cur_state()
 		
 
 	def cur_state(self):

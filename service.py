@@ -15,19 +15,37 @@ db = client.concert
 
 class MusicService:
 	def __init__(self, socketio):
-		self.player = Player()
+		self._player = Player()
 		self.socketio = socketio
 
 	def play_next(self):
 		cur_queue = self.get_queue()
 		if len(cur_queue) > 0:
 			next_song = cur_queue.pop(0)
-			self.player.current_track = next_song
+			self._player.current_track = next_song
 			self._remove_song(next_song['_id'])
-			self.socketio.emit('play', self.player.play(next_song), include_self=True)
+			self.socketio.emit('play', self._player.play(next_song), include_self=True)
 		else:
-			self.player.stop()
-		return self.player.cur_state()
+			self._player.stop()
+			return self._player.cur_state()
+
+	def pause(self):
+		return self._player.pause()
+
+	def stop(self):
+		return self._player.stop()
+
+	def player_state(self):
+		return self._player.cur_state()
+
+	def set_volume(self, value):
+		return self._player.set_volume(value)
+
+	def set_time(self, percent):
+		if not self._player.is_playing():
+			return "Invalid"
+		self._player.set_time(percent)
+		return "Done"
 
 	def get_queue(self):
 		queue = []
@@ -39,15 +57,9 @@ class MusicService:
 	def _remove_song(self, _id):
 		db.Queue.delete_one({"_id": ObjectId(_id)})
 
-	def set_time(self, percent):
-		if not self.player.is_playing():
-			return "Invalid"
-		self.player.set_time(percent)
-		return "done"
-
 	def player_thread(self):
 		while True:
-			if not self.player.is_playing():
+			if not self._player.is_playing():
 				self.play_next()
 			time.sleep(.20)
 
