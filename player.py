@@ -1,7 +1,7 @@
-from models import Song
 import vlc
 import time
 import json
+from models import Song
 
 class Player:
 	def __init__(self):
@@ -22,15 +22,19 @@ class Player:
 		return self.cur_state()
 
 
-	def play(self, mrl):
+	def play(self, song):
+		mrl = song['mrl']
 		m = self.instance.media_new(mrl)
 		self.vlc_player.set_media(m)
 		self.vlc_player.play()
+		self.current_track = song
+
 		print("------PLAYING------")
+		print("Title: %s" % song['title'])
 		print("mrl: %s" % mrl)
 		print("is_playing (called from play): %r" % self.is_playing())
 		print("------PLAYING------")
-		#print("status: %d" % status)
+		
 		return self.cur_state()
 
 
@@ -47,11 +51,14 @@ class Player:
 
 
 	def is_playing(self):
-		audio_status = self.vlc_player.get_state()
+		if(self.current_track != None):
+			return True
+		return False
+		'''audio_status = self.vlc_player.get_state()
 		if audio_status in {vlc.State.Ended, vlc.State.Stopped, vlc.State.NothingSpecial, vlc.State.Error}:
 			#self.vlc_player.set_media(None)
 			return False
-		return True
+		return True'''
 
 	def set_time(self, percent):
 		duration = self.cur_state()['duration']

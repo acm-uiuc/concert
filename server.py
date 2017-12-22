@@ -1,15 +1,14 @@
 import binascii
 import os
-from flask import Flask, request, url_for, render_template
-from flask_socketio import SocketIO, send, emit
-from flask_celery import make_celery
-from celery_tasks import async_download
-from service import MusicService
-from celery import Celery
-from pymongo import MongoClient
 import validators
 import sys
 import downloader as dl
+from flask import Flask, request, url_for, render_template
+from flask_socketio import SocketIO, send, emit
+from celery import Celery
+from pymongo import MongoClient
+from celery_tasks import async_download
+from service import MusicService
 
 app = Flask(__name__)
 app.debug = True
@@ -17,9 +16,7 @@ app.config['SECRET KEY'] = binascii.hexlify(os.urandom(24))
 app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
 app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
 
-celery = make_celery(app)
 socketio = SocketIO(app)
-
 ms = MusicService(socketio)
 ms.start()
 
@@ -56,12 +53,7 @@ def handle_download(url):
 	if not validators.url(url):
 		emit('download_error')
 
-	downloaded_songs = db.Downloaded
-	queried_song = downloaded_songs.find_one({'url': url})
-	if queried_song != None:
-		db.Queue.insert_one(queried_song)
-	else:
-		async_download.apply_async(args=[url])
+	async_download.apply_async(args=[url])
 	socketio.emit('download', ms.player.cur_state(), include_self=True)
 	
 
@@ -75,4 +67,4 @@ def index():
 	return render_template("index.html")
 
 if __name__ == '__main__':
-	socketio.run(app)
+	socketio.run(app, debug=True, use_reloader=False)

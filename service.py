@@ -1,14 +1,14 @@
-from models import Song
-from player import Player
-import downloader as dl
-
 import vlc
 import time
 import threading
 import pymongo
+import sys
+import random
+import downloader as dl
 from pymongo import MongoClient
 from bson.objectid import ObjectId
-import sys
+from models import Song
+from player import Player
 
 client = MongoClient()
 db = client.concert
@@ -22,11 +22,9 @@ class MusicService:
 		cur_queue = self.get_queue()
 		if len(cur_queue) > 0:
 			next_song = cur_queue.pop(0)
-			print(next_song['title'])
-			print("is_playing: %r" % self.player.is_playing())
 			self.player.current_track = next_song
 			self._remove_song(next_song['_id'])
-			self.socketio.emit('play', self.player.play(next_song['mrl']), include_self=True)
+			self.socketio.emit('play', self.player.play(next_song), include_self=True)
 		else:
 			self.player.stop()
 		return self.player.cur_state()

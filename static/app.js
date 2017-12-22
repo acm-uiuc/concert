@@ -107,7 +107,7 @@ $(document).ready(function () {
                 $('#song-name').text("None");
             }
     
-            if (jsonState.is_playing && jsonState.audio_status == "State.Playing") {
+            if (jsonState.is_playing && (jsonState.audio_status == "State.Playing" || jsonState.audio_status == "State.Opening")) {
                 $('#play-pause-button').addClass('pause');
                 $('#play-pause-button').removeClass('play');
             } else{

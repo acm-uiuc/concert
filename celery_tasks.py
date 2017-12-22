@@ -1,9 +1,9 @@
 import youtube_dl
-from models import Song
+import downloader as dl
 from celery import Celery
 from pymongo import MongoClient
+from models import Song
 
-import downloader as dl
 
 CELERY_NAME = 'concert'
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
@@ -28,9 +28,14 @@ ytdl = youtube_dl.YoutubeDL(ydl_opts)
 def async_download(url):
 	client = MongoClient()
 	db = client.concert
-	#Hopefully some front end validation done for urls
-	info = ytdl.extract_info(url, download=True)
 
+	queried_song = db.Downloaded.find_one({'url': url})
+	if queried_song != None:
+		new_song = Song(queried_song['mrl'], queried_song['title'], queried_song['url'])
+		db.Queue.insert_one(new_song.dictify())
+		return
+	
+	info = ytdl.extract_info(url, download=True)
 	song_id = info["id"]
 	song_title = info["title"]
 
