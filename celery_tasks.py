@@ -28,23 +28,47 @@ ytdl = youtube_dl.YoutubeDL(ydl_opts)
 def async_download(url):
 	client = MongoClient()
 	db = client.concert
-
-	queried_song = db.Downloaded.find_one({'url': url})
-	if queried_song != None:
-		new_song = Song(queried_song['mrl'], queried_song['title'], queried_song['url'])
-		db.Queue.insert_one(new_song.dictify())
-		return
 	
-	info = ytdl.extract_info(url, download=True)
-	song_id = info["id"]
-	song_title = info["title"]
+	info = ytdl.extract_info(url, download=False)
+	if '_type' in info and info['_type'] == 'playlist':
+		# Handle Playlist
+		for entry in info['entries']:
+			queried_song = db.Downloaded.find_one({'url': entry['webpage_url']})
+			if queried_song != None:
+				new_song = Song(queried_song['mrl'], queried_song['title'], queried_song['url'])
+				db.Queue.insert_one(new_song.dictify())
+				continue
 
-	#This is jank for now
-	song_mrl = "music/" + str(song_id) + ".mp3"
+			info = ytdl.extract_info(entry['webpage_url'], download=True)
 
-	new_song = Song(song_mrl, song_title, url)
-	db.Queue.insert_one(new_song.dictify())
-	db.Downloaded.insert_one(new_song.dictify())
+			song_id = info["id"]
+			song_title = info["title"]
+
+			# This is jank for now
+			song_mrl = "music/" + str(song_id) + ".mp3"
+
+			new_song = Song(song_mrl, song_title, info['webpage_url'])
+			db.Queue.insert_one(new_song.dictify())
+			db.Downloaded.insert_one(new_song.dictify())
+	else:
+		# If not a playlist assume single song
+		queried_song = db.Downloaded.find_one({'url': url})
+		if queried_song != None:
+			new_song = Song(queried_song['mrl'], queried_song['title'], queried_song['url'])
+			db.Queue.insert_one(new_song.dictify())
+			return
+
+		info = ytdl.extract_info(url, download=True)
+
+		song_id = info["id"]
+		song_title = info["title"]
+
+		# This is jank for now
+		song_mrl = "music/" + str(song_id) + ".mp3"
+
+		new_song = Song(song_mrl, song_title, url)
+		db.Queue.insert_one(new_song.dictify())
+		db.Downloaded.insert_one(new_song.dictify())
 	
 if __name__ == '__main__':
     celery.start()
