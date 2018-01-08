@@ -134,7 +134,6 @@ def try_login():
 
 	#Register User Session
 	val = login_user(cur_user)
-	session['user_id'] = 'tjyu3'
 
 	return redirect(url_for('index'))
 
