@@ -4,3 +4,4 @@
 /music
 .DS_Store
 *.pyc
+config.py
