@@ -4,7 +4,6 @@ import threading
 import pymongo
 import sys
 import random
-import downloader as dl
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from models import Song

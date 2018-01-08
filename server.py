@@ -5,9 +5,8 @@ import sys
 import requests
 import functools
 import flask_login
-import downloader as dl
 from flask import Flask, request, url_for, render_template, redirect, url_for, current_app, session
-from flask_login import LoginManager, login_user, current_user, login_required
+from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from flask_socketio import SocketIO, send, emit, disconnect
 from celery import Celery
 from pymongo import MongoClient
@@ -35,7 +34,7 @@ def authenticated_only(f):
     @functools.wraps(f)
     def wrapped(*args, **kwargs):
         if not current_user.is_authenticated:
-            disconnect()
+            return False
         else:
             return f(*args, **kwargs)
     return wrapped
@@ -45,7 +44,7 @@ def load_user(uid):
 	res = User.get_by_id(db, uid)
 	if res == None:
 		return None
-	newuser = User(res['uid'], res['firstname'], res['lastname'])
+	newuser = User(res['uid'], res['first_name'], res['last_name'])
 	return newuser
 
 @socketio.on('connect')
@@ -53,27 +52,22 @@ def handle_connection():
 	socketio.emit('connected', ms.player_state(), include_self=True)
 
 @socketio.on('play')
-@authenticated_only
 def handle_play(url):
 	ms.play_next()
 
 @socketio.on('pause')
-@authenticated_only
 def handle_pause():
 	socketio.emit('pause', ms.pause(), include_self=True)
 
 @socketio.on('volume')
-@authenticated_only
 def handle_volume(newVolume):
 	socketio.emit('volume', ms.set_volume(newVolume), include_self=True)
 
 @socketio.on('skip')
-@authenticated_only
 def handle_skip():
 	socketio.emit('skip', ms.play_next(), include_self=True)
 
 @socketio.on('stop')
-@authenticated_only
 def handle_stop():
 	socketio.emit('stop', ms.stop(), include_self=True)
 
@@ -94,11 +88,10 @@ def handle_position():
 
 @app.route('/')
 def index():
-	print(session.get('user_id'))
 	return render_template("index.html")
 
 @app.route('/login', methods=['POST'])
-def try_login():
+def login():
 	username = request.form['username']
 	password = request.form['password']
 
@@ -137,6 +130,12 @@ def try_login():
 
 	return redirect(url_for('index'))
 
+@app.route('/logout', methods=['POST'])
+@login_required
+def logout():
+	db.Users.delete_many({"uid": current_user.uid})
+	logout_user()
+	return redirect(url_for('index'))
 
 if __name__ == '__main__':
 	socketio.run(app, debug=True, use_reloader=False)

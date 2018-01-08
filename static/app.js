@@ -3,8 +3,7 @@ var currentUrl;
 var currentSong;
 
 $(document).ready(function () {
-    //socket = io.connect('http://' + document.domain + ':' + location.port);
-    socket = io.connect('http://127.0.0.1:5000/');
+    socket = io.connect('http://' + document.domain + ':' + location.port);
     socket.on('connected', function(state) {
         updateClient(state);
     });

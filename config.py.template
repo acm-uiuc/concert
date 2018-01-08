@@ -1,0 +1,10 @@
+'''
+This is a template file, please duplicate this file and 
+fill in the fields with your keys
+
+NEVER COMMIT YOUR API KEYS IN GIT (config.py will be ignored by git)
+'''
+
+config = {
+    "groot_token" : "MY CONSUMER KEY",
+}

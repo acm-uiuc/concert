@@ -1,5 +1,4 @@
 import youtube_dl
-import downloader as dl
 from celery import Celery
 from pymongo import MongoClient
 from bson.objectid import ObjectId

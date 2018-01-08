@@ -10,6 +10,21 @@
     </head>
 
     <body>
+        {% if current_user.is_authenticated %}
+            <h2>Hi {{ current_user.first_name }}!</h2>
+                <form action="/logout" method="post">
+                <button name="logout">Logout</button>
+            </form>
+        {% else %}
+            <div>
+                <form action="/login" method="post">
+                  username: <input type="text" name="username"><br>
+                  password: <input type="password" name="password"><br>
+                  <input type="submit" value="Submit">
+                </form>
+            </div>
+        {% endif %}
+        
         <div id="page-wrapper">
             <div id="form-wrapper">
                 <input type="text" id="url-textbox" placeholder="Type in a youtube playlist URL here"/>
