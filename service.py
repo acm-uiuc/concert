@@ -43,8 +43,7 @@ class MusicService:
 	def set_time(self, percent):
 		if not self._player.is_playing():
 			return "Invalid"
-		self._player.set_time(percent)
-		return "Done"
+		return self._player.set_time(percent)
 
 	def get_queue(self):
 		queue = []

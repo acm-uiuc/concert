@@ -1,9 +1,20 @@
 var socket;
 var currentUrl;
 var currentSong;
+var currentTime;
+var currentEndTime;
+var currentProgressInterval;
+
+function updateProgress() {
+    console.log("Called")
+    currentTime += 1000;
+    $('#progress-slider').val((currentTime/currentEndTime* 100).toString());
+}
 
 $(document).ready(function () {
     socket = io.connect('http://' + document.domain + ':' + location.port);
+    console.log(document.domain);
+    console.log(location.port);
     socket.on('connected', function(state) {
         updateClient(state);
     });
@@ -56,20 +67,21 @@ $(document).ready(function () {
         updateClient(state);
         $('#play-pause-button').addClass('pause');
         $('#play-pause-button').removeClass('play');
+        clearInterval(currentProgressInterval);
+        currentProgressInterval = setInterval(updateProgress, 1000);
     });
 
     socket.on('pause', function(state) {
         //change to toggle
-        /*if ($('#play-pause-button').hasClass('play'))
+        if ($('#play-pause-button').hasClass('play'))
         {
-            $('#play-pause-button').removeClass('play');
-            $('#play-pause-button').addClass('pause');    
+            currentProgressInterval = setInterval(updateProgress, 1000); 
         }
         else
         {
-            $('#play-pause-button').removeClass('pause');
-            $('#play-pause-button').addClass('play');
-        }*/
+            clearInterval(currentProgressInterval);
+        }
+
         updateClient(state);
     });
 
@@ -90,6 +102,12 @@ $(document).ready(function () {
         $('#volume-slider').val(jsonState.volume.toString());
     });
 
+    socket.on('position', function() {
+        var curTime = jsonState.current_time;
+        var totalTime = jsonState.duration;
+        $('#progress-slider').val((curTime/totalTime * 100).toString());
+    });
+
     
     function updateClient(state) {
         var jsonState = JSON.parse(state);
@@ -97,6 +115,12 @@ $(document).ready(function () {
         {
             console.log(jsonState);
             $('#volume-slider').val(jsonState.volume.toString());
+
+            if(jsonState.media != null){
+                currentTime = jsonState.current_time;
+                currentEndTime = jsonState.duration;
+                $('#progress-slider').val((currentTime/currentEndTime * 100).toString());
+            }
 
             if(jsonState.media != null && jsonState.is_playing == true){
                 currentUrl = jsonState.media;

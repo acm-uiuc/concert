@@ -80,10 +80,9 @@ def handle_download(url):
 	async_download.apply_async(args=[url])
 	socketio.emit('download', ms.player_state(), include_self=True)
 	
-@socketio.on('position')
+@socketio.on('set_position')
 @authenticated_only
-def handle_position():
-	percentage = float(request.values.get('percentage'))
+def handle_position(percentage):
 	socketio.emit('position', ms.set_time(percentage), include_self=True) 
 
 @app.route('/')
@@ -112,21 +111,21 @@ def login():
 	}
 	resp = requests.post('https://api.acm.illinois.edu/session', headers=headers, json=payload)
 	if resp.status_code != 200:
-		return 'Invalid User'
+		return redirect(url_for('index'))
 
 	data = resp.json()
 	token = data['token']
 
 	user_resp = requests.get('https://api.acm.illinois.edu/session/'+token, headers=headers)
 	if user_resp.status_code != 200:
-		return 'Invalid Session Token'
+		return redirect(url_for('index'))
 
 	user_data = user_resp.json()['user']
 	cur_user = User(user_data['name'], user_data['first-name'], user_data['last-name'])
 	db.Users.insert_one(cur_user.__dict__)
 
 	#Register User Session
-	val = login_user(cur_user)
+	val = login_user(cur_user, remember=True)
 
 	return redirect(url_for('index'))
 
@@ -138,4 +137,4 @@ def logout():
 	return redirect(url_for('index'))
 
 if __name__ == '__main__':
-	socketio.run(app, debug=True, use_reloader=False)
+	socketio.run(app, debug=True, use_reloader=False, host='0.0.0.0')
