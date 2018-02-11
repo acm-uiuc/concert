@@ -68,7 +68,9 @@ $(document).ready(function () {
         $('#play-pause-button').addClass('pause');
         $('#play-pause-button').removeClass('play');
         clearInterval(currentProgressInterval);
-        currentProgressInterval = setInterval(updateProgress, 1000);
+        if(currentSong != null){
+            currentProgressInterval = setInterval(updateProgress, 1000);
+        }
     });
 
     socket.on('pause', function(state) {
@@ -117,9 +119,14 @@ $(document).ready(function () {
             $('#volume-slider').val(jsonState.volume.toString());
 
             if(jsonState.media != null){
+                currentSong = jsonState.current_track
                 currentTime = jsonState.current_time;
                 currentEndTime = jsonState.duration;
                 $('#progress-slider').val((currentTime/currentEndTime * 100).toString());
+            }else{
+                currentSong = null;
+                currentTime = 0;
+                currentEndTime = 0;
             }
 
             if(jsonState.media != null && jsonState.is_playing == true){
