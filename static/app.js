@@ -6,7 +6,7 @@ var currentEndTime;
 var currentProgressInterval;
 
 function updateProgress() {
-    console.log("Called")
+    //console.log("Called")
     currentTime += 1000;
     $('#progress-slider').val((currentTime/currentEndTime* 100).toString());
 }
@@ -19,16 +19,8 @@ $(document).ready(function () {
         updateClient(state);
     });
 
-    //playing sample music for testing
     $('#play-pause-button').click(function(e) {
-        /*if ($('#play-pause-button').hasClass('play') && currentUrl == null)
-        {
-            //replace with actual current song
-            currentUrl = "music/-5slZHLSnow.mp3";
-            socket.emit('play', currentUrl);            
-        }
-        else*/
-            socket.emit('pause');
+        socket.emit('pause');
     });
 
     $('#skip-button').click(function(e) { 
@@ -53,7 +45,7 @@ $(document).ready(function () {
             return false;
     });
 
-    socket.on('download', function(state) {
+    socket.on('downloaded', function(state) {
         console.log("Download emitted");
         updateClient(state);
     });
@@ -63,7 +55,7 @@ $(document).ready(function () {
         console.log("Invalid URL");
     });
 
-    socket.on('play', function(state) {
+    socket.on('played', function(state) {
         updateClient(state);
         $('#play-pause-button').addClass('pause');
         $('#play-pause-button').removeClass('play');
@@ -73,21 +65,29 @@ $(document).ready(function () {
         }
     });
 
-    socket.on('pause', function(state) {
+    socket.on('paused', function(state) {
         //change to toggle
-        if ($('#play-pause-button').hasClass('play'))
-        {
+        var playState = JSON.parse(state);
+        console.log(playState);
+        if (playState.is_playing && (playState.audio_status == "State.Playing" || playState.audio_status == "State.Opening")){
+            console.log("this one too")
             currentProgressInterval = setInterval(updateProgress, 1000); 
+            //$('#play-pause-button').addClass('pause');
+            //$('#play-pause-button').removeClass('play');
+            $('#play-pause-button').removeClass('fa-play').addClass('fa-pause');
         }
-        else
-        {
+        else{
             clearInterval(currentProgressInterval);
+            //$('#play-pause-button').addClass('play');
+            //$('#play-pause-button').removeClass('pause');
+            $('#play-pause-button').addClass('fa-play').removeClass('fa-pause');
         }
 
-        updateClient(state);
+        currentTime = playState.current_time;
+        currentEndTime = playState.duration;
     });
 
-    socket.on('skip', function(state) {
+    socket.on('skipped', function(state) {
         updateClient(state);
     });
 
@@ -95,16 +95,15 @@ $(document).ready(function () {
         
     });
 
-    socket.on('volume', function(state) {
+    socket.on('volume_changed', function(volumeResponse) {
         //pass in new volume data
         //$('#volume-slider').val(newVolume);
         //console.log(state["volume"]);
-
-        var jsonState = JSON.parse(state);
-        $('#volume-slider').val(jsonState.volume.toString());
+        volumeState = JSON.parse(volumeResponse)
+        $('#volume-slider').val(volumeState.volume);
     });
 
-    socket.on('position', function() {
+    socket.on('position_changed', function() {
         var curTime = jsonState.current_time;
         var totalTime = jsonState.duration;
         $('#progress-slider').val((curTime/totalTime * 100).toString());
@@ -131,18 +130,20 @@ $(document).ready(function () {
 
             if(jsonState.media != null && jsonState.is_playing == true){
                 currentUrl = jsonState.media;
-                $('#song-name').text(jsonState.current_track);
+                $('#title').text(jsonState.current_track);
             } else{
                 currentUrl = null;
-                $('#song-name').text("None");
+                $('#title').text("None");
             }
     
             if (jsonState.is_playing && (jsonState.audio_status == "State.Playing" || jsonState.audio_status == "State.Opening")) {
-                $('#play-pause-button').addClass('pause');
-                $('#play-pause-button').removeClass('play');
+                //$('#play-pause-button').addClass('pause');
+                //$('#play-pause-button').removeClass('play');
+                $('#play-pause-button').removeClass('fa-play').addClass('fa-pause');
             } else{
-                $('#play-pause-button').addClass('play');
-                $('#play-pause-button').removeClass('pause');
+                //$('#play-pause-button').addClass('play');
+                //$('#play-pause-button').removeClass('pause');
+                $('#play-pause-button').addClass('fa-play').removeClass('fa-pause');
             }
         }
     }

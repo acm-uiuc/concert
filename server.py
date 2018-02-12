@@ -51,25 +51,26 @@ def load_user(uid):
 def handle_connection():
 	socketio.emit('connected', ms.player_state(), include_self=True)
 
+#Not being used
 @socketio.on('play')
 def handle_play(url):
 	ms.play_next()
 
 @socketio.on('pause')
 def handle_pause():
-	socketio.emit('pause', ms.pause(), include_self=True)
+	socketio.emit('paused', ms.pause(), include_self=True)
 
 @socketio.on('volume')
 def handle_volume(newVolume):
-	socketio.emit('volume', ms.set_volume(newVolume), include_self=True)
+	socketio.emit('volume_changed', ms.set_volume(newVolume), include_self=True)
 
 @socketio.on('skip')
 def handle_skip():
-	socketio.emit('skip', ms.play_next(), include_self=True)
+	socketio.emit('skipped', ms.play_next(), include_self=True)
 
 @socketio.on('stop')
 def handle_stop():
-	socketio.emit('stop', ms.stop(), include_self=True)
+	socketio.emit('stopped', ms.stop(), include_self=True)
 
 @socketio.on('download')
 @authenticated_only
@@ -78,16 +79,20 @@ def handle_download(url):
 		emit('download_error')
 
 	async_download.apply_async(args=[url])
-	socketio.emit('download', ms.player_state(), include_self=True)
+	socketio.emit('downloaded', ms.player_state(), include_self=True)
+
+@socketio.on('get_queue')
+def handle_queue():
+	socketio.emit('send_queue', ms.get_queue(), include_self=True)
 	
-@socketio.on('set_position')
+'''@socketio.on('set_position')
 @authenticated_only
 def handle_position(percentage):
-	socketio.emit('position', ms.set_time(percentage), include_self=True) 
+	socketio.emit('position_changed', ms.set_time(percentage), include_self=True)'''
 
 @app.route('/')
 def index():
-	return render_template("index.html")
+	return render_template("index_new.html")
 
 @app.route('/login', methods=['POST'])
 def login():

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+  <title>Music Player - Day 009</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+  <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css'>
+
+      <link rel="stylesheet" href="static/css/style.css">
+
+  
+</head>
+
+<body>
+  {% if current_user.is_authenticated %}
+      <h2>Hi {{ current_user.first_name }}!</h2>
+          <form action="/logout" method="post">
+          <button name="logout">Logout</button>
+      </form>
+  {% else %}
+      <div>
+          <form action="/login" method="post">
+            username: <input type="text" name="username"><br>
+            password: <input type="password" name="password"><br>
+            <input type="submit" value="Submit">
+          </form>
+      </div>
+  {% endif %}
+
+  <div id="form-wrapper">
+        <input type="text" id="url-textbox" placeholder="Type in a youtube playlist URL here"/>
+        <input type="submit" id="import-button" value="Import"/>
+    </div>        
+  <div class="table">
+  <div class="table-cell">
+    <div id="player">
+    <div id="main">
+      <div>
+        <div class="playback_controls">
+          <h2 id="title">Stir Fry</h2>
+          <!--<h3 id="artist">Migos</h3>-->
+          <div class="time-holder">
+            <div class="slider">
+              <div class="fill"></div>
+            </div>
+          </div>
+          <div>
+          <i class="fa fa-bars menu"></i>
+          <div class="buttons">
+            <i class="fa fa-backward" id="back"></i>
+            <i class="fa fa-play loading" id="play-pause-button"></i>
+            <i class="fa fa-forward" id="next"></i>
+          </div>
+        </div>
+        </div>
+        <audio id="playbar" controls></audio>
+      </div>
+    </div>
+    <ol id="playlist">
+      <li class="playing"><a class="track" href="https://dl.dropboxusercontent.com/u/2255413/Perigee/01%20Searching%20%28Memoirs%20Of%20A%20New%20Discovery%29.m4a">Searching (Memoirs Of A New Discovery)</a> <span class="time">2:54</span></li>
+      <li><a class="track" href="https://dl.dropboxusercontent.com/u/2255413/Perigee/02%20Charade%20%28Exploring%20The%20Surface%29%20feat.%20Julie%20Thurman.m4a">Charade (Exploring The Surface) feat. Julie Thurman</a> <span class="time">3:04</span></li>
+      <li><a class="track" href="https://dl.dropboxusercontent.com/u/2255413/Perigee/03%20Speed%20of%20Sound%20%28An%20Interruption%20In%20Spaceflight%29.m4a">Speed of Sound (An Interruption In Spaceflight)</a> <span class="time">5:05</span></li>
+      <li><a class="track" href="https://dl.dropboxusercontent.com/u/2255413/Perigee/04%20Words%20%28Retrograde%29.m4a">Words (Retrograde)</a> <span class="time">2:56</span></li>
+      <li><a class="track" href="https://dl.dropboxusercontent.com/u/2255413/Perigee/05%20GO%21%20%28Breaking%20Orbit%29.m4a">GO! (Breaking Orbit)</a> <span class="time">3:48</span></li>
+      <li><a class="track" href="https://dl.dropboxusercontent.com/u/2255413/Perigee/06%20Remembering%20%28What%20Went%20Wrong%29.m4a">Remembering (What Went Wrong)</a> <span class="time">3:28</span></li>
+      <li><a class="track" href="https://dl.dropboxusercontent.com/u/2255413/Perigee/07%20Loss%20%28The%20Next%20Chapter%29.m4a">Loss (The Next Chapter)</a> <span class="time">3:28</span></li>
+      <li><a class="track" href="https://dl.dropboxusercontent.com/u/2255413/Perigee/08%20Stillborn%20Love%20%28Lost%20In%20Space%29.m4a">Stillborn Love (Lost In Space)</a> <span class="time">2:16</span></li>
+      <li><a class="track" href="https://dl.dropboxusercontent.com/u/2255413/Perigee/09%20Plans%20%28When%20Upon%20A%20Journey%20And%20One%20Becomes%20Filled%20With%20Wonder%29.m4a">Plans (When Upon A Journey And One Becomes Filled With Wonder)</a>
+        <span
+        class="time">4:00</span>
+      </li>
+      <li><a class="track" href="https://dl.dropboxusercontent.com/u/2255413/Perigee/10%20A%20Spacewalk%20%28A%20Renewed%20Mind%29.m4a">A Spacewalk (A Renewed Mind)</a> <span class="time">4:34</span></li>
+    </ol>
+  </div>
+  </div>
+</div>
+  <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+<script src='http://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js'></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+
+    <script src="static/index.js"></script>
+    <script src="static/app.js"></script>
+
+</body>
+</html>

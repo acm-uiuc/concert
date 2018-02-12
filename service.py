@@ -23,7 +23,7 @@ class MusicService:
 			next_song = cur_queue.pop(0)
 			self._player.current_track = next_song
 			self._remove_song(next_song['_id'])
-			self.socketio.emit('play', self._player.play(next_song), include_self=True)
+			self.socketio.emit('played', self._player.play(next_song), include_self=True)
 		else:
 			self._player.stop()
 			return self._player.cur_state()

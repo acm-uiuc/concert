@@ -19,7 +19,10 @@ class Player:
 
 		self.volume = value
 		self.vlc_player.audio_set_volume(value)
-		return self.cur_state()
+		payload = {
+			'volume': self.volume
+		}
+		return json.dumps(payload)
 
 
 	def play(self, song):
@@ -41,7 +44,12 @@ class Player:
 	def pause(self):
 		self.vlc_player.pause()
 		time.sleep(0.1)
-		return self.cur_state()
+		media = self.vlc_player.get_media()
+		payload = {'audio_status': str(self.vlc_player.get_state()), 'is_playing': self.is_playing()}
+		if media:
+			payload['current_time'] = self.vlc_player.get_time()
+			payload['duration'] = media.get_duration()
+		return json.dumps(payload)
 
 
 	def stop(self):
