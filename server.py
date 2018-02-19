@@ -23,7 +23,7 @@ app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-socketio = SocketIO(app)
+socketio = SocketIO(app, message_queue='redis://localhost:6379/1')
 ms = MusicService(socketio)
 ms.start()
 
@@ -73,7 +73,7 @@ def handle_stop():
 	socketio.emit('stopped', ms.stop(), include_self=True)
 
 @socketio.on('download')
-@authenticated_only
+#@authenticated_only
 def handle_download(url):
 	if not validators.url(url):
 		emit('download_error')

@@ -53,6 +53,11 @@ $(document).ready(function () {
         console.log("Invalid URL");
     });
 
+    socket.on('stopped', function(state) {
+        console.log("Stopped");
+        updateClient(state);
+    });
+
     socket.on('played', function(state) {
         updateClient(state);
         $('#play-pause-button').addClass('pause');
@@ -101,6 +106,18 @@ $(document).ready(function () {
         $('#progress-slider').val(curTime/totalTime);
     });
 
+    socket.on('queue_change', function(queue_data) {
+        queued_songs = JSON.parse(queue_data);
+        var len = queued_songs.length;
+        //for(var i = 0; i < len; i++){
+        //    console.log(queued_songs[i]);
+        //}
+        console.log(len);
+    });
+
+    var list = $('#playlist');
+    var entry = document.createElement('li');
+    list.append(entry);
     
     function updateClient(state) {
         var jsonState = JSON.parse(state);
@@ -108,28 +125,32 @@ $(document).ready(function () {
         {
             console.log(jsonState);
             $('#volume-slider').val(jsonState.volume.toString());
+            clearInterval(currentProgressInterval);
 
             if(jsonState.media != null){
                 currentSong = jsonState.current_track
                 currentTime = jsonState.current_time;
                 currentEndTime = jsonState.duration;
                 $('#progress-slider').val(currentTime/currentEndTime);
-                clearInterval(currentProgressInterval);
-                currentProgressInterval = setInterval(updateProgress, 1000);
             }else{
                 currentSong = null;
                 currentTime = 0;
                 currentEndTime = 0;
                 $('#progress-slider').val(0);
-                clearInterval(currentProgressInterval);
             }
 
             if(jsonState.media != null && jsonState.is_playing == true){
                 currentUrl = jsonState.media;
-                $('#title').text(jsonState.current_track);
+                var title = jsonState.current_track;
+                $('#title').text(title);
+                $('.playing .track').text(title);
+                if(jsonState.audio_status != "State.Paused"){
+                    currentProgressInterval = setInterval(updateProgress, 1000);
+                }
             } else{
                 currentUrl = null;
                 $('#title').text("None");
+                $('.playing .track').text("None")
             }
     
             if (jsonState.is_playing && (jsonState.audio_status == "State.Playing" || jsonState.audio_status == "State.Opening")) {

@@ -4,6 +4,7 @@ import threading
 import pymongo
 import sys
 import random
+import json
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from models import Song
@@ -24,8 +25,11 @@ class MusicService:
 			self._player.current_track = next_song
 			self._remove_song(next_song['_id'])
 			self.socketio.emit('played', self._player.play(next_song), include_self=True)
+			self.socketio.emit('queue_change', self.get_json_queue(), include_self=True)
 		else:
-			self._player.stop()
+			if(self._player.current_track != None):
+				self._player.stop()
+				self.socketio.emit('stopped', self.player_state(), include_self=True)
 			return self._player.cur_state()
 
 	def pause(self):
@@ -51,6 +55,16 @@ class MusicService:
 		for item in cur_queue:
 			queue.append(item)
 		return queue
+
+	def get_json_queue(self):
+		client = MongoClient()
+		db = client.concert
+		queue = []
+		cur_queue = db.Queue.find().sort('date', pymongo.ASCENDING)
+		for item in cur_queue:
+			song = Song(item['mrl'], item['title'], item['url'], item['duration'])
+			queue.append(song.dictify())
+		return json.dumps(queue)
 
 	def _remove_song(self, _id):
 		db.Queue.delete_one({"_id": ObjectId(_id)})

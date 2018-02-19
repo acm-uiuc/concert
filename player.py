@@ -53,8 +53,9 @@ class Player:
 
 
 	def stop(self):
-		self.vlc_player.stop()
-		self.current_track = None
+		if(self.current_track != None):
+			self.vlc_player.stop()
+			self.current_track = None
 		return self.cur_state()
 
 
@@ -65,7 +66,7 @@ class Player:
 		audio_status = self.vlc_player.get_state()
 		if audio_status in {vlc.State.Ended, vlc.State.Stopped, vlc.State.NothingSpecial, vlc.State.Error}:
 			self.vlc_player.set_media(None)
-			self.current_track = None
+			#self.current_track = None
 			return False
 		return True
 
