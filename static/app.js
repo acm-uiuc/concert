@@ -8,13 +8,11 @@ var currentProgressInterval;
 function updateProgress() {
     //console.log("Called")
     currentTime += 1000;
-    $('#progress-slider').val((currentTime/currentEndTime* 100).toString());
+    $('#progress-slider').val(currentTime/currentEndTime);
 }
 
 $(document).ready(function () {
     socket = io.connect('http://' + document.domain + ':' + location.port);
-    console.log(document.domain);
-    console.log(location.port);
     socket.on('connected', function(state) {
         updateClient(state);
     });
@@ -23,7 +21,7 @@ $(document).ready(function () {
         socket.emit('pause');
     });
 
-    $('#skip-button').click(function(e) { 
+    $('#next').click(function(e) { 
         socket.emit('skip');
     });
 
@@ -60,26 +58,18 @@ $(document).ready(function () {
         $('#play-pause-button').addClass('pause');
         $('#play-pause-button').removeClass('play');
         clearInterval(currentProgressInterval);
-        if(currentSong != null){
-            currentProgressInterval = setInterval(updateProgress, 1000);
-        }
+        currentProgressInterval = setInterval(updateProgress, 1000);
     });
 
     socket.on('paused', function(state) {
         //change to toggle
         var playState = JSON.parse(state);
-        console.log(playState);
         if (playState.is_playing && (playState.audio_status == "State.Playing" || playState.audio_status == "State.Opening")){
-            console.log("this one too")
             currentProgressInterval = setInterval(updateProgress, 1000); 
-            //$('#play-pause-button').addClass('pause');
-            //$('#play-pause-button').removeClass('play');
             $('#play-pause-button').removeClass('fa-play').addClass('fa-pause');
         }
         else{
             clearInterval(currentProgressInterval);
-            //$('#play-pause-button').addClass('play');
-            //$('#play-pause-button').removeClass('pause');
             $('#play-pause-button').addClass('fa-play').removeClass('fa-pause');
         }
 
@@ -96,9 +86,6 @@ $(document).ready(function () {
     });
 
     socket.on('volume_changed', function(volumeResponse) {
-        //pass in new volume data
-        //$('#volume-slider').val(newVolume);
-        //console.log(state["volume"]);
         volumeState = JSON.parse(volumeResponse)
         $('#volume-slider').val(volumeState.volume);
     });
@@ -106,7 +93,7 @@ $(document).ready(function () {
     socket.on('position_changed', function() {
         var curTime = jsonState.current_time;
         var totalTime = jsonState.duration;
-        $('#progress-slider').val((curTime/totalTime * 100).toString());
+        $('#progress-slider').val(curTime/totalTime);
     });
 
     
@@ -121,7 +108,7 @@ $(document).ready(function () {
                 currentSong = jsonState.current_track
                 currentTime = jsonState.current_time;
                 currentEndTime = jsonState.duration;
-                $('#progress-slider').val((currentTime/currentEndTime * 100).toString());
+                $('#progress-slider').val(currentTime/currentEndTime);
             }else{
                 currentSong = null;
                 currentTime = 0;
@@ -137,12 +124,8 @@ $(document).ready(function () {
             }
     
             if (jsonState.is_playing && (jsonState.audio_status == "State.Playing" || jsonState.audio_status == "State.Opening")) {
-                //$('#play-pause-button').addClass('pause');
-                //$('#play-pause-button').removeClass('play');
                 $('#play-pause-button').removeClass('fa-play').addClass('fa-pause');
             } else{
-                //$('#play-pause-button').addClass('play');
-                //$('#play-pause-button').removeClass('pause');
                 $('#play-pause-button').addClass('fa-play').removeClass('fa-pause');
             }
         }

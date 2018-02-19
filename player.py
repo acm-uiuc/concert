@@ -48,7 +48,7 @@ class Player:
 		payload = {'audio_status': str(self.vlc_player.get_state()), 'is_playing': self.is_playing()}
 		if media:
 			payload['current_time'] = self.vlc_player.get_time()
-			payload['duration'] = media.get_duration()
+			payload['duration'] = self.current_track['duration']
 		return json.dumps(payload)
 
 
@@ -83,11 +83,12 @@ class Player:
 		if media:
 			state['media'] = vlc.bytes_to_str(media.get_mrl())
 			state['current_time'] = self.vlc_player.get_time()
-			state['duration'] = media.get_duration()
 			if self.current_track != None:
 				state['current_track'] = self.current_track['title']
+				state['duration'] = self.current_track['duration']
 			else:
-				state['current_track'] = 'None'
+				state['current_track'] = None
+				state['duration'] = -1
 		else:
 			state['media'] = None
 		

@@ -2,7 +2,7 @@
 <html >
 <head>
   <meta charset="UTF-8">
-  <title>Music Player - Day 009</title>
+  <title>ACM Concert</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 
@@ -39,12 +39,10 @@
     <div id="main">
       <div>
         <div class="playback_controls">
-          <h2 id="title">Stir Fry</h2>
+          <h2 id="title">ACM Concert</h2>
           <!--<h3 id="artist">Migos</h3>-->
           <div class="time-holder">
-            <div class="slider">
-              <div class="fill"></div>
-            </div>
+            <progress id="progress-slider" value="0" max="1"></progress>
           </div>
           <div>
           <i class="fa fa-bars menu"></i>
@@ -74,6 +72,10 @@
       <li><a class="track" href="https://dl.dropboxusercontent.com/u/2255413/Perigee/10%20A%20Spacewalk%20%28A%20Renewed%20Mind%29.m4a">A Spacewalk (A Renewed Mind)</a> <span class="time">4:34</span></li>
     </ol>
   </div>
+  </div>
+  <div id="volume-slider-wrapper">
+      <h3>Volume</h3>
+      <input type="range" min="1" max="100" value="70" class="slider" id="volume-slider">
   </div>
 </div>
   <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>

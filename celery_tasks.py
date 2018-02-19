@@ -36,7 +36,7 @@ def async_download(url):
 			queried_song = db.Downloaded.find_one({'url': entry['webpage_url']})
 			if queried_song != None:
 				if _file_exists(queried_song['mrl']):
-					new_song = Song(queried_song['mrl'], queried_song['title'], queried_song['url'])
+					new_song = Song(queried_song['mrl'], queried_song['title'], queried_song['url'], queried_song['duration'])
 					db.Queue.insert_one(new_song.dictify())
 					continue
 				else:
@@ -45,10 +45,11 @@ def async_download(url):
 			info = ytdl.extract_info(entry['webpage_url'], download=True)
 			song_id = info["id"]
 			song_title = info["title"]
+			song_duration = info["duration"] * 1000
 
 			# This is jank for now
 			song_mrl = "music/" + str(song_id) + ".mp3"
-			new_song = Song(song_mrl, song_title, info['webpage_url'])
+			new_song = Song(song_mrl, song_title, info['webpage_url'], song_duration)
 			db.Queue.insert_one(new_song.dictify())
 			db.Downloaded.insert_one(new_song.dictify())
 	else:
@@ -56,7 +57,7 @@ def async_download(url):
 		queried_song = db.Downloaded.find_one({'url': url})
 		if queried_song != None:
 			if _file_exists(queried_song['mrl']):
-				new_song = Song(queried_song['mrl'], queried_song['title'], queried_song['url'])
+				new_song = Song(queried_song['mrl'], queried_song['title'], queried_song['url'], queried_song['duration'])
 				db.Queue.insert_one(new_song.dictify())
 				return
 			else:
@@ -65,10 +66,11 @@ def async_download(url):
 		info = ytdl.extract_info(url, download=True)
 		song_id = info["id"]
 		song_title = info["title"]
+		song_duration = info["duration"] * 1000
 
 		# This is jank for now
 		song_mrl = "music/" + str(song_id) + ".mp3"
-		new_song = Song(song_mrl, song_title, url)
+		new_song = Song(song_mrl, song_title, url, song_duration)
 		db.Queue.insert_one(new_song.dictify())
 		db.Downloaded.insert_one(new_song.dictify())
 

@@ -2,16 +2,18 @@ from flask_login import UserMixin
 
 class Song:
 	#Will add more parameters later
-	def __init__(self, mrl, title, url):
+	def __init__(self, mrl, title, url, duration):
 		self.mrl = mrl
 		self.title = title
 		self.url = url
+		self.duration = duration
 
 	def dictify(self):
 		return {
 			'url': self.url,
 			'mrl': self.mrl,
-			'title': self.title
+			'title': self.title,
+			'duration': self.duration
 		}
 
 class User(UserMixin):
