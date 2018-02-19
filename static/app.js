@@ -61,6 +61,11 @@ $(document).ready(function () {
         currentProgressInterval = setInterval(updateProgress, 1000);
     });
 
+    socket.on('heartbeat', function(state) {
+        console.log("HEARTBEATING");
+        updateClient(state);
+    })
+
     socket.on('paused', function(state) {
         //change to toggle
         var playState = JSON.parse(state);
@@ -109,6 +114,8 @@ $(document).ready(function () {
                 currentTime = jsonState.current_time;
                 currentEndTime = jsonState.duration;
                 $('#progress-slider').val(currentTime/currentEndTime);
+                clearInterval(currentProgressInterval);
+                currentProgressInterval = setInterval(updateProgress, 1000);
             }else{
                 currentSong = null;
                 currentTime = 0;

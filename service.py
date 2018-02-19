@@ -61,7 +61,16 @@ class MusicService:
 				self.play_next()
 			time.sleep(.20)
 
+	def heartbeat(self):
+		while True:
+			self.socketio.emit('heartbeat', self.player_state(), include_self=True)
+			time.sleep(30)
+
 	def start(self):
 		thread = threading.Thread(target=self.player_thread)
 		thread.daemon = True
 		thread.start()
+
+		heartbeat_thread = threading.Thread(target=self.heartbeat)
+		heartbeat_thread.daemon = True
+		heartbeat_thread.start()
