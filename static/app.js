@@ -120,6 +120,8 @@ $(document).ready(function () {
                 currentSong = null;
                 currentTime = 0;
                 currentEndTime = 0;
+                $('#progress-slider').val(0);
+                clearInterval(currentProgressInterval);
             }
 
             if(jsonState.media != null && jsonState.is_playing == true){

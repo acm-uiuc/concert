@@ -59,7 +59,7 @@ class MusicService:
 		while True:
 			if not self._player.is_playing():
 				self.play_next()
-			time.sleep(.20)
+			time.sleep(.5)
 
 	def heartbeat(self):
 		while True:
