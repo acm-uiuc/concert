@@ -86,7 +86,6 @@ class MusicService:
 	def heartbeat(self):
 		while True:
 			self.socketio.emit('heartbeat', self.player_state(), include_self=True)
-			self.socketio.emit('queue_change', self.get_json_queue(), include_self=True)
 			time.sleep(30)
 
 	def start(self):
