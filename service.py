@@ -13,12 +13,16 @@ from player import Player
 client = MongoClient()
 db = client.concert
 
+#determines whether or not we emitted the stop signal
+has_stopped = False
+
 class MusicService:
 	def __init__(self, socketio):
 		self._player = Player()
 		self.socketio = socketio
 
 	def play_next(self):
+		global has_stopped
 		cur_queue = self.get_queue()
 		if len(cur_queue) > 0:
 			next_song = cur_queue.pop(0)
@@ -26,10 +30,12 @@ class MusicService:
 			self._remove_song(next_song['_id'])
 			self.socketio.emit('played', self._player.play(next_song), include_self=True)
 			self.socketio.emit('queue_change', self.get_json_queue(), include_self=True)
+			has_stopped = False
 		else:
-			if(self._player.current_track != None):
+			if(not has_stopped):
 				self._player.stop()
 				self.socketio.emit('stopped', self.player_state(), include_self=True)
+				has_stopped = True
 			return self._player.cur_state()
 
 	def pause(self):
@@ -73,7 +79,7 @@ class MusicService:
 		while True:
 			if not self._player.is_playing():
 				self.play_next()
-			time.sleep(.5)
+			time.sleep(.2)
 
 	def heartbeat(self):
 		while True:
