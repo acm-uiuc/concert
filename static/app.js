@@ -4,11 +4,48 @@ var currentSong;
 var currentTime;
 var currentEndTime;
 var currentProgressInterval;
+var list = $('#playlist');
+
+function formatSeconds(time) {
+    var minutes = Math.floor(time / 60);
+    var seconds = time - minutes * 60;
+    return str_pad_left(minutes,'0',2)+':'+str_pad_left(seconds,'0',2);
+}
+
+function str_pad_left(string,pad,length) {
+    return (new Array(length+1).join(pad)+string).slice(-length);
+}
 
 function updateProgress() {
     //console.log("Called")
     currentTime += 1000;
     $('#progress-slider').val(currentTime/currentEndTime);
+}
+
+function createQueueItem(title, time, songPlaying) {
+    var entry = document.createElement('li');
+    if(songPlaying){
+        entry.className += "playing";
+    }
+    var content = document.createElement('a');
+    content.className += "track";
+    content.innerText = title;
+    var timeInfo = document.createElement('span');
+    timeInfo.className += "time";
+    timeInfo.innerText = formatSeconds(time/1000);
+    entry.appendChild(content);
+    entry.appendChild(timeInfo);
+    return entry;
+}
+
+function reloadQueue(queued_songs){
+    var len = queued_songs.length;
+    list.empty();
+    for(var i = 0; i < len; i++){
+        var curSong = queued_songs[i];
+        var newQueuedSong = createQueueItem(curSong.title, curSong.duration, false);
+        list.append(newQueuedSong);
+    }
 }
 
 $(document).ready(function () {
@@ -108,16 +145,10 @@ $(document).ready(function () {
 
     socket.on('queue_change', function(queue_data) {
         queued_songs = JSON.parse(queue_data);
-        var len = queued_songs.length;
-        //for(var i = 0; i < len; i++){
-        //    console.log(queued_songs[i]);
-        //}
-        console.log(len);
+        reloadQueue(queued_songs);
+        var newQueuedSong = createQueueItem(currentSong, currentEndTime, true);
+        list.prepend(newQueuedSong);
     });
-
-    var list = $('#playlist');
-    var entry = document.createElement('li');
-    list.append(entry);
     
     function updateClient(state) {
         var jsonState = JSON.parse(state);
@@ -132,11 +163,18 @@ $(document).ready(function () {
                 currentTime = jsonState.current_time;
                 currentEndTime = jsonState.duration;
                 $('#progress-slider').val(currentTime/currentEndTime);
+                if (jsonState.queue != null){
+                    reloadQueue(JSON.parse(jsonState.queue));
+                    var newQueuedSong = createQueueItem(currentSong, currentEndTime, true);
+                    list.prepend(newQueuedSong);
+                }
             }else{
                 currentSong = null;
                 currentTime = 0;
                 currentEndTime = 0;
                 $('#progress-slider').val(0);
+                $('#title').text("ACM Concert");
+                list.empty()
             }
 
             if(jsonState.media != null && jsonState.is_playing == true){
@@ -149,8 +187,8 @@ $(document).ready(function () {
                 }
             } else{
                 currentUrl = null;
-                $('#title').text("None");
-                $('.playing .track').text("None")
+                $('#title').text("ACM Concert");
+                list.empty()
             }
     
             if (jsonState.is_playing && (jsonState.audio_status == "State.Playing" || jsonState.audio_status == "State.Opening")) {

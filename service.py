@@ -45,7 +45,9 @@ class MusicService:
 		return self._player.stop()
 
 	def player_state(self):
-		return self._player.cur_state()
+		player_state = json.loads(self._player.cur_state())
+		player_state['queue'] = self.get_json_queue()
+		return json.dumps(player_state)
 
 	def set_volume(self, value):
 		return self._player.set_volume(value)
@@ -84,6 +86,7 @@ class MusicService:
 	def heartbeat(self):
 		while True:
 			self.socketio.emit('heartbeat', self.player_state(), include_self=True)
+			self.socketio.emit('queue_change', self.get_json_queue(), include_self=True)
 			time.sleep(30)
 
 	def start(self):
