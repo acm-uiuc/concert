@@ -11,7 +11,6 @@ from pathlib import Path
 CELERY_NAME = 'concert'
 CELERY_BROKER_URL = 'redis://localhost:6379/1'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
-
 celery = Celery(CELERY_NAME, backend=CELERY_RESULT_BACKEND, broker=CELERY_BROKER_URL)
 
 ydl_opts = {
@@ -42,6 +41,7 @@ def async_download(url):
 				if _file_exists(queried_song['mrl']):
 					new_song = Song(queried_song['mrl'], queried_song['title'], queried_song['url'], queried_song['duration'])
 					db.Queue.insert_one(new_song.dictify())
+					socketio.emit('queue_change', json.dumps(_get_queue()), include_self=True)
 					continue
 				else:
 					db.Downloaded.delete_one({'_id': ObjectId(queried_song['_id'])})
@@ -54,8 +54,9 @@ def async_download(url):
 			# This is jank for now
 			song_mrl = "music/" + str(song_id) + ".mp3"
 			new_song = Song(song_mrl, song_title, info['webpage_url'], song_duration)
-			db.Queue.insert_one(new_song.dictify())
 			db.Downloaded.insert_one(new_song.dictify())
+			db.Queue.insert_one(new_song.dictify())
+			socketio.emit('queue_change', json.dumps(_get_queue()), include_self=True)
 	else:
 		# If not a playlist assume single song
 		queried_song = db.Downloaded.find_one({'url': url})
@@ -76,8 +77,8 @@ def async_download(url):
 		# This is jank for now
 		song_mrl = "music/" + str(song_id) + ".mp3"
 		new_song = Song(song_mrl, song_title, url, song_duration)
-		db.Queue.insert_one(new_song.dictify())
 		db.Downloaded.insert_one(new_song.dictify())
+		db.Queue.insert_one(new_song.dictify())
 		socketio.emit('queue_change', json.dumps(_get_queue()), include_self=True)
 
 def _file_exists(mrl):

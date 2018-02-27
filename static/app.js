@@ -17,7 +17,6 @@ function str_pad_left(string,pad,length) {
 }
 
 function updateProgress() {
-    //console.log("Called")
     currentTime += 1000;
     $('#progress-slider').val(currentTime/currentEndTime);
 }
