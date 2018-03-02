@@ -31,6 +31,93 @@ body {
   line-height: 1.5em;
 }
 
+.top-bar {
+  padding-top: 20px;
+  padding-right: 20px;
+}
+
+.top-bar #login-btn {
+  float: right;
+}
+
+.top-bar #logout-btn {
+  float: right;
+}
+
+.button {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 0 1rem;
+  padding: .85em 1em;
+  -webkit-appearance: none;
+  border: 1px solid transparent;
+  border-radius: 0;
+  -webkit-transition: background-color .25s ease-out,color .25s ease-out;
+  transition: background-color .25s ease-out,color .25s ease-out;
+  font-size: .9rem;
+  line-height: 1;
+  text-align: center;
+  cursor: pointer;
+  font-family: "Roboto Mono", monospace;
+  vertical-align: middle;
+  transform: translateY(15%);
+  transition: all 0.5s ease-out;
+  font-weight: normal;
+}
+
+.button.light {
+  background-color: #262626;
+  color: #fefefe;
+}
+
+.button.dark {
+  background-color: #fefefe;
+  color: #262626;
+}
+
+.button.light:hover {
+  box-shadow: inset 0 0 110px 110px rgba(255, 255, 255, 0.15);
+}
+
+.button.dark:hover {
+  box-shadow: inset 0 0 110px 110px rgba(0, 0, 0, 0.15);
+}
+
+#login-btn {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+
+.search-container{
+  position: absolute;
+  width: 70%;
+  left: 50%;
+  transform: translate(-50%, 320%);
+}
+#search-bar {
+    background-color: black;
+    height: 50px;
+    width: 100%;
+}
+#url-textbox {
+    border: solid 1px #CCC;
+    height: 100%;
+    font-size: 15px;
+    width: 90%;
+    float: left;
+    padding-left: 15px;
+    font-size: 1.2em;
+}
+#import-btn {
+  border: solid 1px #CCC;
+  height: 100%;
+  width: 10%;
+  float: right;
+}
+
+
+
 .table {
   display: table;
   width: 100%;
@@ -54,6 +141,7 @@ body {
   width: 400px;
   height: 400px;
 }
+
 #player #main {
   width: 400px;
   height: 400px;
@@ -385,4 +473,89 @@ ol#playlist li:first-child {
 .volume .volume-controls .slider .progress .pin {
   left: -5px;
   top: -8px;
+}
+
+
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 100; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    padding-top: 60px;
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    border: 1px solid #888;
+    width: 30%; /* Could be more or less, depending on screen size */
+    height: 30%;
+    position: relative;
+    display: block;
+    left: 35%;
+    top: 15%;
+}
+
+.login-input {
+  margin-bottom: 12px;
+}
+
+#submit-btn {
+  margin-top: 10px;
+  float: left;
+  width: 100%;
+    position: relative;
+}
+
+.container {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 30px;
+}
+
+/* The Close Button */
+.close {
+    /* Position it in the top right corner outside of the modal */
+    position: absolute;
+    right: 25px;
+    top: 0; 
+    color: #000;
+    font-size: 35px;
+    font-weight: bold;
+}
+
+/* Close button on hover */
+.close:hover,
+.close:focus {
+    color: red;
+    cursor: pointer;
+}
+
+/* Add Zoom Animation */
+.animate {
+    -webkit-animation: animatezoom 0.6s;
+    animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+    from {-webkit-transform: scale(0)} 
+    to {-webkit-transform: scale(1)}
+}
+
+@keyframes animatezoom {
+    from {transform: scale(0)} 
+    to {transform: scale(1)}
 }

@@ -11,24 +11,44 @@
 
   <body>
     {% if current_user.is_authenticated %}
-        <h2>Hi {{ current_user.first_name }}!</h2>
-            <form action="/logout" method="post">
-            <button name="logout">Logout</button>
-        </form>
-    {% else %}
-        <div>
-            <form action="/login" method="post">
-              username: <input type="text" name="username"><br>
-              password: <input type="password" name="password"><br>
-              <input type="submit" value="Submit">
-            </form>
+        <div class="top-bar nav">
+          <form action="/logout" method="post">
+          <button id="logout-btn" name="logout" class="button dark">Logout</button>
         </div>
+    {% else %}
+      <div class="top-bar nav">
+        <button id="login-btn" class="button dark"
+        onclick="document.getElementById('login-form').style.display='block'">Login</button>
+      </div>
+
+      <!-- Login Modal -->
+      <div id="login-form" class="modal">
+        <span onclick="document.getElementById('login-form').style.display='none'" class="close" title="Close Modal">&times;</span>
+        <form class="modal-content animate" action="/login" method="post">
+          <div class="container">
+            <div class="login-input">
+              <label for="uname"><b>Username</b></label>
+              <input type="text" placeholder="Enter Username" name="username" style="width: 100%" required>
+            </div>
+
+            <div class="login-input">
+              <label for="psw"><b>Password</b></label>
+              <input type="password" placeholder="Enter Password" name="password" style="width: 100%" required>
+            </div>
+            <button id="submit-btn" type="submit">Login</button>
+          </div>
+        </form>
+      </div>
     {% endif %}
 
-    <div id="form-wrapper">
+    <div class="search-container">
+      <div id="search-bar">
         <input type="text" id="url-textbox" placeholder="Type in a youtube playlist URL here"/>
-        <input type="submit" id="import-button" value="Import"/>
-    </div>        
+        <button type="submit" id="import-btn">Import</button>
+      </div>        
+    </div>
+      
+
     <div class="table">
     <div class="table-cell">
       <div id="player" class="audio-player">
@@ -73,6 +93,7 @@
     <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
     <script src='http://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js'></script>
+    <script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js'></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
     <script src="static/app.js"></script>
     <script src="static/volume_control.js"></script>

@@ -11,6 +11,16 @@ $('.menu').click(function() {
   $('#player').toggleClass('show');
 });
 
+
+var modal = document.getElementById('login-form');
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
 //Helper Functions
 function getThumbnailPath(mrl) {
     var parts = mrl.split("/");
@@ -91,7 +101,7 @@ $(document).ready(function () {
         socket.emit('previous');
     });
 
-    $("#import-button").click(function(e) {
+    $("#import-btn").click(function(e) {
         if ($('#url-textbox').val().trim() != ""){
             var currentUrl = $('#url-textbox').val();
             socket.emit('download', currentUrl);
@@ -220,7 +230,7 @@ $(document).ready(function () {
                 currentTime = 0;
                 currentEndTime = 0;
                 currentThumbnail = null;
-                $('body').css('background-color', 'transparent');
+                $('body').css('background-color', 'rgba(34, 34, 34, 0.1)');
                 $('#main').css("background-image", "none");  
                 $('#progress-slider').val(0);
                 $('#title').text("ACM Concert");
