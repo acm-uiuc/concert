@@ -6,6 +6,12 @@ var currentEndTime;
 var currentProgressInterval;
 var list = $('#playlist');
 
+//Setup Playlist Menu
+$('.menu').click(function() {
+  $('#player').toggleClass('show');
+});
+
+//Helper Functions
 function formatSeconds(time) {
     var minutes = Math.floor(time / 60);
     var seconds = time - minutes * 60;
@@ -47,6 +53,7 @@ function reloadQueue(queued_songs){
     }
 }
 
+//Socket Functions
 $(document).ready(function () {
     socket = io.connect('http://' + document.domain + ':' + location.port);
     socket.on('connected', function(state) {
@@ -65,22 +72,18 @@ $(document).ready(function () {
         socket.emit('previous');
     });
 
-    $("#volume-slider").on("input", function() {
-        socket.emit('volume', parseInt(this.value));
-    });
-
     $("#import-button").click(function(e) {
         if ($('#url-textbox').val().trim() != ""){
             currentUrl = $('#url-textbox').val();
             socket.emit('download', currentUrl);
             $('#url-textbox').val("");
         }
-        else
+        else{
             return false;
+        }
     });
 
     socket.on('downloaded', function(state) {
-        console.log("Download emitted");
         updateClient(state);
     });
 
@@ -153,15 +156,28 @@ $(document).ready(function () {
         var jsonState = JSON.parse(state);
         if (jsonState != null)
         {
-            console.log(jsonState);
-            $('#volume-slider').val(jsonState.volume.toString());
+            // Update Volume State
+            player.volume = jsonState.volume / 100;
+            updateVolume();
+
+            // Reset Song Progress Bar
             clearInterval(currentProgressInterval);
 
+            // Update Track and Queue State
             if(jsonState.media != null){
                 currentSong = jsonState.current_track
                 currentTime = jsonState.current_time;
                 currentEndTime = jsonState.duration;
+                currentUrl = jsonState.media;
                 $('#progress-slider').val(currentTime/currentEndTime);
+
+                var title = jsonState.current_track;
+                $('#title').text(title);
+                $('.playing .track').text(title);
+                if(jsonState.audio_status != "State.Paused"){
+                    currentProgressInterval = setInterval(updateProgress, 1000);
+                }
+
                 if (jsonState.queue != null){
                     reloadQueue(JSON.parse(jsonState.queue));
                     var newQueuedSong = createQueueItem(currentSong, currentEndTime, true);
@@ -171,25 +187,13 @@ $(document).ready(function () {
                 currentSong = null;
                 currentTime = 0;
                 currentEndTime = 0;
+                currentUrl = null;
                 $('#progress-slider').val(0);
                 $('#title').text("ACM Concert");
                 list.empty()
             }
-
-            if(jsonState.media != null && jsonState.is_playing == true){
-                currentUrl = jsonState.media;
-                var title = jsonState.current_track;
-                $('#title').text(title);
-                $('.playing .track').text(title);
-                if(jsonState.audio_status != "State.Paused"){
-                    currentProgressInterval = setInterval(updateProgress, 1000);
-                }
-            } else{
-                currentUrl = null;
-                $('#title').text("ACM Concert");
-                list.empty()
-            }
     
+            // Toggle play/pause button
             if (jsonState.is_playing && (jsonState.audio_status == "State.Playing" || jsonState.audio_status == "State.Opening")) {
                 $('#play-pause-button').removeClass('fa-play').addClass('fa-pause');
             } else{
