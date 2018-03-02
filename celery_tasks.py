@@ -36,10 +36,12 @@ def async_download(url):
 	if '_type' in info and info['_type'] == 'playlist':
 		# Handle Playlist
 		for entry in info['entries']:
+			thumbnail_url = entry['thumbnail']
 			queried_song = db.Downloaded.find_one({'url': entry['webpage_url']})
 			if queried_song != None:
 				if _file_exists(queried_song['mrl']):
-					new_song = Song(queried_song['mrl'], queried_song['title'], queried_song['url'], queried_song['duration'])
+					new_song = Song(queried_song['mrl'], queried_song['title'], queried_song['url'], 
+						queried_song['duration'], queried_song['thumbnail'])
 					db.Queue.insert_one(new_song.dictify())
 					socketio.emit('queue_change', json.dumps(_get_queue()), include_self=True)
 					continue
@@ -53,16 +55,18 @@ def async_download(url):
 
 			# This is jank for now
 			song_mrl = "music/" + str(song_id) + ".mp3"
-			new_song = Song(song_mrl, song_title, info['webpage_url'], song_duration)
+			new_song = Song(song_mrl, song_title, info['webpage_url'], song_duration, thumbnail_url)
 			db.Downloaded.insert_one(new_song.dictify())
 			db.Queue.insert_one(new_song.dictify())
 			socketio.emit('queue_change', json.dumps(_get_queue()), include_self=True)
 	else:
 		# If not a playlist assume single song
+		thumbnail_url = info["thumbnail"]
 		queried_song = db.Downloaded.find_one({'url': url})
 		if queried_song != None:
 			if _file_exists(queried_song['mrl']):
-				new_song = Song(queried_song['mrl'], queried_song['title'], queried_song['url'], queried_song['duration'])
+				new_song = Song(queried_song['mrl'], queried_song['title'], queried_song['url'], 
+					queried_song['duration'], queried_song['thumbnail'])
 				db.Queue.insert_one(new_song.dictify())
 				socketio.emit('queue_change', json.dumps(_get_queue()), include_self=True)
 				return
@@ -76,7 +80,7 @@ def async_download(url):
 
 		# This is jank for now
 		song_mrl = "music/" + str(song_id) + ".mp3"
-		new_song = Song(song_mrl, song_title, url, song_duration)
+		new_song = Song(song_mrl, song_title, url, song_duration, thumbnail_url)
 		db.Downloaded.insert_one(new_song.dictify())
 		db.Queue.insert_one(new_song.dictify())
 		socketio.emit('queue_change', json.dumps(_get_queue()), include_self=True)
@@ -91,7 +95,7 @@ def _get_queue():
 	queue = []
 	cur_queue = db.Queue.find().sort('date', pymongo.ASCENDING)
 	for item in cur_queue:
-		song = Song(item['mrl'], item['title'], item['url'], item['duration'])
+		song = Song(item['mrl'], item['title'], item['url'], item['duration'], item['thumbnail'])
 		queue.append(song.dictify())
 	return queue
 	

@@ -1,9 +1,9 @@
 var socket;
-var currentUrl;
 var currentSong;
 var currentTime;
 var currentEndTime;
 var currentProgressInterval;
+var currentThumbnail;
 var list = $('#playlist');
 
 //Setup Playlist Menu
@@ -12,6 +12,18 @@ $('.menu').click(function() {
 });
 
 //Helper Functions
+if (!String.prototype.format) {
+  String.prototype.format = function() {
+    var args = arguments;
+    return this.replace(/{(\d+)}/g, function(match, number) { 
+      return typeof args[number] != 'undefined'
+        ? args[number]
+        : match
+      ;
+    });
+  };
+}
+
 function formatSeconds(time) {
     var minutes = Math.floor(time / 60);
     var seconds = time - minutes * 60;
@@ -74,7 +86,7 @@ $(document).ready(function () {
 
     $("#import-button").click(function(e) {
         if ($('#url-textbox').val().trim() != ""){
-            currentUrl = $('#url-textbox').val();
+            var currentUrl = $('#url-textbox').val();
             socket.emit('download', currentUrl);
             $('#url-textbox').val("");
         }
@@ -156,6 +168,7 @@ $(document).ready(function () {
         var jsonState = JSON.parse(state);
         if (jsonState != null)
         {
+            console.log(jsonState);
             // Update Volume State
             player.volume = jsonState.volume / 100;
             updateVolume();
@@ -168,7 +181,10 @@ $(document).ready(function () {
                 currentSong = jsonState.current_track
                 currentTime = jsonState.current_time;
                 currentEndTime = jsonState.duration;
-                currentUrl = jsonState.media;
+                if (currentThumbnail != jsonState.thumbnail) {
+                    currentThumbnail = jsonState.thumbnail;
+                    $('#main').css("background-image", "url({0})".format(currentThumbnail));  
+                }
                 $('#progress-slider').val(currentTime/currentEndTime);
 
                 var title = jsonState.current_track;
@@ -187,7 +203,8 @@ $(document).ready(function () {
                 currentSong = null;
                 currentTime = 0;
                 currentEndTime = 0;
-                currentUrl = null;
+                currentThumbnail = null;
+                $('#main').css("background-image", "none");  
                 $('#progress-slider').val(0);
                 $('#title').text("ACM Concert");
                 list.empty()

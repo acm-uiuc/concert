@@ -66,7 +66,7 @@ class MusicService:
         queue = []
         cur_queue = db.Queue.find().sort('date', pymongo.ASCENDING)
         for item in cur_queue:
-            song = Song(item['mrl'], item['title'], item['url'], item['duration'])
+            song = Song(item['mrl'], item['title'], item['url'], item['duration'], item['thumbnail'])
             queue.append(song.dictify())
         return json.dumps(queue)
 

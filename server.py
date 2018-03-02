@@ -94,7 +94,7 @@ def handle_position(percentage):
 
 @app.route('/')
 def index():
-    return render_template("index_new.html")
+    return render_template("index.html")
 
 
 @app.route('/login', methods=['POST'])

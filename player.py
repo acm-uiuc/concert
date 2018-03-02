@@ -81,9 +81,11 @@ class Player:
             if self.current_track != None:
                 state['current_track'] = self.current_track['title']
                 state['duration'] = self.current_track['duration']
+                state['thumbnail'] = self.current_track['thumbnail']
             else:
                 state['current_track'] = None
                 state['duration'] = -1
+                state['thumbnail'] = ''
         else:
             state['media'] = None
 
