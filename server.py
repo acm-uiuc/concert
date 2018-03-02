@@ -147,4 +147,6 @@ def logout():
 
 
 if __name__ == '__main__':
+    if not os.path.exists("static/thumbnails"):
+        os.mkdir("static/thumbnails")
     socketio.run(app, debug=True, use_reloader=False, host='0.0.0.0')

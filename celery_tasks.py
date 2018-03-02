@@ -1,6 +1,8 @@
 import youtube_dl
 import pymongo
 import json
+import requests
+import shutil
 from celery import Celery
 from flask_socketio import SocketIO
 from pymongo import MongoClient
@@ -78,6 +80,10 @@ def async_download(url):
 		song_title = info["title"]
 		song_duration = info["duration"] * 1000
 
+		print("Downloading Thumnail")
+		_download_thumbnail(thumbnail_url, str(song_id))
+		print("Finished Downloading Thumbnail")
+
 		# This is jank for now
 		song_mrl = "music/" + str(song_id) + ".mp3"
 		new_song = Song(song_mrl, song_title, url, song_duration, thumbnail_url)
@@ -98,6 +104,14 @@ def _get_queue():
 		song = Song(item['mrl'], item['title'], item['url'], item['duration'], item['thumbnail'])
 		queue.append(song.dictify())
 	return queue
+
+def _download_thumbnail(url, song_id):
+	r = requests.get(url, stream=True)
+	if r.status_code == 200:
+		path = "static/thumbnails/" + song_id + ".jpg"
+		with open(path, 'wb+') as f:
+			r.raw.decode_content = True
+			shutil.copyfileobj(r.raw, f)        
 	
 if __name__ == '__main__':
     celery.start()

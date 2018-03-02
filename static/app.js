@@ -12,6 +12,13 @@ $('.menu').click(function() {
 });
 
 //Helper Functions
+function getThumbnailPath(mrl) {
+    var parts = mrl.split("/");
+    var filePath =  parts[parts.length - 1];
+    var prefix = filePath.split('.')[0];
+    return "static/thumbnails/" + prefix + ".jpg";
+}
+
 if (!String.prototype.format) {
   String.prototype.format = function() {
     var args = arguments;
@@ -182,8 +189,17 @@ $(document).ready(function () {
                 currentTime = jsonState.current_time;
                 currentEndTime = jsonState.duration;
                 if (currentThumbnail != jsonState.thumbnail) {
-                    currentThumbnail = jsonState.thumbnail;
+                    currentThumbnail = getThumbnailPath(jsonState.media);
                     $('#main').css("background-image", "url({0})".format(currentThumbnail));  
+                    var image = new Image;
+                    image.src = currentThumbnail;
+                    image.onload = function() {
+                        var colorThief = new ColorThief();
+                        var paletteArray = colorThief.getPalette(image, 2);
+                        var dominantColor = paletteArray[0];
+                        var rbgVal = "rgb({0}, {1}, {2})".format(dominantColor[0], dominantColor[1], dominantColor[2]);
+                        $('body').css('background-color', rbgVal);
+                    }
                 }
                 $('#progress-slider').val(currentTime/currentEndTime);
 
@@ -204,6 +220,7 @@ $(document).ready(function () {
                 currentTime = 0;
                 currentEndTime = 0;
                 currentThumbnail = null;
+                $('body').css('background-color', 'transparent');
                 $('#main').css("background-image", "none");  
                 $('#progress-slider').val(0);
                 $('#title').text("ACM Concert");
