@@ -31,6 +31,41 @@ body {
   line-height: 1.5em;
 }
 
+.logo {
+  height: 56px;
+  width: auto;
+  transform: translateY(15%);
+  display: inline-block;
+}
+
+#acm-title {
+  position: relative;
+}
+
+#title-content {
+  position: absolute;
+  top: -30px;
+  left: 0px;
+}
+
+#title-text {
+  display: inline-block;
+}
+
+#title-header {
+  transform: translate(-15%, 160%);
+  font-family: "Roboto Mono", monospace;
+  font-size: 1.9375rem;
+  font-weight: 400;
+}
+
+#title-sub {
+  font-family: "Roboto Mono", monospace;
+  font-size: 1.1em;
+  font-weight: 400;
+  transform: translate(-15%, 25%);
+}
+
 .top-bar {
   padding-top: 20px;
   padding-right: 20px;
@@ -261,13 +296,6 @@ h2 {
   font-size: 16px;
   text-align: center;
   margin: 0 0 10px 0;
-}
-
-h3 {
-  font-weight: 700;
-  font-size: 12px;
-  text-align: center;
-  margin: 0;
 }
 
 .time-holder {
