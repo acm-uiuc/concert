@@ -201,6 +201,7 @@ $(document).ready(function () {
                 if (currentThumbnail != jsonState.thumbnail) {
                     currentThumbnail = getThumbnailPath(jsonState.media);
                     $('#main').css("background-image", "url({0})".format(currentThumbnail));  
+                    $('#main').css("background-size", "cover"); 
                     var image = new Image;
                     image.src = currentThumbnail;
                     image.onload = function() {
@@ -231,7 +232,8 @@ $(document).ready(function () {
                 currentEndTime = 0;
                 currentThumbnail = null;
                 $('body').css('background-color', 'rgba(34, 34, 34, 0.1)');
-                $('#main').css("background-image", "none");  
+                $('#main').css("background-image", "url(static/acm-logo.png)"); 
+                $('#main').css("background-size", "100%"); 
                 $('#progress-slider').val(0);
                 $('#title').text("ACM Concert");
                 list.empty()

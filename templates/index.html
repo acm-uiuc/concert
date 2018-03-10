@@ -13,7 +13,7 @@
     <div id="acm-title">
       <div id="title-content">
         <img src="static/acm-logo.png" class="logo">
-        <div id="title-text">
+        <div class="title-text light">
           <h3 id="title-header">ACM@UIUC</h3>
           <h5 id="title-sub">Concert</h5>          
         </div>
@@ -23,11 +23,11 @@
     {% if current_user.is_authenticated %}
         <div class="top-bar nav">
           <form action="/logout" method="post">
-          <button id="logout-btn" name="logout" class="button dark">Logout</button>
+          <button id="logout-btn" name="logout" class="button light">Logout</button>
         </div>
     {% else %}
       <div class="top-bar nav">
-        <button id="login-btn" class="button dark"
+        <button id="login-btn" class="button light"
         onclick="document.getElementById('login-form').style.display='block'">Login</button>
       </div>
 

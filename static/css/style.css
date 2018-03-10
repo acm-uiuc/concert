@@ -48,8 +48,16 @@ body {
   left: 0px;
 }
 
-#title-text {
+.title-text {
   display: inline-block;
+}
+
+.title-text.light {
+  color: #262626;
+}
+
+.title-text.dark {
+  color: white;
 }
 
 #title-header {
@@ -121,8 +129,14 @@ body {
 #login-btn {
   padding-top: 15px;
   padding-bottom: 15px;
+  margin-right: 5px;
 }
 
+#logout-btn {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  margin-right: 5px;
+}
 
 .search-container{
   position: absolute;
