@@ -6,13 +6,31 @@ var currentProgressInterval;
 var currentThumbnail;
 var list = $('#playlist');
 
-//Setup Playlist Menu
+// Setup Playlist Menu
 $('.menu').click(function() {
   $('#player').toggleClass('show');
 });
 
+// Handle Login
+$('#submit-btn').click(function () {
+    var username = $('#uname-input').val();
+    var password = $('#password-input').val();
+    var data = {"username": username, "password": password};
+    $.ajax({
+        url: '/login',
+        type: "POST",
+        data: JSON.stringify(data),
+        contentType: "application/json",
+      }).done(function (response) {
+        window.location.replace("/");
+        return null;
+      }).fail(function (response) {
+        alert(response.responseText);
+        return null;
+      });
+});
 
-var modal = document.getElementById('login-form');
+var modal = document.getElementById('login-modal');
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
@@ -108,12 +126,12 @@ $(document).ready(function () {
             $('#url-textbox').val("");
         }
         else{
-            return false;
+            //return false;
         }
     });
 
     socket.on('downloaded', function(state) {
-        updateClient(state);
+        //updateClient(state);
     });
 
     socket.on('download_error', function() {
@@ -232,7 +250,7 @@ $(document).ready(function () {
                 currentEndTime = 0;
                 currentThumbnail = null;
                 $('body').css('background-color', 'rgba(34, 34, 34, 0.1)');
-                $('#main').css("background-image", "url(static/acm-logo.png)"); 
+                $('#main').css("background-image", "url(static/images/acm-logo.png)"); 
                 $('#main').css("background-size", "100%"); 
                 $('#progress-slider').val(0);
                 $('#title').text("ACM Concert");
