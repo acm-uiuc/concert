@@ -54,7 +54,11 @@
 
     <div class="search-container">
       <div id="search-bar">
-        <input type="text" id="url-textbox" placeholder="Type in a youtube playlist URL here"/>
+        {% if current_user.is_authenticated %}
+          <input type="text" id="url-textbox" placeholder="Hi, {{current_user.first_name}}. Please search or enter a Youtube URL"/>
+        {% else %}
+          <input type="text" id="url-textbox" placeholder="Please login to add to the queue."/>
+        {% endif %}
         <button type="submit" id="import-btn">Import</button>
       </div>        
     </div>
