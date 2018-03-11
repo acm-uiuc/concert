@@ -12,6 +12,12 @@ $('.menu').click(function() {
 });
 
 // Handle Login
+$(document).keypress(function(e) {
+    if(e.keyCode == 13 && $('#login-modal').css('display') == "block") {
+        $("#submit-btn").click();
+    }
+});
+
 $('#submit-btn').click(function () {
     var username = $('#uname-input').val();
     var password = $('#password-input').val();
