@@ -132,12 +132,14 @@ function toggleDarkMode(on) {
         $('.title-text').removeClass('light');
         $('.title-text').addClass('dark');
         $('.button').removeClass('light');
-        $('.button').addClass('dark');     
+        $('.button').addClass('dark');    
+        $("#acm-logo").attr("src", "static/images/acm-logo-inverted.png"); 
     } else {
         $('.title-text').addClass('light');
         $('.title-text').removeClass('dark');
         $('.button').addClass('light');
         $('.button').removeClass('dark');
+        $("#acm-logo").attr("src", "static/images/acm-logo.png"); 
     }
 }
 
