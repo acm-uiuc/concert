@@ -5,6 +5,7 @@ var currentEndTime;
 var currentProgressInterval;
 var currentThumbnail;
 var list = $('#playlist');
+var submitBtn = $('#submit-btn');
 
 // Setup Playlist Menu
 $('.menu').click(function() {
@@ -14,14 +15,19 @@ $('.menu').click(function() {
 // Handle Login
 $(document).keypress(function(e) {
     if(e.keyCode == 13 && $('#login-modal').css('display') == "block") {
-        $("#submit-btn").click();
+        submitBtn.click();
     }
 });
 
-$('#submit-btn').click(function () {
+submitBtn.click(function () {
     var username = $('#uname-input').val();
     var password = $('#password-input').val();
     var data = {"username": username, "password": password};
+
+    submitBtn.html('Logging In...');
+    submitBtn.css('width', '100px');
+    submitBtn.prop('disabled', 'true');
+
     $.ajax({
         url: '/login',
         type: "POST",
@@ -29,10 +35,11 @@ $('#submit-btn').click(function () {
         contentType: "application/json",
       }).done(function (response) {
         window.location.replace("/");
-        return null;
       }).fail(function (response) {
         alert(response.responseText);
-        return null;
+        submitBtn.html('Login');
+        submitBtn.css('width', '80px');
+        submitBtn.removeAttr("disabled");
       });
 });
 

@@ -34,19 +34,18 @@
 
       <!-- Login Modal -->
       <div id="login-modal" class="modal">
-        <span onclick="document.getElementById('login-modal').style.display='none'" class="close" title="Close Modal">&times;</span>
         <div class="modal-content animate">
           <div class="container">
             <div class="login-input">
               <label for="uname"><b>Username</b></label>
-              <input type="text" id="uname-input" placeholder="Enter Username" name="username" style="width: 100%" required>
+              <input type="text" id="uname-input" placeholder="Enter Username" name="username" readonly onfocus="this.removeAttribute('readonly');" style="width: 100%" required>
             </div>
 
             <div class="login-input">
               <label for="psw"><b>Password</b></label>
-              <input type="password" id="password-input" placeholder="Enter Password" name="password" style="width: 100%" required>
+              <input type="password" id="password-input" placeholder="Enter Password" name="password" readonly onfocus="this.removeAttribute('readonly');" style="width: 100%" required>
             </div>
-            <button id="submit-btn" type="submit">Login</button>
+            <button id="submit-btn">Login</button>
           </div>
         </div>
       </div>
