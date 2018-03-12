@@ -14,8 +14,12 @@ $('.menu').click(function() {
 
 // Handle Login
 $(document).keypress(function(e) {
-    if(e.keyCode == 13 && $('#login-modal').css('display') == "block") {
-        submitBtn.click();
+    if(e.keyCode == 13) {
+        if ($('#login-modal').css('display') == "block") {
+            submitBtn.click();
+        } else {
+            $('#import-btn').click();
+        }
     }
 });
 
@@ -82,6 +86,16 @@ function str_pad_left(string,pad,length) {
     return (new Array(length+1).join(pad)+string).slice(-length);
 }
 
+function isURL(str) {
+  var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
+  '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+  '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+  '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+  return pattern.test(str);
+}
+
 function updateProgress() {
     currentTime += 1000;
     $('#progress-slider').val(currentTime/currentEndTime);
@@ -113,6 +127,20 @@ function reloadQueue(queued_songs){
     }
 }
 
+function toggleDarkMode(on) {
+    if (on) {
+        $('.title-text').removeClass('light');
+        $('.title-text').addClass('dark');
+        $('.button').removeClass('light');
+        $('.button').addClass('dark');     
+    } else {
+        $('.title-text').addClass('light');
+        $('.title-text').removeClass('dark');
+        $('.button').addClass('light');
+        $('.button').removeClass('dark');
+    }
+}
+
 //Socket Functions
 $(document).ready(function () {
     socket = io.connect('http://' + document.domain + ':' + location.port);
@@ -135,16 +163,17 @@ $(document).ready(function () {
     $("#import-btn").click(function(e) {
         if ($('#url-textbox').val().trim() != ""){
             var currentUrl = $('#url-textbox').val();
-            socket.emit('download', currentUrl);
+            if (loggedin) {
+                if (!isURL(currentUrl) || !currentUrl.includes("youtube.com")) {
+                    alert("Please enter a valid url");
+                } else {
+                    socket.emit('download', currentUrl);
+                }
+            } else {
+                alert("Please login to add to queue");
+            }
             $('#url-textbox').val("");
         }
-        else{
-            //return false;
-        }
-    });
-
-    socket.on('downloaded', function(state) {
-        //updateClient(state);
     });
 
     socket.on('download_error', function() {
@@ -153,7 +182,6 @@ $(document).ready(function () {
     });
 
     socket.on('stopped', function(state) {
-        console.log("Stopped");
         updateClient(state);
     });
 
@@ -166,9 +194,8 @@ $(document).ready(function () {
     });
 
     socket.on('heartbeat', function(state) {
-        console.log("HEARTBEATING");
         updateClient(state);
-    })
+    });
 
     socket.on('paused', function(state) {
         //change to toggle
@@ -213,69 +240,74 @@ $(document).ready(function () {
     });
     
     function updateClient(state) {
+        if (state == null) return;
         var jsonState = JSON.parse(state);
-        if (jsonState != null)
-        {
-            console.log(jsonState);
-            // Update Volume State
-            player.volume = jsonState.volume / 100;
-            updateVolume();
 
-            // Reset Song Progress Bar
-            clearInterval(currentProgressInterval);
+        // Update Volume State
+        player.volume = jsonState.volume / 100;
+        updateVolume();
 
-            // Update Track and Queue State
-            if(jsonState.media != null){
-                currentSong = jsonState.current_track
-                currentTime = jsonState.current_time;
-                currentEndTime = jsonState.duration;
-                if (currentThumbnail != jsonState.thumbnail) {
-                    currentThumbnail = getThumbnailPath(jsonState.media);
-                    $('#main').css("background-image", "url({0})".format(currentThumbnail));  
-                    $('#main').css("background-size", "cover"); 
-                    var image = new Image;
-                    image.src = currentThumbnail;
-                    image.onload = function() {
-                        var colorThief = new ColorThief();
-                        var paletteArray = colorThief.getPalette(image, 2);
-                        var dominantColor = paletteArray[0];
-                        var rbgVal = "rgb({0}, {1}, {2})".format(dominantColor[0], dominantColor[1], dominantColor[2]);
-                        $('body').css('background-color', rbgVal);
+        // Reset Song Progress Bar
+        clearInterval(currentProgressInterval);
+
+        // Update Track and Queue State
+        if(jsonState.media != null){
+            currentSong = jsonState.current_track
+            currentTime = jsonState.current_time;
+            currentEndTime = jsonState.duration;
+            if (currentThumbnail != jsonState.thumbnail) {
+                currentThumbnail = getThumbnailPath(jsonState.media);
+                $('#main').css("background-image", "url({0})".format(currentThumbnail));  
+                $('#main').css("background-size", "cover"); 
+                var image = new Image;
+                image.src = currentThumbnail;
+                image.onload = function() {
+                    var colorThief = new ColorThief();
+                    var paletteArray = colorThief.getPalette(image, 2);
+                    var dominantColor = paletteArray[0];
+                    var rbgVal = "rgb({0}, {1}, {2})".format(dominantColor[0], dominantColor[1], dominantColor[2]);
+                    $('body').css('background-color', rbgVal);
+                    var brightness = RGBtoHSV(dominantColor[0], dominantColor[1], dominantColor[2])['v'];
+                    if (brightness < 0.4) {
+                        toggleDarkMode(true);
+                    } else {
+                        toggleDarkMode(false);
                     }
                 }
-                $('#progress-slider').val(currentTime/currentEndTime);
-
-                var title = jsonState.current_track;
-                $('#title').text(title);
-                $('.playing .track').text(title);
-                if(jsonState.audio_status != "State.Paused"){
-                    currentProgressInterval = setInterval(updateProgress, 1000);
-                }
-
-                if (jsonState.queue != null){
-                    reloadQueue(JSON.parse(jsonState.queue));
-                    var newQueuedSong = createQueueItem(currentSong, currentEndTime, true);
-                    list.prepend(newQueuedSong);
-                }
-            }else{
-                currentSong = null;
-                currentTime = 0;
-                currentEndTime = 0;
-                currentThumbnail = null;
-                $('body').css('background-color', 'rgba(34, 34, 34, 0.1)');
-                $('#main').css("background-image", "url(static/images/acm-logo.png)"); 
-                $('#main').css("background-size", "100%"); 
-                $('#progress-slider').val(0);
-                $('#title').text("ACM Concert");
-                list.empty()
             }
-    
-            // Toggle play/pause button
-            if (jsonState.is_playing && (jsonState.audio_status == "State.Playing" || jsonState.audio_status == "State.Opening")) {
-                $('#play-pause-button').removeClass('fa-play').addClass('fa-pause');
-            } else{
-                $('#play-pause-button').addClass('fa-play').removeClass('fa-pause');
+            $('#progress-slider').val(currentTime/currentEndTime);
+
+            var title = jsonState.current_track;
+            $('#title').text(title);
+            $('.playing .track').text(title);
+            if(jsonState.audio_status != "State.Paused"){
+                currentProgressInterval = setInterval(updateProgress, 1000);
             }
+
+            if (jsonState.queue != null){
+                reloadQueue(JSON.parse(jsonState.queue));
+                var newQueuedSong = createQueueItem(currentSong, currentEndTime, true);
+                list.prepend(newQueuedSong);
+            }
+        }else{
+            currentSong = null;
+            currentTime = 0;
+            currentEndTime = 0;
+            currentThumbnail = null;
+            $('body').css('background-color', 'rgba(34, 34, 34, 0.1)');
+            $('#main').css("background-image", "url(static/images/acm-logo.png)"); 
+            $('#main').css("background-size", "100%"); 
+            toggleDarkMode(false);
+            $('#progress-slider').val(0);
+            $('#title').text("ACM Concert");
+            list.empty();
+        }
+
+        // Toggle play/pause button
+        if (jsonState.is_playing && (jsonState.audio_status == "State.Playing" || jsonState.audio_status == "State.Opening")) {
+            $('#play-pause-button').removeClass('fa-play').addClass('fa-pause');
+        } else{
+            $('#play-pause-button').addClass('fa-play').removeClass('fa-pause');
         }
     }
 });

@@ -96,6 +96,8 @@ function changeVolume(event) {
 slider.click(changeVolume);
 
 $('.volume-btn').click(function(){
-  $('.volume-controls').toggleClass('hidden');
-  $('.volume-btn').toggleClass('open');
+  if (loggedin) {
+    $('.volume-controls').toggleClass('hidden');
+    $('.volume-btn').toggleClass('open');
+  }
 });
