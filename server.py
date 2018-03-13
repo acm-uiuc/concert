@@ -86,7 +86,8 @@ def handle_download(url):
     if not validators.url(url):
         emit('download_error')
 
-    async_download.apply_async(args=[url])
+    user_name = current_user.first_name + " " + current_user.last_name
+    async_download.apply_async(args=[url, user_name])
     socketio.emit('downloaded', ms.player_state(), include_self=True)
 
 

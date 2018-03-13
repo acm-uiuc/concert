@@ -4,6 +4,7 @@ var currentTime;
 var currentEndTime;
 var currentProgressInterval;
 var currentThumbnail;
+var modal = document.getElementById('login-modal');
 var list = $('#playlist');
 var submitBtn = $('#submit-btn');
 
@@ -13,12 +14,17 @@ $('.menu').click(function() {
 });
 
 // Handle Login
-$(document).keypress(function(e) {
-    if(e.keyCode == 13) {
+$(document).keyup(function(e) {
+    if (e.keyCode == 13) {
         if ($('#login-modal').css('display') == "block") {
             submitBtn.click();
         } else {
             $('#import-btn').click();
+        }
+    }
+    if (e.keyCode == 27) {
+        if (modal.style.display == "block") {
+            modal.style.display = "none";
         }
     }
 });
@@ -46,8 +52,6 @@ submitBtn.click(function () {
         submitBtn.removeAttr("disabled");
       });
 });
-
-var modal = document.getElementById('login-modal');
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
@@ -155,7 +159,11 @@ $(document).ready(function () {
     });
 
     $('#next').click(function(e) { 
-        socket.emit('skip');
+        if (loggedin) {
+            socket.emit('skip');
+        } else {
+            alert("Please login to skip this song");
+        }
     });
 
     $('#previous-button').click(function(e) { 
@@ -244,6 +252,7 @@ $(document).ready(function () {
     function updateClient(state) {
         if (state == null) return;
         var jsonState = JSON.parse(state);
+        console.log(jsonState);
 
         // Update Volume State
         player.volume = jsonState.volume / 100;

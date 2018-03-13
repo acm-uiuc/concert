@@ -33,6 +33,8 @@ class MusicService:
             self.socketio.emit('played', self.player_state(), include_self=True)
             has_stopped = False
         else:
+            # We need to emit a signal to stop clients, but this should only occur once while
+            # there is no media in the player
             if (not has_stopped):
                 self._player.stop()
                 self.socketio.emit('stopped', self.player_state(), include_self=True)
@@ -66,7 +68,8 @@ class MusicService:
         queue = []
         cur_queue = db.Queue.find().sort('date', pymongo.ASCENDING)
         for item in cur_queue:
-            song = Song(item['mrl'], item['title'], item['url'], item['duration'], item['thumbnail'])
+            song = Song(item['mrl'], item['title'], item['url'], item['duration'], 
+                item['thumbnail'], item['playedby'])
             queue.append(song.dictify())
         return json.dumps(queue)
 
@@ -83,7 +86,7 @@ class MusicService:
         while True:
             if not self._player.is_playing():
                 self.play_next()
-            time.sleep(.2)
+            time.sleep(1)
 
     def heartbeat(self):
         while True:

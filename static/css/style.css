@@ -143,6 +143,7 @@ body {
   margin-right: 5px;
 }
 
+
 .search-container{
   position: absolute;
   width: 70%;
@@ -563,7 +564,7 @@ ol#playlist li:first-child {
     background-color: #fefefe;
     border: 1px solid #888;
     width: 25%; /* Could be more or less, depending on screen size */
-    height: 22%;
+    height: 24%;
     position: relative;
     display: block;
     left: 37.5%;
@@ -575,12 +576,18 @@ ol#playlist li:first-child {
   font-weight: 400;
 }
 
+.login-text {
+  line-height: 1.5;
+  padding-left: 5px;
+  width: 100%; 
+}
+
 #submit-btn {
   width: 80px;
   height: 35px;
   margin:0 auto;
   display:block;
-  margin-top: 22px;
+  margin-top: 28px;
   line-height: 1;
 
   -webkit-appearance: none;

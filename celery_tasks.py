@@ -30,7 +30,7 @@ ytdl = youtube_dl.YoutubeDL(ydl_opts)
 socketio = SocketIO(message_queue='redis://localhost:6379/1')
 
 @celery.task
-def async_download(url):
+def async_download(url, user_name):
 	client = MongoClient()
 	db = client.concert
 
@@ -43,7 +43,7 @@ def async_download(url):
 			if queried_song != None:
 				if _file_exists(queried_song['mrl']):
 					new_song = Song(queried_song['mrl'], queried_song['title'], queried_song['url'], 
-						queried_song['duration'], queried_song['thumbnail'])
+						queried_song['duration'], queried_song['thumbnail'], queried_song['playedby'])
 					db.Queue.insert_one(new_song.dictify())
 					socketio.emit('queue_change', json.dumps(_get_queue()), include_self=True)
 					continue
@@ -53,22 +53,29 @@ def async_download(url):
 			info = ytdl.extract_info(entry['webpage_url'], download=True)
 			song_id = info["id"]
 			song_title = info["title"]
-			song_duration = info["duration"] * 1000
+			song_duration = info["duration"] * 1000 #convert to milliseconds
+
+			print("Downloading Thumnail")
+			_download_thumbnail(thumbnail_url, str(song_id))
+			print("Finished Downloading Thumbnail")
 
 			# This is jank for now
 			song_mrl = "music/" + str(song_id) + ".mp3"
-			new_song = Song(song_mrl, song_title, info['webpage_url'], song_duration, thumbnail_url)
+			new_song = Song(song_mrl, song_title, info['webpage_url'], song_duration, thumbnail_url, user_name)
 			db.Downloaded.insert_one(new_song.dictify())
 			db.Queue.insert_one(new_song.dictify())
 			socketio.emit('queue_change', json.dumps(_get_queue()), include_self=True)
 	else:
+		# Prevent downloads of songs longer than 10 minutes
+		if (info["duration"] > 600):
+			return
 		# If not a playlist assume single song
 		thumbnail_url = info["thumbnail"]
 		queried_song = db.Downloaded.find_one({'url': url})
 		if queried_song != None:
 			if _file_exists(queried_song['mrl']):
 				new_song = Song(queried_song['mrl'], queried_song['title'], queried_song['url'], 
-					queried_song['duration'], queried_song['thumbnail'])
+					queried_song['duration'], queried_song['thumbnail'], queried_song['playedby'])
 				db.Queue.insert_one(new_song.dictify())
 				socketio.emit('queue_change', json.dumps(_get_queue()), include_self=True)
 				return
@@ -86,7 +93,7 @@ def async_download(url):
 
 		# This is jank for now
 		song_mrl = "music/" + str(song_id) + ".mp3"
-		new_song = Song(song_mrl, song_title, url, song_duration, thumbnail_url)
+		new_song = Song(song_mrl, song_title, url, song_duration, thumbnail_url, user_name)
 		db.Downloaded.insert_one(new_song.dictify())
 		db.Queue.insert_one(new_song.dictify())
 		socketio.emit('queue_change', json.dumps(_get_queue()), include_self=True)
@@ -101,7 +108,8 @@ def _get_queue():
 	queue = []
 	cur_queue = db.Queue.find().sort('date', pymongo.ASCENDING)
 	for item in cur_queue:
-		song = Song(item['mrl'], item['title'], item['url'], item['duration'], item['thumbnail'])
+		song = Song(item['mrl'], item['title'], item['url'], item['duration'], 
+			item['thumbnail'], item['playedby'])
 		queue.append(song.dictify())
 	return queue
 
