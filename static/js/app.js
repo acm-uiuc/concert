@@ -279,7 +279,7 @@ $(document).ready(function () {
                     var rbgVal = "rgb({0}, {1}, {2})".format(dominantColor[0], dominantColor[1], dominantColor[2]);
                     $('body').css('background-color', rbgVal);
                     var brightness = RGBtoHSV(dominantColor[0], dominantColor[1], dominantColor[2])['v'];
-                    if (brightness < 0.4) {
+                    if (brightness < 0.6) {
                         toggleDarkMode(true);
                     } else {
                         toggleDarkMode(false);

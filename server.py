@@ -9,7 +9,7 @@ from flask import Flask, Response, request, url_for, render_template, redirect, 
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from flask_socketio import SocketIO, send, emit, disconnect
 from pymongo import MongoClient
-from celery_tasks import async_download
+from downloader import async_download
 from service import MusicService
 from models import User
 from config import config
