@@ -41,17 +41,16 @@ def async_download(url, user_name):
 	song_id = video.videoid
 	song_duration = video.length * 1000
 	stream_url = video.audiostreams[0].url
+	print("Getting info for: " + song_title)
 
 	# Download Thumbnail
 	print("Downloading Thumnail")
 	thumbnail_url = 'https://img.youtube.com/vi/' + song_id + '/hqdefault.jpg'
-	print(thumbnail_url)
 	thumbnail_path = _download_thumbnail(thumbnail_url, str(song_id))
 	print("Finished Downloading Thumbnail")
 
 	# Tell client we've finished downloading
 	new_song = Song(stream_url, song_title, url, song_duration, thumbnail_path, user_name)
-	db.Downloaded.insert_one(new_song.dictify())
 	db.Queue.insert_one(new_song.dictify())
 	socketio.emit('queue_change', json.dumps(_get_queue()), include_self=True)
 
