@@ -35,8 +35,17 @@ def async_download(url, user_name):
 	client = MongoClient()
 	db = client.concert
 
+	try:
+		playlist = pafy.get_playlist(url)
+		videos = playlist["items"]
+		for video in videos:
+			add_song_to_queue(video["pafy"], user_name, db)
+	except Exception as e:
+		video = pafy.new(url)
+		add_song_to_queue(video, user_name, db)
+	
+def add_song_to_queue(video, user_name, db):
 	# Get video information
-	video = pafy.new(url)
 	song_title = video.title
 	song_id = video.videoid
 	song_duration = video.length * 1000
@@ -50,7 +59,7 @@ def async_download(url, user_name):
 	print("Finished Downloading Thumbnail")
 
 	# Tell client we've finished downloading
-	new_song = Song(stream_url, song_title, url, song_duration, thumbnail_path, user_name)
+	new_song = Song(stream_url, song_title, song_duration, thumbnail_path, user_name)
 	db.Queue.insert_one(new_song.dictify())
 	socketio.emit('queue_change', json.dumps(_get_queue()), include_self=True)
 
@@ -64,7 +73,7 @@ def _get_queue():
 	queue = []
 	cur_queue = db.Queue.find().sort('date', pymongo.ASCENDING)
 	for item in cur_queue:
-		song = Song(item['mrl'], item['title'], item['url'], item['duration'], 
+		song = Song(item['mrl'], item['title'], item['duration'], 
 			item['thumbnail'], item['playedby'])
 		queue.append(song.dictify())
 	return queue
