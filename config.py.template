@@ -6,5 +6,5 @@ NEVER COMMIT YOUR API KEYS IN GIT (config.py will be ignored by git)
 '''
 
 config = {
-    "groot_token" : "MY CONSUMER KEY",
+    "GROOT_TOKEN" : "MY CONSUMER KEY",
 }
