@@ -9,6 +9,7 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 from models import Song
 from pathlib import Path
+import pafy
 
 CELERY_NAME = 'concert'
 CELERY_BROKER_URL = 'redis://localhost:6379/1'
@@ -34,8 +35,7 @@ def async_download(url, user_name):
 	client = MongoClient()
 	db = client.concert
 
-	info = ytdl.extract_info(url, download=False)
-	if '_type' in info and info['_type'] == 'playlist':
+	'''if '_type' in info and info['_type'] == 'playlist':
 		# Handle Playlist
 		for entry in info['entries']:
 			thumbnail_url = entry['thumbnail']
@@ -72,6 +72,7 @@ def async_download(url, user_name):
 		# If not a playlist assume single song
 		thumbnail_url = info["thumbnail"]
 		queried_song = db.Downloaded.find_one({'url': url})
+		v = pafy.new(url)
 		if queried_song != None:
 			if _file_exists(queried_song['mrl']):
 				new_song = Song(queried_song['mrl'], queried_song['title'], queried_song['url'], 
@@ -89,14 +90,26 @@ def async_download(url, user_name):
 
 		print("Downloading Thumnail")
 		_download_thumbnail(thumbnail_url, str(song_id))
-		print("Finished Downloading Thumbnail")
+		print("Finished Downloading Thumbnail")'''
 
 		# This is jank for now
-		song_mrl = "music/" + str(song_id) + ".mp3"
-		new_song = Song(song_mrl, song_title, url, song_duration, thumbnail_url, user_name)
-		db.Downloaded.insert_one(new_song.dictify())
-		db.Queue.insert_one(new_song.dictify())
-		socketio.emit('queue_change', json.dumps(_get_queue()), include_self=True)
+		#song_mrl = "music/" + str(song_id) + ".mp3"
+	video = pafy.new(url)
+	song_title = video.title
+	song_id = video.videoid
+	song_duration = video.length * 1000
+	stream_url = video.audiostreams[0].url
+
+	print("Downloading Thumnail")
+	thumbnail_url = 'https://img.youtube.com/vi/' + song_id + '/maxresdefault.jpg'
+	print(thumbnail_url)
+	thumbnail_path = _download_thumbnail(thumbnail_url, str(song_id))
+	print("Finished Downloading Thumbnail")
+
+	new_song = Song(stream_url, song_title, url, song_duration, thumbnail_path, user_name)
+	db.Downloaded.insert_one(new_song.dictify())
+	db.Queue.insert_one(new_song.dictify())
+	socketio.emit('queue_change', json.dumps(_get_queue()), include_self=True)
 
 def _file_exists(mrl):
 	file = Path(mrl)
@@ -119,7 +132,9 @@ def _download_thumbnail(url, song_id):
 		path = "static/thumbnails/" + song_id + ".jpg"
 		with open(path, 'wb+') as f:
 			r.raw.decode_content = True
-			shutil.copyfileobj(r.raw, f)        
+			shutil.copyfileobj(r.raw, f)  
+		return path
+	return ""      
 	
 if __name__ == '__main__':
     celery.start()

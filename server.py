@@ -72,7 +72,7 @@ def handle_volume(newVolume):
 @authenticated_only
 def handle_skip():
     print(current_user.first_name)
-    socketio.emit('skipped', ms.skip(), include_self=True)
+    socketio.emit('skipped', ms.play_next(), include_self=True)
 
 
 @socketio.on('stop')

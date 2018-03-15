@@ -267,7 +267,7 @@ $(document).ready(function () {
             currentTime = jsonState.current_time;
             currentEndTime = jsonState.duration;
             if (currentThumbnail != jsonState.thumbnail) {
-                currentThumbnail = getThumbnailPath(jsonState.media);
+                currentThumbnail = jsonState.thumbnail;
                 $('#main').css("background-image", "url({0})".format(currentThumbnail));  
                 $('#main').css("background-size", "cover"); 
                 var image = new Image;
