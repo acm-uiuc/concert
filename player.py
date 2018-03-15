@@ -26,13 +26,9 @@ class Player:
     def play(self, song):
         mrl = song['mrl']
         start_time = time.time()
-        while (not self._file_exists(mrl)):
-            cur_time = time.time()
-            if cur_time - start_time >= 3:
-                return self.stop()
-            sleep(0.2)
         m = self.instance.media_new(mrl)
         self.vlc_player.set_media(m)
+        sleep(0.3)
         self.vlc_player.play()
         self.current_track = song
 
