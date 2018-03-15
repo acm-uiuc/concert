@@ -16,7 +16,7 @@ CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
 celery = Celery(CELERY_NAME, backend=CELERY_RESULT_BACKEND, broker=CELERY_BROKER_URL)
 
 ydl_opts = {
-    'format': 'bestaudio/best',
+    'format': 'best',
     'outtmpl': 'music/%(id)s.%(ext)s',
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
