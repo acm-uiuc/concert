@@ -25,7 +25,7 @@ class Player:
 
     def play(self, song):
         mrl = song['mrl']
-        start_time = time.time()
+        time.sleep(0.2)
         m = self.instance.media_new(mrl)
         self.vlc_player.set_media(m)
         self.vlc_player.play()

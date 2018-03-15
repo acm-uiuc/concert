@@ -16,6 +16,7 @@ db = client.concert
 
 # determines whether or not we emitted the stop signal
 has_stopped = False
+should_skip = False
 
 class MusicService:
     def __init__(self, socketio):
@@ -39,6 +40,10 @@ class MusicService:
                 self._player.stop()
                 self.socketio.emit('stopped', self.player_state(), include_self=True)
                 has_stopped = True
+
+    def skip(self):
+        global should_skip 
+        should_skip = True
 
     def pause(self):
         return self._player.pause()
@@ -83,8 +88,11 @@ class MusicService:
         db.Queue.delete_one({"_id": ObjectId(_id)})
 
     def player_thread(self):
+        global should_skip
         while True:
-            if not self._player.is_playing():
+            if not self._player.is_playing() or should_skip:
+                if should_skip:
+                    should_skip = False
                 self.play_next()
             time.sleep(1)
 
