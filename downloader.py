@@ -35,77 +35,21 @@ def async_download(url, user_name):
 	client = MongoClient()
 	db = client.concert
 
-	'''if '_type' in info and info['_type'] == 'playlist':
-		# Handle Playlist
-		for entry in info['entries']:
-			thumbnail_url = entry['thumbnail']
-			queried_song = db.Downloaded.find_one({'url': entry['webpage_url']})
-			if queried_song != None:
-				if _file_exists(queried_song['mrl']):
-					new_song = Song(queried_song['mrl'], queried_song['title'], queried_song['url'], 
-						queried_song['duration'], queried_song['thumbnail'], queried_song['playedby'])
-					db.Queue.insert_one(new_song.dictify())
-					socketio.emit('queue_change', json.dumps(_get_queue()), include_self=True)
-					continue
-				else:
-					db.Downloaded.delete_one({'_id': ObjectId(queried_song['_id'])})
-
-			info = ytdl.extract_info(entry['webpage_url'], download=True)
-			song_id = info["id"]
-			song_title = info["title"]
-			song_duration = info["duration"] * 1000 #convert to milliseconds
-
-			print("Downloading Thumnail")
-			_download_thumbnail(thumbnail_url, str(song_id))
-			print("Finished Downloading Thumbnail")
-
-			# This is jank for now
-			song_mrl = "music/" + str(song_id) + ".mp3"
-			new_song = Song(song_mrl, song_title, info['webpage_url'], song_duration, thumbnail_url, user_name)
-			db.Downloaded.insert_one(new_song.dictify())
-			db.Queue.insert_one(new_song.dictify())
-			socketio.emit('queue_change', json.dumps(_get_queue()), include_self=True)
-	else:
-		# Prevent downloads of songs longer than 10 minutes
-		if (info["duration"] > 600):
-			return
-		# If not a playlist assume single song
-		thumbnail_url = info["thumbnail"]
-		queried_song = db.Downloaded.find_one({'url': url})
-		v = pafy.new(url)
-		if queried_song != None:
-			if _file_exists(queried_song['mrl']):
-				new_song = Song(queried_song['mrl'], queried_song['title'], queried_song['url'], 
-					queried_song['duration'], queried_song['thumbnail'], queried_song['playedby'])
-				db.Queue.insert_one(new_song.dictify())
-				socketio.emit('queue_change', json.dumps(_get_queue()), include_self=True)
-				return
-			else:
-				db.Downloaded.delete_one({'_id': ObjectId(queried_song['_id'])})
-
-		info = ytdl.extract_info(url, download=True)
-		song_id = info["id"]
-		song_title = info["title"]
-		song_duration = info["duration"] * 1000
-
-		print("Downloading Thumnail")
-		_download_thumbnail(thumbnail_url, str(song_id))
-		print("Finished Downloading Thumbnail")'''
-
-		# This is jank for now
-		#song_mrl = "music/" + str(song_id) + ".mp3"
+	# Get video information
 	video = pafy.new(url)
 	song_title = video.title
 	song_id = video.videoid
 	song_duration = video.length * 1000
 	stream_url = video.audiostreams[0].url
 
+	# Download Thumbnail
 	print("Downloading Thumnail")
-	thumbnail_url = 'https://img.youtube.com/vi/' + song_id + '/maxresdefault.jpg'
+	thumbnail_url = 'https://img.youtube.com/vi/' + song_id + '/hqdefault.jpg'
 	print(thumbnail_url)
 	thumbnail_path = _download_thumbnail(thumbnail_url, str(song_id))
 	print("Finished Downloading Thumbnail")
 
+	# Tell client we've finished downloading
 	new_song = Song(stream_url, song_title, url, song_duration, thumbnail_path, user_name)
 	db.Downloaded.insert_one(new_song.dictify())
 	db.Queue.insert_one(new_song.dictify())
