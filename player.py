@@ -2,7 +2,7 @@ import vlc
 import time
 import json
 from models import Song
-
+from pathlib import Path
 
 class Player:
     def __init__(self):
@@ -25,8 +25,13 @@ class Player:
 
     def play(self, song):
         mrl = song['mrl']
+        start_time = time.time()
+        while (not self._file_exists(mrl)):
+            cur_time = time.time()
+            if cur_time - start_time >= 3:
+                return self.stop()
+            sleep(0.2)
         m = self.instance.media_new(mrl)
-        time.sleep(0.2) #We need this so the vlc library can update
         self.vlc_player.set_media(m)
         self.vlc_player.play()
         self.current_track = song
@@ -92,3 +97,7 @@ class Player:
 
         json_str = json.dumps(state)
         return json_str
+
+    def _file_exists(self, mrl):
+        file = Path(mrl)
+        return file.is_file()
