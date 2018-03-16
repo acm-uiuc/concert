@@ -35,7 +35,7 @@ class Player:
             if count == 5:
                 return self.cur_state()
 
-        time.sleep(0.1)
+        time.sleep(0.2)
         print("Play status: " + str(self.vlc_player.play()))
         self.current_track = song
 

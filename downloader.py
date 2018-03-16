@@ -57,7 +57,7 @@ def add_song_to_queue(video, user_name, db):
 
 	# Download Thumbnail
 	print("Downloading Thumnail")
-	thumbnail_url = 'https://img.youtube.com/vi/' + song_id + '/hqdefault.jpg'
+	thumbnail_url = 'https://i.ytimg.com/vi/' + song_id + '/hqdefault.jpg'
 	thumbnail_path = _download_thumbnail(thumbnail_url, str(song_id))
 	print("Finished Downloading Thumbnail")
 
