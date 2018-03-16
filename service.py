@@ -25,9 +25,9 @@ class MusicService:
 
     def play_next(self):
         global has_stopped
-        cur_queue = self.get_queue()
-        if len(cur_queue) > 0:
-            next_song = cur_queue.pop(0)
+        queue_size = self.get_queue_size()
+        if queue_size > 0:
+            next_song = self.get_next_song()
             self._player.current_track = next_song
             self._remove_song(next_song['_id'])
             self._player.play(next_song)
@@ -60,12 +60,12 @@ class MusicService:
             return "Invalid"
         return self._player.set_time(percent)
 
-    def get_queue(self):
-        queue = []
-        cur_queue = db.Queue.find().sort('date', pymongo.ASCENDING)
-        for item in cur_queue:
-            queue.append(item)
-        return queue
+    def get_next_song(self):
+        first_item = db.Queue.find().sort('date', pymongo.ASCENDING).limit(1)
+        return first_item[0]
+
+    def get_queue_size(self):
+        return db.Queue.count()
 
     def get_json_queue(self):
         client = MongoClient()
@@ -98,7 +98,7 @@ class MusicService:
     def heartbeat(self):
         while True:
             self.socketio.emit('heartbeat', self.player_state(), include_self=True)
-            time.sleep(30)
+            time.sleep(60)
 
     def start(self):
         thread = threading.Thread(target=self.player_thread)
