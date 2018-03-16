@@ -30,7 +30,7 @@ class Player:
         self.vlc_player.set_media(m)
 
         count = 0
-        while not self.network_available():
+        while not self.network_available(mrl):
             count += 1
             if count == 5:
                 return self.cur_state()
@@ -104,9 +104,9 @@ class Player:
         file = Path(mrl)
         return file.is_file()
 
-    def network_available(self):
+    def network_available(self, url):
         try:
-            urllib.request.urlopen('http://216.58.192.142', timeout=1)
+            urllib.request.urlopen(url, timeout=1)
             return True
         except urllib.error.URLError as err:
             return False
