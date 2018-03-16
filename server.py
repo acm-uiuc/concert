@@ -152,4 +152,4 @@ if __name__ == '__main__':
     db.Users.delete_many({})
     if not os.path.exists("static/thumbnails"):
         os.mkdir("static/thumbnails")
-    socketio.run(app, debug=True, use_reloader=False, host='0.0.0.0')
+    socketio.run(app, debug=False, use_reloader=False, host='0.0.0.0')
