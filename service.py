@@ -91,8 +91,7 @@ class MusicService:
         global should_skip
         while True:
             if not self._player.is_playing() or should_skip:
-                if should_skip:
-                    should_skip = False
+                should_skip = False
                 self.play_next()
             time.sleep(1)
 

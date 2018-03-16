@@ -71,7 +71,6 @@ def handle_volume(newVolume):
 @socketio.on('skip')
 @authenticated_only
 def handle_skip():
-    print(current_user.first_name)
     socketio.emit('skipped', ms.skip(), include_self=True)
 
 
@@ -90,12 +89,6 @@ def handle_download(url):
     user_name = current_user.first_name + " " + current_user.last_name
     async_download.apply_async(args=[url, user_name])
     socketio.emit('downloaded', ms.player_state(), include_self=True)
-
-
-'''@socketio.on('set_position')
-@authenticated_only
-def handle_position(percentage):
-	socketio.emit('position_changed', ms.set_time(percentage), include_self=True)'''
 
 
 @app.route('/')
@@ -155,6 +148,8 @@ def logout():
 
 
 if __name__ == '__main__':
+    # Clear users before starting up 
+    db.Users.delete_many({})
     if not os.path.exists("static/thumbnails"):
         os.mkdir("static/thumbnails")
     socketio.run(app, debug=True, use_reloader=False, host='0.0.0.0')
