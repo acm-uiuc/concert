@@ -1,6 +1,7 @@
 import vlc
 import time
 import json
+import urllib
 from models import Song
 from pathlib import Path
 
@@ -27,6 +28,13 @@ class Player:
         mrl = song['mrl']
         m = self.instance.media_new(mrl)
         self.vlc_player.set_media(m)
+
+        count = 0
+        while not self.network_available():
+            count += 1
+            if count == 5:
+                return self.cur_state()
+
         self.vlc_player.play()
         self.current_track = song
 
@@ -95,3 +103,10 @@ class Player:
     def _file_exists(self, mrl):
         file = Path(mrl)
         return file.is_file()
+
+    def network_available(self):
+        try:
+            urllib.request.urlopen('http://216.58.192.142', timeout=1)
+            return True
+        except urllib.error.URLError as err:
+            return False
