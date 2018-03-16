@@ -39,7 +39,10 @@ def async_download(url, user_name):
 		playlist = pafy.get_playlist(url)
 		videos = playlist["items"]
 		for video in videos:
-			add_song_to_queue(video["pafy"], user_name, db)
+			try:
+				add_song_to_queue(video["pafy"], user_name, db)
+			except Exception as e:
+				pass # Skip invalid youtube videos
 	except Exception as e:
 		video = pafy.new(url)
 		add_song_to_queue(video, user_name, db)
