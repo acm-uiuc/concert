@@ -35,10 +35,6 @@ class Player:
             if count == 5:
                 return self.cur_state()
 
-        time.sleep(0.2)
-        print("Play status: " + str(self.vlc_player.play()))
-        self.current_track = song
-
         print("------PLAYING------")
         print("Title: %s" % song['title'])
         print("mrl: %s" % mrl)
@@ -108,7 +104,9 @@ class Player:
     def network_available(self, url):
         try:
             urllib.request.urlopen(url, timeout=1)
-            print("Pinged: "+ url)
+            time.sleep(0.2)
+            print("Play status: " + str(self.vlc_player.play()))
+            self.current_track = song
             return True
         except urllib.error.URLError as err:
             return False
