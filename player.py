@@ -26,6 +26,7 @@ class Player:
 
     def play(self, song):
         mrl = song['mrl']
+        self.vlc_player.stop()
         m = self.instance.media_new(mrl)
         self.vlc_player.set_media(m)
 
