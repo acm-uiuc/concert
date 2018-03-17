@@ -26,19 +26,23 @@ class Player:
 
     def play(self, song):
         mrl = song['mrl']
-        self.vlc_player.stop()
-        m = self.instance.media_new(mrl)
-        self.vlc_player.set_media(m)
-
         count = 0
         while not self.network_available(mrl):
             count += 1
             if count == 5:
                 return self.cur_state()
 
-        time.sleep(0.2)
-        print("Play status: " + str(self.vlc_player.play()))
-        self.current_track = song
+        count = 0
+        while not self.is_playing():
+            if count == 3:
+                return self.cur_state()
+            self.vlc_player.stop()
+            m = self.instance.media_new(mrl)
+            self.vlc_player.set_media(m)
+            time.sleep(0.2)
+            self.vlc_player.play()
+            self.current_track = song
+            count += 1
 
         print("------PLAYING------")
         print("Title: %s" % song['title'])
