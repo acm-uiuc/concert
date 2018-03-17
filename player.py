@@ -43,6 +43,7 @@ class Player:
             self.vlc_player.play()
             self.current_track = song
             count += 1
+            time.sleep(0.5)
 
         print("------PLAYING------")
         print("Title: %s" % song['title'])
