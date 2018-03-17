@@ -37,7 +37,6 @@ class Player:
                 return self.cur_state()
 
         time.sleep(0.2)
-        print("Will play: " + self.vlc_player.will_play())
         print("Play status: " + str(self.vlc_player.play()))
         self.current_track = song
 
