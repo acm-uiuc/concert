@@ -39,7 +39,6 @@ class Player:
             self.vlc_player.stop()
             m = self.instance.media_new(mrl)
             self.vlc_player.set_media(m)
-            time.sleep(0.2)
             self.vlc_player.play()
             self.current_track = song
             count += 1
