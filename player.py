@@ -25,7 +25,10 @@ class Player:
         return json.dumps(payload)
 
     def play(self, song):
+        self.vlc_player.stop()
         mrl = song['mrl']
+        m = self.instance.media_new(mrl)
+
         count = 0
         while not self.network_available(mrl):
             count += 1
@@ -34,15 +37,14 @@ class Player:
 
         count = 0
         while not self.is_playing():
-            if count == 3:
+            if count == 5:
                 return self.cur_state()
             self.vlc_player.stop()
-            m = self.instance.media_new(mrl)
             self.vlc_player.set_media(m)
             self.vlc_player.play()
             self.current_track = song
             count += 1
-            time.sleep(0.5)
+            time.sleep(0.3)
 
         print("------PLAYING------")
         print("Title: %s" % song['title'])
@@ -69,9 +71,6 @@ class Player:
         return self.cur_state()
 
     def is_playing(self):
-        '''if(self.current_track != None):
-			return True
-		return False'''
         audio_status = self.vlc_player.get_state()
         if audio_status in {vlc.State.Ended, vlc.State.Stopped, vlc.State.NothingSpecial, vlc.State.Error}:
             self.vlc_player.set_media(None)
