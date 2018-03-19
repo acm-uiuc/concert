@@ -105,7 +105,7 @@ function updateProgress() {
     $('#progress-slider').val(currentTime/currentEndTime);
 }
 
-function createQueueItem(title, time, songPlaying) {
+function createQueueItem(title, time, songPlaying, callback) {
     var entry = document.createElement('li');
     if(songPlaying){
         entry.className += "playing";
@@ -118,17 +118,25 @@ function createQueueItem(title, time, songPlaying) {
     timeInfo.innerText = formatSeconds(time/1000);
     entry.appendChild(content);
     entry.appendChild(timeInfo);
-    return entry;
+    if (callback) {
+        callback(entry);
+    } else {
+        return entry;
+    }
 }
 
-function reloadQueue(queued_songs){
-    var len = queued_songs.length;
-    list.empty();
-    for(var i = 0; i < len; i++){
-        var curSong = queued_songs[i];
-        var newQueuedSong = createQueueItem(curSong.title, curSong.duration, false);
-        list.append(newQueuedSong);
-    }
+function reloadQueue(queue_data){
+    createQueueItem(currentSong, currentEndTime, true, function(firstSong) {
+        queued_songs = JSON.parse(queue_data);
+        var len = queued_songs.length;
+        list.empty();
+        list.append(firstSong);
+        for(var i = 0; i < len; i++){
+            var curSong = queued_songs[i];
+            var newQueuedSong = createQueueItem(curSong.title, curSong.duration, false, null);
+            list.append(newQueuedSong);
+        }
+    });
 }
 
 function toggleDarkMode(on) {
@@ -243,10 +251,7 @@ $(document).ready(function () {
     });
 
     socket.on('queue_change', function(queue_data) {
-        queued_songs = JSON.parse(queue_data);
-        reloadQueue(queued_songs);
-        var newQueuedSong = createQueueItem(currentSong, currentEndTime, true);
-        list.prepend(newQueuedSong);
+        reloadQueue(queue_data);
     });
     
     function updateClient(state) {
@@ -296,9 +301,7 @@ $(document).ready(function () {
             }
 
             if (jsonState.queue != null){
-                reloadQueue(JSON.parse(jsonState.queue));
-                var newQueuedSong = createQueueItem(currentSong, currentEndTime, true);
-                list.prepend(newQueuedSong);
+                reloadQueue(jsonState.queue);
             }
         }else{
             currentSong = null;
