@@ -11,6 +11,7 @@ var submitBtn = $('#submit-btn');
 // Setup Playlist Menu
 $('.menu').click(function() {
   $('#player').toggleClass('show');
+  $('.clear-queue').toggleClass('clear-queue-hidden');
 });
 
 // Handle Login
@@ -194,6 +195,10 @@ $(document).ready(function () {
         }
     });
 
+    $('.clear-queue').click(function() {
+        socket.emit('clear');
+    });
+
     socket.on('download_error', function() {
         //TODO: Better error handling
         console.log("Invalid URL");
@@ -237,6 +242,10 @@ $(document).ready(function () {
 
     socket.on('previous', function() {
         
+    });
+
+    socket.on('cleared', function(queue_data) {
+        reloadQueue(queue_data);
     });
 
     socket.on('volume_changed', function(volumeResponse) {

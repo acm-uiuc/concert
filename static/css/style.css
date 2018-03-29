@@ -320,6 +320,21 @@ body {
   -webkit-transition: opacity 0.2s;
   transition: opacity 0.2s;
 }
+.clear-queue {
+  cursor: pointer;
+  opacity: 0.2;
+  -webkit-transition: opacity 0.2s;
+  transition: opacity 0.2s;
+  padding-right: 5px;
+  position: absolute;
+  left: 82%;
+}
+.clear-queue:hover {
+  opacity: 0.6;
+}
+.clear-queue-hidden {
+  display: none;
+}
 
 .volume-btn {
   float: left;

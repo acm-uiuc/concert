@@ -90,6 +90,10 @@ def handle_download(url):
     async_download.apply_async(args=[url, user_name])
     socketio.emit('downloaded', ms.player_state(), include_self=True)
 
+@socketio.on('clear')
+@authenticated_only
+def clear_queue():
+    socketio.emit('cleared', ms.clear_queue(), include_self=True)
 
 @app.route('/')
 def index():

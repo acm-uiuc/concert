@@ -87,6 +87,10 @@ class MusicService:
     def _remove_song(self, _id):
         db.Queue.delete_one({"_id": ObjectId(_id)})
 
+    def clear_queue(self):
+        db.Queue.delete_many({})
+        return self.get_json_queue()
+
     def player_thread(self):
         global should_skip
         while True:
