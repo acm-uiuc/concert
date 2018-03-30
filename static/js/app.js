@@ -1,5 +1,5 @@
 var socket;
-var currentSong;
+var currentSong = null;
 var currentTime;
 var currentEndTime;
 var currentProgressInterval;
@@ -255,8 +255,9 @@ $(document).ready(function () {
     });
 
     socket.on('volume_changed', function(volumeResponse) {
-        volumeState = JSON.parse(volumeResponse)
-        $('#volume-slider').val(volumeState.volume);
+        volumeState = JSON.parse(volumeResponse);
+        player.volume = volumeState.volume / 100;
+        updateVolume();
     });
 
     socket.on('position_changed', function() {
@@ -272,7 +273,6 @@ $(document).ready(function () {
     function updateClient(state) {
         if (state == null) return;
         var jsonState = JSON.parse(state);
-        console.log(jsonState);
 
         // Update Volume State
         player.volume = jsonState.volume / 100;
