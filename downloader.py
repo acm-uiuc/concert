@@ -1,15 +1,16 @@
+import os
 import youtube_dl
 import pymongo
 import json
 import requests
 import shutil
+import pafy
 from celery import Celery
 from flask_socketio import SocketIO
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from models import Song
 from pathlib import Path
-import pafy
 
 CELERY_NAME = 'concert'
 CELERY_BROKER_URL = 'redis://localhost:6379/1'
@@ -59,6 +60,11 @@ def add_song_to_queue(video, user_name, db):
 	print("Downloading Thumnail")
 	thumbnail_url = 'https://i.ytimg.com/vi/' + song_id + '/maxresdefault.jpg'
 	thumbnail_path = _download_thumbnail(thumbnail_url, str(song_id))
+	if thumbnail_path == None:
+		alternate_url = 'https://img.youtube.com/vi/' + song_id + '/hqdefault.jpg'
+		thumbnail_path = _download_thumbnail(thumbnail_url, str(song_id))
+		if thumbnail_path == None:
+			thumbnail_path = 'static/images/acm-logo.png'
 	print("Finished Downloading Thumbnail")
 
 	# Tell client we've finished downloading
@@ -82,14 +88,14 @@ def _get_queue():
 	return queue
 
 def _download_thumbnail(url, song_id):
-	r = requests.get(url, stream=True)
+	r = requests.get(url)
 	if r.status_code == 200:
 		path = "static/thumbnails/" + song_id + ".jpg"
 		with open(path, 'wb+') as f:
 			r.raw.decode_content = True
 			shutil.copyfileobj(r.raw, f)  
 		return path
-	return ""      
+	return None
 	
 if __name__ == '__main__':
     celery.start()
