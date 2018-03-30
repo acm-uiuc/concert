@@ -127,17 +127,19 @@ function createQueueItem(title, time, songPlaying, callback) {
 }
 
 function reloadQueue(queue_data){
-    createQueueItem(currentSong, currentEndTime, true, function(firstSong) {
-        queued_songs = JSON.parse(queue_data);
-        var len = queued_songs.length;
-        list.empty();
-        list.append(firstSong);
-        for(var i = 0; i < len; i++){
-            var curSong = queued_songs[i];
-            var newQueuedSong = createQueueItem(curSong.title, curSong.duration, false, null);
-            list.append(newQueuedSong);
-        }
-    });
+    if (currentSong != null) {
+        createQueueItem(currentSong, currentEndTime, true, function(firstSong) {
+            queued_songs = JSON.parse(queue_data);
+            var len = queued_songs.length;
+            list.empty();
+            list.append(firstSong);
+            for(var i = 0; i < len; i++){
+                var curSong = queued_songs[i];
+                var newQueuedSong = createQueueItem(curSong.title, curSong.duration, false, null);
+                list.append(newQueuedSong);
+            }
+        });
+    }
 }
 
 function toggleDarkMode(on) {
@@ -158,7 +160,11 @@ function toggleDarkMode(on) {
 
 //Socket Functions
 $(document).ready(function () {
-    socket = io.connect('https://' + document.domain + ':' + location.port);
+    if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+        socket = io.connect('http://' + document.domain + ':' + location.port);
+    } else {
+        socket = io.connect('https://' + document.domain + ':' + location.port);
+    }
     socket.on('connected', function(state) {
         updateClient(state);
     });
