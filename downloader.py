@@ -3,6 +3,7 @@ import pymongo
 import json
 import requests
 import shutil
+import os
 from celery import Celery
 from flask_socketio import SocketIO
 from pymongo import MongoClient
@@ -82,9 +83,11 @@ def _get_queue():
 	return queue
 
 def _download_thumbnail(url, song_id):
+	path = "static/thumbnails/" + song_id + ".jpg"
+	if os.path.isfile(path):
+		return path
 	r = requests.get(url, stream=True)
 	if r.status_code == 200:
-		path = "static/thumbnails/" + song_id + ".jpg"
 		with open(path, 'wb+') as f:
 			r.raw.decode_content = True
 			shutil.copyfileobj(r.raw, f)  
