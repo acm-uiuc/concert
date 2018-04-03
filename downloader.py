@@ -11,6 +11,8 @@ from bson.objectid import ObjectId
 from models import Song
 from pathlib import Path
 import pafy
+import soundcloud
+from config import config
 
 CELERY_NAME = 'concert'
 CELERY_BROKER_URL = 'redis://localhost:6379/1'
@@ -29,6 +31,7 @@ ydl_opts = {
     "noplaylist": False
 }
 ytdl = youtube_dl.YoutubeDL(ydl_opts)
+sndcld = soundcloud.Client(client_id=config["SOUNDCLOUD"])
 socketio = SocketIO(message_queue='redis://localhost:6379/1')
 
 @celery.task
@@ -36,19 +39,41 @@ def async_download(url, user_name):
 	client = MongoClient()
 	db = client.concert
 
-	try:
-		playlist = pafy.get_playlist(url)
-		videos = playlist["items"]
-		for video in videos:
-			try:
-				add_song_to_queue(video["pafy"], user_name, db)
-			except Exception as e:
-				pass # Skip invalid youtube videos
-	except Exception as e:
-		video = pafy.new(url)
-		add_song_to_queue(video, user_name, db)
-	
-def add_song_to_queue(video, user_name, db):
+	print("New Song to Add")
+	print(url)
+	if "soundcloud.com" in url:
+		print("Source is SoundCloud")
+		try:
+			resource = sndcld.get("/resolve", url=url).fields()
+			if resource["kind"] is "playlist":
+				for t in resource["tracks"]:
+					add_song_to_queue(*soundcloud_processing(t), user_name, db)
+			elif resource["kind"] is "track":
+				add_song_to_queue(*soundcloud_processing(resource), user_name, db)
+
+		except Exception as e:
+			pass
+
+	elif "youtube.com" in url:
+		print("Source is Youtube")
+		try:
+			playlist = pafy.get_playlist(url)
+			videos = playlist["items"]
+			for video in videos:
+				try:
+					add_song_to_queue(*youtube_processing(video["pafy"]), user_name, db)
+				except Exception as e:
+					pass # Skip invalid youtube videos
+		except Exception as e:
+			video = pafy.new(url)
+			add_song_to_queue(*youtube_processing(video), user_name, db)
+
+def soundcloud_processing(t):
+	print("Getting info for  " + t["title"])
+	thumbnail_path = _download_thumbnail(t["artwork_url"], str(t["id"]))
+	return (t["stream_url"], t["title"], t["duration"], thumbnail_path)
+
+def youtube_processing(video):
 	# Get video information
 	song_title = video.title
 	song_id = video.videoid
@@ -61,9 +86,11 @@ def add_song_to_queue(video, user_name, db):
 	thumbnail_url = 'https://i.ytimg.com/vi/' + song_id + '/maxresdefault.jpg'
 	thumbnail_path = _download_thumbnail(thumbnail_url, str(song_id))
 	print("Finished Downloading Thumbnail")
+	return (stream_url, song_title, song_duration, thumbnail_path)
 
-	# Tell client we've finished downloading
-	new_song = Song(stream_url, song_title, song_duration, thumbnail_path, user_name)
+def add_song_to_queue(stream_url, title, duration, thumbnail_path, user, db):
+	# Tell client we've finished processing
+	new_song = Song(stream_url, title, duration, thumbnail_path, user)
 	db.Queue.insert_one(new_song.dictify())
 	socketio.emit('queue_change', json.dumps(_get_queue()), include_self=True)
 
