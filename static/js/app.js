@@ -187,9 +187,12 @@ $(document).ready(function () {
 
     $("#import-btn").click(function(e) {
         if ($('#url-textbox').val().trim() != ""){
-            var currentUrl = $('#url-textbox').val();
+            var currentUrl = $('#url-textbox').val()
+            if (currentUrl.includes("soundcloud.com")) {
+                currentUrl = currentUrl.split("?")[0]; /// Drop the URL parameters
+            }
             if (loggedin) {
-                if (!isURL(currentUrl) || !currentUrl.includes("youtube.com")) {
+                if (!isURL(currentUrl) || !(currentUrl.includes("youtube.com") || currentUrl.includes("soundcloud.com"))) {
                     alert("Please enter a valid url");
                 } else {
                     socket.emit('download', currentUrl);

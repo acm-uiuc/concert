@@ -6,4 +6,4 @@
 *.pyc
 config.py
 /.idea
-/static/thumbnails
+static/thumbnails
