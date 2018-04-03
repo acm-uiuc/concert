@@ -26,7 +26,7 @@
 }
 body {
   background-color: rgba(34, 34, 34, 0.1);
-  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-family: "Open Sans" "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   font-weight: 300;
   line-height: 1.5em;
   height: 100%; 
@@ -110,6 +110,8 @@ body {
   font-weight: normal;
   border:none;
   outline:none;
+  height:50px;
+  width:80px;
 }
 .button:focus {
   outline:0;
@@ -127,10 +129,12 @@ body {
 
 .button.light:hover {
   box-shadow: inset 0 0 110px 110px rgba(255, 255, 255, 0.15);
+  text-decoration: underline;
 }
 
 .button.dark:hover {
   box-shadow: inset 0 0 110px 110px rgba(0, 0, 0, 0.15);
+  text-decoration: underline;
 }
 
 #login-btn {
@@ -153,46 +157,111 @@ body {
   transform: translate(-50%, 320%);
 }
 #search-bar {
-    background-color: black;
     height: 50px;
     width: 100%;
 }
+
+#url-textbox.light::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #464646;
+  opacity: 1; /* Firefox */
+}
+
+#url-textbox.dark::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #fefefe;
+  opacity: 1; /* Firefox */
+}
+
 #url-textbox:focus {
   outline:0;
 }
-#url-textbox {
-    border: solid 1px #CCC;
+
+#url-textbox:focus::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  opacity: 1; /* Firefox */
+  color: transparent;
+}
+
+
+#url-textbox.light {
     height: 100%;
     font-size: 15px;
-    width: 90%;
+    width: 87%;
     float: left;
     padding-left: 15px;
     font-size: 1.2em;
+    background-color:rgba(0, 0, 0, 0);
+    padding: 10px;
+    border: none;
+    border-bottom: solid 1.5px #282828;
+    transition: border 0.3s;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0);
+    color:#333333;
 }
+
+#url-textbox.dark {
+    height: 100%;
+    font-size: 15px;
+    width: 87%;
+    float: left;
+    padding-left: 15px;
+    font-size: 1.2em;
+    background-color:rgba(0, 0, 0, 0);
+    padding: 10px;
+    border: none;
+    border-bottom: solid 1.5px #fff;
+    transition: border 0.3s;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0);
+    color:#fefefe;
+}
+
 #import-btn {
-  border: solid 1px #CCC;
-  height: 100%;
-  width: 10%;
-  float: right;
-  -webkit-appearance: none;
-  -webkit-transition: background-color .25s ease-out,color .25s ease-out;
-  transition: background-color .25s ease-out,color .25s ease-out;
-  font-size: .9rem;
-  text-align: center;
-  cursor: pointer;
-  font-family: "Roboto Mono", monospace;
-  vertical-align: middle;
-  transition: all 0.5s ease-out;
-  font-weight: normal;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    padding: .85em 1em;
+    -webkit-appearance: none;
+    border: 1px solid transparent;
+    border-radius: 0;
+    -webkit-transition: background-color .25s ease-out,color .25s ease-out;
+    transition: background-color .25s ease-out,color .25s ease-out;
+    font-size: .9rem;
+    line-height: 1;
+    text-align: center;
+    cursor: pointer;
+    font-family: "Roboto Mono", monospace;
+    vertical-align: middle;
+    transform: translateY(15%);
+    transition: all 0.5s ease-out;
+    font-weight: normal;
+    border:none;
+    outline:none;
+    height: 100%;
+    width: 10%;
+    max-width: 150px;
+    min-width: 70px;
+    float: right;
+    transform: translateY(0px);
 }
-#import-btn:hover {
+
+#import-btn.light {
+  background-color: #262626;
+  color: #fefefe;
+}
+
+#import-btn.dark {
+  background-color: #fefefe;
+  color: #262626;
+}
+
+#import-btn.light:hover {
+  box-shadow: inset 0 0 110px 110px rgba(255, 255, 255, 0.15);
+  text-decoration: underline;
+}
+
+#import-btn.dark:hover {
   box-shadow: inset 0 0 110px 110px rgba(0, 0, 0, 0.15);
+  text-decoration: underline;
 }
+
 #import-btn:focus {
- outline:0; 
+    outline:0;
+    text-decoration: underline; 
 }
 @media (max-width:975px) {
   #import-btn{
@@ -584,17 +653,59 @@ ol#playlist li:first-child {
 /* Modal Content/Box */
 .modal-content {
     background-color: #fefefe;
-    border: 1px solid #888;
-    width: 25%; /* Could be more or less, depending on screen size */
-    height: 24%;
+    width: 400px; /* Could be more or less, depending on screen size */ /*This should be constant size, since content is static, note: this is not responsive, but having a modal on a 300px wide display doesnt make a lot of sense, so might want to use media tags for displays < 400px wide*/
+    height: 400px;
     position: relative;
     display: block;
-    left: 37.5%;
-    top: 15%;
+    top: 50%;
+    left: 50%;
+    margin: -200px 0 0 -200px;
+    padding: 10px;
+}
+
+.field input[type="text"] {
+  padding: 10px;
+  border: none;
+  border-bottom: solid 1.5px #282828;
+  transition: border 0.3s;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0);
+  color:#464646;
+}
+
+.field input[type="text"].focus {
+  border-bottom: solid 2px  #333333;
+}
+
+select {
+    border: none;
+    border-bottom: solid 1.5px  #282828;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0);
+    background-color: white;
+    transition: border 0.3s;
+      color:#464646;
+}
+
+select.focus {
+  border-bottom: solid 2px  #333333;
+    color:#464646;
+}
+
+.field input[type="password"] {
+  padding: 10px;
+  border: none;
+  border-bottom: solid 1.5px #282828;
+  transition: border 0.3s;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0);
+  color:#464646;
+}
+
+.field input[type="text"].focus {
+  border-bottom: solid 2px  #313131;
 }
 
 .login-input {
-  margin-bottom: 10px;
+  margin-top: 10px;
+  margin-bottom: 30px;
   font-weight: 400;
 }
 
@@ -606,8 +717,8 @@ ol#playlist li:first-child {
 
 #submit-btn {
   width: 80px;
-  height: 35px;
-  margin:0 auto;
+  height: 50px;
+  margin:0 ;
   display:block;
   margin-top: 28px;
   line-height: 1;
@@ -631,6 +742,7 @@ ol#playlist li:first-child {
 
 #submit-btn:hover {
   box-shadow: inset 0 0 110px 110px rgba(255, 255, 255, 0.15);
+  text-decoration: underline;
 }
 
 #submit-btn:focus {
@@ -644,9 +756,10 @@ ol#playlist li:first-child {
   top: 50%;
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
-  padding-left: 15px;
-  padding-right: 15px;
-  padding-top: 15px;
+  padding-top: 75px;
+  padding-left: 40px;
+  padding-right: 40px;
+  padding-top: 40px;
 }
 
 /* Add Zoom Animation */
@@ -663,4 +776,54 @@ ol#playlist li:first-child {
 @keyframes animatezoom {
     from {transform: scale(0)} 
     to {transform: scale(1)}
+}
+
+.spinner {
+  margin: 10px auto;
+  width: 70px;
+  height: 50px;
+  text-align: center;
+  font-size: 10px;
+  display: none;
+}
+
+.spinner > div {
+  background-color: #282828;
+  height: 100%;
+  width: 6px;
+  display: inline-block;
+  
+  -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
+  animation: sk-stretchdelay 1.2s infinite ease-in-out;
+}
+
+.spinner .rect2 {
+  -webkit-animation-delay: -1.1s;
+  animation-delay: -1.1s;
+}
+
+.spinner .rect3 {
+  -webkit-animation-delay: -1.0s;
+  animation-delay: -1.0s;
+}
+
+.spinner .rect4 {
+  -webkit-animation-delay: -0.9s;
+  animation-delay: -0.9s;
+}
+
+
+@-webkit-keyframes sk-stretchdelay {
+  0%, 40%, 100% { -webkit-transform: scaleY(0.4) }  
+  20% { -webkit-transform: scaleY(1.0) }
+}
+
+@keyframes sk-stretchdelay {
+  0%, 40%, 100% { 
+    transform: scaleY(0.4);
+    -webkit-transform: scaleY(0.4);
+  }  20% { 
+    transform: scaleY(1.0);
+    -webkit-transform: scaleY(1.0);
+  }
 }

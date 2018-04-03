@@ -35,8 +35,8 @@ submitBtn.click(function () {
     var password = $('#password-input').val();
     var data = {"username": username, "password": password};
 
-    submitBtn.html('Logging In...');
-    submitBtn.css('width', '100px');
+    submitBtn.css("display", "none");
+    $(".spinner").css("display", "block");
     submitBtn.prop('disabled', 'true');
 
     $.ajax({
@@ -49,6 +49,8 @@ submitBtn.click(function () {
       }).fail(function (response) {
         alert(response.responseText);
         submitBtn.html('Login');
+        submitBtn.css("display", "block");
+        $(".spinner").css("display", "None");
         submitBtn.css('width', '80px');
         submitBtn.removeAttr("disabled");
       });
@@ -147,13 +149,21 @@ function toggleDarkMode(on) {
         $('.title-text').removeClass('light');
         $('.title-text').addClass('dark');
         $('.button').removeClass('light');
-        $('.button').addClass('dark');    
+        $('.button').addClass('dark'); 
+        $('#url-textbox').removeClass('light');
+        $('#url-textbox').addClass('dark'); 
+        $('#import-btn').removeClass('light');
+        $('#import-btn').addClass('dark');     
         $("#acm-logo").attr("src", "static/images/acm-logo-inverted.png"); 
     } else {
         $('.title-text').addClass('light');
         $('.title-text').removeClass('dark');
         $('.button').addClass('light');
         $('.button').removeClass('dark');
+        $('#url-textbox').removeClass('dark');
+        $('#url-textbox').addClass('light'); 
+        $('#import-btn').removeClass('dark');
+        $('#import-btn').addClass('light');  
         $("#acm-logo").attr("src", "static/images/acm-logo.png"); 
     }
 }
