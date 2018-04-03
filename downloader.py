@@ -45,10 +45,11 @@ def async_download(url, user_name):
 		print("Source is SoundCloud")
 		try:
 			resource = sndcld.get("/resolve", url=url).fields()
-			if resource["kind"] is "playlist":
+			print(resource["kind"])
+			if resource["kind"] == "playlist":
 				for t in resource["tracks"]:
 					add_song_to_queue(*soundcloud_processing(t), user_name, db)
-			elif resource["kind"] is "track":
+			elif resource["kind"] == "track":
 				add_song_to_queue(*soundcloud_processing(resource), user_name, db)
 
 		except Exception as e:
@@ -70,8 +71,8 @@ def async_download(url, user_name):
 
 def soundcloud_processing(t):
 	print("Getting info for  " + t["title"])
-	thumbnail_path = _download_thumbnail(t["artwork_url"], str(t["id"]))
-	return (t["stream_url"], t["title"], t["duration"], thumbnail_path)
+	thumbnail_path = _download_thumbnail(t["artwork_url"].replace("large","t500x500"), str(t["id"]))
+	return (t["stream_url"] + "?client_id=" + config["SOUNDCLOUD"], t["title"], t["duration"], thumbnail_path)
 
 def youtube_processing(video):
 	# Get video information
