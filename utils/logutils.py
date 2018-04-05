@@ -38,7 +38,7 @@ def configure_celery_logger(celery_logger):
 	file_handler.setLevel(logging.DEBUG)
 	file_handler.setFormatter(file_formatter)
 	console_handler = logging.StreamHandler()
-	console_handler.setLevel(logging.INFO)
+	console_handler.setLevel(logging.WARNING)
 	console_handler.setFormatter(console_formatter)
 	celery_logger.addHandler(file_handler)
 	celery_logger.addHandler(console_handler)

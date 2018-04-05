@@ -64,7 +64,7 @@ def async_download(url, user_name):
 		try:
 			sc_object = sc_client.get('/resolve', url=url)
 		except requests.exceptions.HTTPError:
-			logger.warning('Soundcloud track unavailable', exc_info=True)
+			logger.warning('Soundcloud track unavailable')
 			return
 		if sc_object.fields()["kind"] == "playlist":
 			playlist = sc_client.get('/playlists/' + str(sc_object.id))

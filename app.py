@@ -1,5 +1,5 @@
-import eventlet
-eventlet.monkey_patch()
+from gevent import monkey
+monkey.patch_all()
 import os
 import sys
 import binascii
@@ -130,7 +130,7 @@ def login():
     }
     resp = requests.post('https://api.acm.illinois.edu/session', headers=headers, json=payload)
     if resp.status_code != 200:
-        logger.error("Invalid login: {}".format(json.loads(resp.content)["reason"]))
+        logger.error("Invalid login")
         return Response("Invalid Username/Password", status=400)
 
     data = resp.json()
@@ -138,7 +138,7 @@ def login():
 
     user_resp = requests.get('https://api.acm.illinois.edu/session/' + token, headers=headers)
     if user_resp.status_code != 200:
-        logger.error("Invalid user token: {}".format(json.loads(resp.content)["reason"]))
+        logger.error("Invalid user token")
         return Response("Invalid Session Token", status=400)
 
     user_data = user_resp.json()['user']
