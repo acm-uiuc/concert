@@ -5,16 +5,20 @@ import requests
 import json
 import shutil
 import os
+import logging
 from pathlib import Path
 from celery import Celery
+from celery.utils.log import get_task_logger
 from flask_socketio import SocketIO
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from models import Song
 
+LOGS_PATH = 'logs'
 REDIS_URL = 'redis://localhost:6379/1'
 YOUTUBE_THUMBNAIL_URL = 'https://i.ytimg.com/vi/'
 MAXRES_THUMBNAIL = '/maxresdefault.jpg'
+MQ_THUMBNAIL = '/mqdefault.jpg'
 THUMBNAIL_PATH = 'static/thumbnails/'
 JPG_EXTENSION = '.jpg'
 
@@ -24,6 +28,21 @@ celery = Celery(CELERY_NAME, backend=REDIS_URL, broker=REDIS_URL)
 
 # Flask SocketIO Reference
 socketio = SocketIO(message_queue=REDIS_URL)
+
+# Configure Logger
+if not os.path.exists(LOGS_PATH):
+    os.mkdir(LOGS_PATH)
+logger = get_task_logger('concert.celery')
+logger.setLevel(logging.INFO)
+file_handler = logging.handlers.RotatingFileHandler('logs/celery.log', 
+    maxBytes=1024 * 1024 * 100, backupCount=20)
+file_handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter(
+    '%(asctime)s %(levelname)s: %(message)s '
+    '[in %(pathname)s:%(lineno)d]'
+ )
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
 
 @celery.task
 def async_download(url, user_name):
@@ -37,7 +56,7 @@ def async_download(url, user_name):
 			try:
 				_add_song_to_queue(video["pafy"], user_name, db)
 			except Exception as e:
-				print('Invalid Song Url')
+				logger.warning('Invalid Song Url')
 	except Exception as e:
 		video = pafy.new(url)
 		_add_song_to_queue(video, user_name, db)
@@ -48,13 +67,16 @@ def _add_song_to_queue(video, user_name, db):
 	song_id = video.videoid
 	song_duration = video.length * 1000
 	stream_url = video.audiostreams[0].url
-	print("Getting info for: " + song_title)
+	logger.info("Getting info for: {}".format(song_title))
 
 	# Download Thumbnail
-	print("Downloading Thumnail")
+	logger.info("Downloading Thumnail")
 	thumbnail_url = "{}{}{}".format(YOUTUBE_THUMBNAIL_URL, song_id, MAXRES_THUMBNAIL)
 	thumbnail_path = _download_thumbnail(thumbnail_url, str(song_id))
-	print("Finished Downloading Thumbnail")
+	if thumbnail_path == None:
+		thumbnail_url = "{}{}{}".format(YOUTUBE_THUMBNAIL_URL, song_id, MQ_THUMBNAIL)
+		thumbnail_path = _download_thumbnail(thumbnail_url, str(song_id))
+	logger.info("Finished Downloading Thumbnail")
 
 	# Tell client we've finished downloading
 	new_song = Song(stream_url, song_title, song_duration, thumbnail_path, user_name)
@@ -78,15 +100,13 @@ def _download_thumbnail(url, song_id):
 	path = "{}{}{}".format(THUMBNAIL_PATH, song_id, JPG_EXTENSION)
 	# Reuse thumbnail if it already exists
 	if os.path.isfile(path):
+		logger.info("Reusing existing thumbnail image")
 		return path
-
 	r = requests.get(url, stream=True)
 	if r.status_code == 200:
 		with open(path, 'wb+') as f:
 			r.raw.decode_content = True
 			shutil.copyfileobj(r.raw, f)  
 		return path
+	logger.warning("Could not download thumbnail image for: {}".format(url))
 	return None      
-	
-if __name__ == '__main__':
-    celery.start()

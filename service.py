@@ -3,6 +3,7 @@ import random
 import json
 import time
 import threading
+import logging
 import vlc
 import pymongo
 from pymongo import MongoClient
@@ -12,6 +13,9 @@ from player import Player
 
 PLAY_NEXT_DELAY = 0.8
 HEARTBEAT_DELAY = 60
+
+# Get logger
+logger = logging.getLogger('concert')
 
 class MusicService:
     def __init__(self, socketio, db):
@@ -33,11 +37,6 @@ class MusicService:
 
     def set_volume(self, value):
         return self._player.set_volume(value)
-
-    def set_time(self, percent):
-        if not self._player.is_playing():
-            return "Invalid"
-        return self._player.set_time(percent)
 
     def clear_queue(self):
         self.db.Queue.delete_many({})
@@ -82,6 +81,7 @@ class MusicService:
 
     def _play_next(self):
         if self._get_queue_size() > 0:
+            logger.info("Playing next song")
             next_song = self._get_next_song()
             self._player.current_track = next_song
             self._remove_song_from_queue(next_song['_id'])
@@ -95,6 +95,7 @@ class MusicService:
                 self._player.stop()
                 self.socketio.emit('stopped', self.player_state(), include_self=True)
                 self.has_stopped = True
+                logger.info("Player has stopped")
 
     def start(self):
         player_thread = threading.Thread(target=self._player_thread)

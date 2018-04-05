@@ -1,10 +1,14 @@
-import binascii
+import eventlet
+eventlet.monkey_patch()
 import os
-import validators
 import sys
+import binascii
 import requests
 import functools
+import json
 import flask_login
+import validators
+import logging
 from flask import Flask, Response, request, url_for, render_template, redirect, url_for, current_app, session
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from flask_socketio import SocketIO, send, emit, disconnect
@@ -14,6 +18,7 @@ from service import MusicService
 from models import User
 from config import config
 
+LOGS_PATH = 'logs'
 THUMBNAIL_PATH = 'static/thumbnails'
 REDIS_URL = 'redis://localhost:6379/1'
 
@@ -33,6 +38,11 @@ db = client.concert
 socketio = SocketIO(app, message_queue=REDIS_URL)
 ms = MusicService(socketio, db)
 ms.start()
+
+# Get Logger
+logger = logging.getLogger('concert')
+if not os.path.exists(LOGS_PATH):
+    os.mkdir(LOGS_PATH)
 
 # Flask-login setup
 def authenticated_only(f):
@@ -82,6 +92,7 @@ def handle_stop():
 def handle_download(url):
     if not validators.url(url):
         socketio.emit('download_error', "", include_self=True)
+        logger.error("Invalid URL in download attempt")
     else:
         user_name = "{} {}".format(current_user.first_name, current_user.last_name)
         async_download.apply_async(args=[url, user_name])
@@ -119,6 +130,7 @@ def login():
     }
     resp = requests.post('https://api.acm.illinois.edu/session', headers=headers, json=payload)
     if resp.status_code != 200:
+        logger.error("Invalid login: {}".format(json.loads(resp.content)["reason"]))
         return Response("Invalid Username/Password", status=400)
 
     data = resp.json()
@@ -126,6 +138,7 @@ def login():
 
     user_resp = requests.get('https://api.acm.illinois.edu/session/' + token, headers=headers)
     if user_resp.status_code != 200:
+        logger.error("Invalid user token: {}".format(json.loads(resp.content)["reason"]))
         return Response("Invalid Session Token", status=400)
 
     user_data = user_resp.json()['user']
@@ -142,12 +155,30 @@ def logout():
         db.Users.delete_many({"uid": current_user.uid})
         logout_user()
     except AttributeError:
-        pass
+        logger.warning("User not logged in")
     return redirect(url_for('index'))
+
+def configure_logger():
+    logger.setLevel(logging.INFO)
+    formatter = logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s '
+        '[in %(pathname)s:%(lineno)d]'
+    )
+    file_handler = logging.handlers.RotatingFileHandler('logs/output.log', 
+        maxBytes=1024 * 1024 * 100, backupCount=20)
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(formatter)
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+    console_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+    logger.addHandler(console_handler)
 
 if __name__ == '__main__':
     # Clear users before starting up 
     db.Users.delete_many({})
     if not os.path.exists(THUMBNAIL_PATH):
         os.mkdir(THUMBNAIL_PATH)
-    socketio.run(app, debug=False, use_reloader=False, host='0.0.0.0')
+    configure_logger()
+    logger.info("Starting Concert")
+    socketio.run(app, debug=False, use_reloader=False, host='0.0.0.0', log_output=False)

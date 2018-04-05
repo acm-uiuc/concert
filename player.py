@@ -1,6 +1,7 @@
-import vlc
 import time
 import json
+import logging
+import vlc
 import urllib
 from models import Song
 from pathlib import Path
@@ -12,6 +13,9 @@ NETWORK_ATTEMPT_DELAY = 1
 MAX_PLAY_ATTEMPTS = 5
 PLAY_ATTEMPT_DELAY = 0.3
 PAUSE_DELAY = 0.1
+
+# Get logger
+logger = logging.getLogger('concert')
 
 class Player:
     def __init__(self):
@@ -52,16 +56,12 @@ class Player:
             play_attempts += 1
             time.sleep(PLAY_ATTEMPT_DELAY)
 
-        print("------PLAYING------")
-        print("Title: %s" % song['title'])
-        print("mrl: %s" % mrl)
-        print("is_playing (called from play): %r" % self.is_playing())
-        print("------PLAYING------")
-
+        logger.info("NOW PLAYING: {}".format(song['title']))
         return self.cur_state()
 
     def pause(self):
         self.vlc_player.pause()
+        logger.info("Play/Pause toggled")
         # We need this so the vlc library can update
         time.sleep(PAUSE_DELAY) 
         media = self.vlc_player.get_media()
@@ -118,7 +118,8 @@ class Player:
     def _network_available(self, url):
         try:
             urllib.request.urlopen(url, timeout=NETWORK_ATTEMPT_DELAY)
-            print("Pinged: "+ url)
+            logger.info("Pinged: {}".format(url))
             return True
         except urllib.error.URLError as err:
+            logger.warning("Network could not be reached: {}".format(url))
             return False

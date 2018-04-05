@@ -7,3 +7,4 @@
 config.py
 /.idea
 /static/thumbnails
+/logs
