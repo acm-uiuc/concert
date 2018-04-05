@@ -62,34 +62,25 @@ def async_download(url, user_name):
 			videos = playlist["items"]
 			for video in videos:
 				try:
-					_add_song_to_queue(video["pafy"], user_name, db)
+					_add_yt_song(video["pafy"], user_name, db)
 				except Exception as e:
 					logger.warning('Invalid Song Url')
 		except Exception as e:
 			video = pafy.new(url)
-			_add_song_to_queue(video, user_name, db)
+			_add_yt_song(video, user_name, db)
 	elif "soundcloud" in url:
-		# Get song information
-		logger.info("Getting info for: {}".format(url))
-		track_id = sc_client.get('/resolve', url=url).id
-		track = sc_client.get('/tracks/' + str(track_id))
-		stream_url = sc_client.get(track.stream_url, allow_redirects=False).location
-		song_title = track.title
-		song_id = track_id
-		song_duration = track.duration
-
-		# Download Thumbnail
-		logger.info("Downloading Thumnail")
-		thumbnail_url = track.artwork_url.replace('large', 't500x500')
-		thumbnail_path = _download_thumbnail(thumbnail_url, str(song_id))
-		logger.info("Finished Downloading Thumbnail")
-
-		# Tell client we've finished downloading
-		new_song = Song(stream_url, song_title, song_duration, thumbnail_path, user_name)
-		db.Queue.insert_one(new_song.dictify())
-		socketio.emit('queue_change', json.dumps(_get_queue(db)), include_self=True)
+		try:
+			playlist_id = sc_client.get('/resolve', url=url).id
+			playlist = sc_client.get('/playlists/' + str(playlist_id))
+			tracks = playlist.tracks
+			for track in tracks:
+				_add_sc_song(track, user_name, db, True)
+		except Exception as e:
+			track_id = sc_client.get('/resolve', url=url).id
+			track = sc_client.get('/tracks/' + str(track_id))
+			_add_sc_song(track, user_name, db, False)
 	
-def _add_song_to_queue(video, user_name, db):
+def _add_yt_song(video, user_name, db):
 	# Get video information
 	song_title = video.title
 	song_id = video.videoid
@@ -104,6 +95,32 @@ def _add_song_to_queue(video, user_name, db):
 	if thumbnail_path == None:
 		thumbnail_url = "{}{}{}".format(YOUTUBE_THUMBNAIL_URL, song_id, MQ_THUMBNAIL)
 		thumbnail_path = _download_thumbnail(thumbnail_url, str(song_id))
+	logger.info("Finished Downloading Thumbnail")
+
+	# Tell client we've finished downloading
+	new_song = Song(stream_url, song_title, song_duration, thumbnail_path, user_name)
+	db.Queue.insert_one(new_song.dictify())
+	socketio.emit('queue_change', json.dumps(_get_queue(db)), include_self=True)
+
+def _add_sc_song(track, user_name, db, is_dict):
+	# Get song information
+	if is_dict:
+		stream_url = sc_client.get(track["stream_url"], allow_redirects=False).location
+		song_title = track["title"]
+		song_id = track["id"]
+		song_duration = track["duration"]
+		thumbnail_url = track["artwork_url"].replace('large', 't500x500')
+	else:
+		stream_url = sc_client.get(track.stream_url, allow_redirects=False).location
+		song_title = track.title
+		song_id = track.id
+		song_duration = track.duration
+		thumbnail_url = track.artwork_url.replace('large', 't500x500')
+	logger.info("Getting info for: {}".format(song_title))
+
+	# Download Thumbnail
+	logger.info("Downloading Thumnail")
+	thumbnail_path = _download_thumbnail(thumbnail_url, str(song_id))
 	logger.info("Finished Downloading Thumbnail")
 
 	# Tell client we've finished downloading
