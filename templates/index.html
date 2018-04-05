@@ -55,7 +55,7 @@
     <div class="search-container">
       <div id="search-bar">
         {% if current_user.is_authenticated %}
-          <input type="text" id="url-textbox" placeholder="Hi, {{current_user.first_name}}. Please enter a Youtube URL"/>
+          <input type="text" id="url-textbox" placeholder="Hi, {{current_user.first_name}}. Please enter a Youtube or Soundcloud URL"/>
         {% else %}
           <input type="text" id="url-textbox" placeholder="Please login to add to the queue."/>
         {% endif %}

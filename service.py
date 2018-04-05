@@ -95,7 +95,7 @@ class MusicService:
                 self._player.stop()
                 self.socketio.emit('stopped', self.player_state(), include_self=True)
                 self.has_stopped = True
-                logger.info("Player has stopped")
+                logger.info("Player is stopped")
 
     def start(self):
         player_thread = threading.Thread(target=self._player_thread)

@@ -19,7 +19,7 @@ logger = logging.getLogger('concert')
 
 class Player:
     def __init__(self):
-        self.instance = vlc.Instance('--no-video')
+        self.instance = vlc.Instance('--no-video', '--network-caching=1500')
         self.vlc_player = self.instance.media_player_new()
         self.volume = DEFAULT_VOLUME
         self.vlc_player.audio_set_volume(self.volume)

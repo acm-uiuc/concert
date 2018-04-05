@@ -15,6 +15,7 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 from models import Song
 from config import config
+from utils.logutils import configure_celery_logger
 
 LOGS_PATH = 'logs'
 REDIS_URL = 'redis://localhost:6379/1'
@@ -31,20 +32,9 @@ celery = Celery(CELERY_NAME, backend=REDIS_URL, broker=REDIS_URL)
 # Flask SocketIO Reference
 socketio = SocketIO(message_queue=REDIS_URL)
 
-# Configure Logger
-if not os.path.exists(LOGS_PATH):
-    os.mkdir(LOGS_PATH)
+# Setup Logger
 logger = get_task_logger('concert.celery')
-logger.setLevel(logging.INFO)
-file_handler = logging.handlers.RotatingFileHandler('logs/celery.log', 
-    maxBytes=1024 * 1024 * 100, backupCount=20)
-file_handler.setLevel(logging.DEBUG)
-formatter = logging.Formatter(
-    '%(asctime)s %(levelname)s: %(message)s '
-    '[in %(pathname)s:%(lineno)d]'
- )
-file_handler.setFormatter(formatter)
-logger.addHandler(file_handler)
+configure_celery_logger(logger)
 
 # Setup Soundcloud
 SOUNDCLOUD_CLIENT_ID = config["SOUNDCLOUD_CLIENT_ID"]
@@ -65,14 +55,17 @@ def async_download(url, user_name):
 					song_dict = _get_yt_song(video["pafy"])
 					_add_song_to_queue(song_dict, user_name, db)
 				except Exception as e:
-					logger.error(e)
-					logger.warning('Invalid Song Url')
+					logger.error('Invalid Youtube url', exc_info=True)
 		except Exception as e:
 			video = pafy.new(url)
 			song_dict = _get_yt_song(video)
 			_add_song_to_queue(song_dict, user_name, db)
 	elif "soundcloud.com" in url:
-		sc_object = sc_client.get('/resolve', url=url)
+		try:
+			sc_object = sc_client.get('/resolve', url=url)
+		except requests.exceptions.HTTPError:
+			logger.warning('Soundcloud track unavailable', exc_info=True)
+			return
 		if sc_object.fields()["kind"] == "playlist":
 			playlist = sc_client.get('/playlists/' + str(sc_object.id))
 			tracks = playlist.tracks

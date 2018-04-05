@@ -17,6 +17,7 @@ from downloader import async_download
 from service import MusicService
 from models import User
 from config import config
+from utils.logutils import configure_app_logger
 
 LOGS_PATH = 'logs'
 THUMBNAIL_PATH = 'static/thumbnails'
@@ -41,8 +42,7 @@ ms.start()
 
 # Get Logger
 logger = logging.getLogger('concert')
-if not os.path.exists(LOGS_PATH):
-    os.mkdir(LOGS_PATH)
+configure_app_logger(logger)
 
 # Flask-login setup
 def authenticated_only(f):
@@ -158,27 +158,10 @@ def logout():
         logger.warning("User not logged in")
     return redirect(url_for('index'))
 
-def configure_logger():
-    logger.setLevel(logging.INFO)
-    formatter = logging.Formatter(
-        '%(asctime)s %(levelname)s: %(message)s '
-        '[in %(pathname)s:%(lineno)d]'
-    )
-    file_handler = logging.handlers.RotatingFileHandler('logs/output.log', 
-        maxBytes=1024 * 1024 * 100, backupCount=20)
-    file_handler.setLevel(logging.DEBUG)
-    file_handler.setFormatter(formatter)
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.INFO)
-    console_handler.setFormatter(formatter)
-    logger.addHandler(file_handler)
-    logger.addHandler(console_handler)
-
 if __name__ == '__main__':
     # Clear users before starting up 
     db.Users.delete_many({})
     if not os.path.exists(THUMBNAIL_PATH):
         os.mkdir(THUMBNAIL_PATH)
-    configure_logger()
     logger.info("Starting Concert")
     socketio.run(app, debug=False, use_reloader=False, host='0.0.0.0', log_output=False)
