@@ -7,4 +7,5 @@ NEVER COMMIT YOUR API KEYS IN GIT (config.py will be ignored by git)
 
 config = {
     "GROOT_TOKEN" : "MY CONSUMER KEY",
+    "SOUNDCLOUD_CLIENT_ID": "SC_CLIENT_ID",
 }

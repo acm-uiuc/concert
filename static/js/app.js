@@ -189,7 +189,7 @@ $(document).ready(function () {
         if ($('#url-textbox').val().trim() != ""){
             var currentUrl = $('#url-textbox').val();
             if (loggedin) {
-                if (!isURL(currentUrl) || !currentUrl.includes("youtube.com")) {
+                if (!isURL(currentUrl) || (!currentUrl.includes("youtube.com") && !currentUrl.includes("soundcloud.com"))) {
                     alert("Please enter a valid url");
                 } else {
                     socket.emit('download', currentUrl);

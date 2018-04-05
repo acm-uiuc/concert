@@ -1,4 +1,5 @@
 import youtube_dl
+import soundcloud
 import pymongo
 import pafy
 import requests
@@ -13,6 +14,7 @@ from flask_socketio import SocketIO
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from models import Song
+from config import config
 
 LOGS_PATH = 'logs'
 REDIS_URL = 'redis://localhost:6379/1'
@@ -44,22 +46,48 @@ formatter = logging.Formatter(
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
+# Setup Soundcloud
+SOUNDCLOUD_CLIENT_ID = config["SOUNDCLOUD_CLIENT_ID"]
+sc_client = soundcloud.Client(client_id=SOUNDCLOUD_CLIENT_ID)
+
 @celery.task
 def async_download(url, user_name):
 	client = MongoClient()
 	db = client.concert
-	# Try to parse url as playlist otherwise treat it as single song
-	try:
-		playlist = pafy.get_playlist(url)
-		videos = playlist["items"]
-		for video in videos:
-			try:
-				_add_song_to_queue(video["pafy"], user_name, db)
-			except Exception as e:
-				logger.warning('Invalid Song Url')
-	except Exception as e:
-		video = pafy.new(url)
-		_add_song_to_queue(video, user_name, db)
+
+	if "youtube" in url:
+		# Try to parse url as playlist otherwise treat it as single song
+		try:
+			playlist = pafy.get_playlist(url)
+			videos = playlist["items"]
+			for video in videos:
+				try:
+					_add_song_to_queue(video["pafy"], user_name, db)
+				except Exception as e:
+					logger.warning('Invalid Song Url')
+		except Exception as e:
+			video = pafy.new(url)
+			_add_song_to_queue(video, user_name, db)
+	elif "soundcloud" in url:
+		# Get song information
+		logger.info("Getting info for: {}".format(url))
+		track_id = sc_client.get('/resolve', url=url).id
+		track = sc_client.get('/tracks/' + str(track_id))
+		stream_url = sc_client.get(track.stream_url, allow_redirects=False).location
+		song_title = track.title
+		song_id = track_id
+		song_duration = track.duration
+
+		# Download Thumbnail
+		logger.info("Downloading Thumnail")
+		thumbnail_url = track.artwork_url.replace('large', 't500x500')
+		thumbnail_path = _download_thumbnail(thumbnail_url, str(song_id))
+		logger.info("Finished Downloading Thumbnail")
+
+		# Tell client we've finished downloading
+		new_song = Song(stream_url, song_title, song_duration, thumbnail_path, user_name)
+		db.Queue.insert_one(new_song.dictify())
+		socketio.emit('queue_change', json.dumps(_get_queue(db)), include_self=True)
 	
 def _add_song_to_queue(video, user_name, db):
 	# Get video information
@@ -98,10 +126,10 @@ def _get_queue(db):
 
 def _download_thumbnail(url, song_id):
 	path = "{}{}{}".format(THUMBNAIL_PATH, song_id, JPG_EXTENSION)
-	# Reuse thumbnail if it already exists
 	if os.path.isfile(path):
 		logger.info("Reusing existing thumbnail image")
 		return path
+
 	r = requests.get(url, stream=True)
 	if r.status_code == 200:
 		with open(path, 'wb+') as f:
@@ -109,4 +137,4 @@ def _download_thumbnail(url, song_id):
 			shutil.copyfileobj(r.raw, f)  
 		return path
 	logger.warning("Could not download thumbnail image for: {}".format(url))
-	return None      
+	return None  
