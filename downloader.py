@@ -55,76 +55,69 @@ def async_download(url, user_name):
 	client = MongoClient()
 	db = client.concert
 
-	if "youtube" in url:
+	if "youtube.com" in url:
 		# Try to parse url as playlist otherwise treat it as single song
 		try:
 			playlist = pafy.get_playlist(url)
 			videos = playlist["items"]
 			for video in videos:
 				try:
-					_add_yt_song(video["pafy"], user_name, db)
+					song_dict = _get_yt_song(video["pafy"])
+					_add_song_to_queue(song_dict, user_name, db)
 				except Exception as e:
+					logger.error(e)
 					logger.warning('Invalid Song Url')
 		except Exception as e:
 			video = pafy.new(url)
-			_add_yt_song(video, user_name, db)
-	elif "soundcloud" in url:
-		try:
-			playlist_id = sc_client.get('/resolve', url=url).id
-			playlist = sc_client.get('/playlists/' + str(playlist_id))
+			song_dict = _get_yt_song(video)
+			_add_song_to_queue(song_dict, user_name, db)
+	elif "soundcloud.com" in url:
+		sc_object = sc_client.get('/resolve', url=url)
+		if sc_object.fields()["kind"] == "playlist":
+			playlist = sc_client.get('/playlists/' + str(sc_object.id))
 			tracks = playlist.tracks
 			for track in tracks:
-				_add_sc_song(track, user_name, db, True)
-		except Exception as e:
-			track_id = sc_client.get('/resolve', url=url).id
-			track = sc_client.get('/tracks/' + str(track_id))
-			_add_sc_song(track, user_name, db, False)
+				song_dict = _get_sc_song(track)
+				_add_song_to_queue(song_dict, user_name, db)
+		else:
+			track = sc_client.get('/tracks/' + str(sc_object.id)).fields()
+			song_dict = _get_sc_song(track)
+			_add_song_to_queue(song_dict, user_name, db)
 	
-def _add_yt_song(video, user_name, db):
+def _get_yt_song(video):
+	s = {}
 	# Get video information
-	song_title = video.title
-	song_id = video.videoid
-	song_duration = video.length * 1000
-	stream_url = video.audiostreams[0].url
-	logger.info("Getting info for: {}".format(song_title))
+	s["song_title"] = video.title
+	s["song_id"] = video.videoid
+	s["song_duration"] = video.length * 1000
+	s["stream_url"] = video.audiostreams[0].url
+	logger.info("Getting info for: {}".format(s["song_title"]))
 
-	# Download Thumbnail
-	logger.info("Downloading Thumnail")
-	thumbnail_url = "{}{}{}".format(YOUTUBE_THUMBNAIL_URL, song_id, MAXRES_THUMBNAIL)
-	thumbnail_path = _download_thumbnail(thumbnail_url, str(song_id))
-	if thumbnail_path == None:
-		thumbnail_url = "{}{}{}".format(YOUTUBE_THUMBNAIL_URL, song_id, MQ_THUMBNAIL)
-		thumbnail_path = _download_thumbnail(thumbnail_url, str(song_id))
-	logger.info("Finished Downloading Thumbnail")
+	s["thumbnail_url_1"] = "{}{}{}".format(YOUTUBE_THUMBNAIL_URL, s["song_id"], MAXRES_THUMBNAIL)
+	s["thumbnail_url_2"] = "{}{}{}".format(YOUTUBE_THUMBNAIL_URL, s["song_id"], MQ_THUMBNAIL)
+	return s
 
-	# Tell client we've finished downloading
-	new_song = Song(stream_url, song_title, song_duration, thumbnail_path, user_name)
-	db.Queue.insert_one(new_song.dictify())
-	socketio.emit('queue_change', json.dumps(_get_queue(db)), include_self=True)
-
-def _add_sc_song(track, user_name, db, is_dict):
+def _get_sc_song(track):
+	s = {}
 	# Get song information
-	if is_dict:
-		stream_url = sc_client.get(track["stream_url"], allow_redirects=False).location
-		song_title = track["title"]
-		song_id = track["id"]
-		song_duration = track["duration"]
-		thumbnail_url = track["artwork_url"].replace('large', 't500x500')
-	else:
-		stream_url = sc_client.get(track.stream_url, allow_redirects=False).location
-		song_title = track.title
-		song_id = track.id
-		song_duration = track.duration
-		thumbnail_url = track.artwork_url.replace('large', 't500x500')
-	logger.info("Getting info for: {}".format(song_title))
+	s["stream_url"]= sc_client.get(track["stream_url"], allow_redirects=False).location
+	s["song_title"] = track["title"]
+	s["song_id"] = track["id"]
+	s["song_duration"] = track["duration"]
+	logger.info("Getting info for: {}".format(s["song_title"]))
 
+	s["thumbnail_url_1"] = track["artwork_url"].replace('large', 't500x500')
+	s["thumbnail_url_2"] = track["artwork_url"].replace('large', 'crop')
+	return s
+
+def _add_song_to_queue(sd, user_name, db):
 	# Download Thumbnail
 	logger.info("Downloading Thumnail")
-	thumbnail_path = _download_thumbnail(thumbnail_url, str(song_id))
+	thumbnail_path = _download_thumbnail(sd["thumbnail_url_1"], sd["thumbnail_url_2"], str(sd["song_id"]))
 	logger.info("Finished Downloading Thumbnail")
 
 	# Tell client we've finished downloading
-	new_song = Song(stream_url, song_title, song_duration, thumbnail_path, user_name)
+	new_song = Song(sd["stream_url"], sd["song_title"], sd["song_duration"], thumbnail_path, user_name)
 	db.Queue.insert_one(new_song.dictify())
 	socketio.emit('queue_change', json.dumps(_get_queue(db)), include_self=True)
 
@@ -141,17 +134,25 @@ def _get_queue(db):
 		queue.append(song.dictify())
 	return queue
 
-def _download_thumbnail(url, song_id):
+def _download_thumbnail(primary_url, secondary_url, song_id):
 	path = "{}{}{}".format(THUMBNAIL_PATH, song_id, JPG_EXTENSION)
 	if os.path.isfile(path):
 		logger.info("Reusing existing thumbnail image")
 		return path
 
-	r = requests.get(url, stream=True)
-	if r.status_code == 200:
+	r1 = requests.get(primary_url, stream=True)
+	if r1.status_code == 200:
 		with open(path, 'wb+') as f:
-			r.raw.decode_content = True
-			shutil.copyfileobj(r.raw, f)  
+			r1.raw.decode_content = True
+			shutil.copyfileobj(r1.raw, f)  
 		return path
+
+	r2 = requests.get(secondary_url, stream=True)
+	if r2.status_code == 200:
+		with open(path, 'wb+') as f:
+			r2.raw.decode_content = True
+			shutil.copyfileobj(r2.raw, f)  
+		return path
+
 	logger.warning("Could not download thumbnail image for: {}".format(url))
 	return None  
