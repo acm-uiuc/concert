@@ -1,4 +1,3 @@
-import youtube_dl
 import soundcloud
 import pymongo
 import pafy
