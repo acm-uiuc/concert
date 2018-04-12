@@ -106,6 +106,17 @@ def clear_queue():
 def index():
     return render_template("index.html")
 
+@app.route('/ytsearch', methods=['GET'])
+def ytsearch():
+    base_url = request.args.get('baseURL')
+    q = request.args.get('q')
+    part = request.args.get('part')
+    key = config['YT_API_KEY']
+    search_url  = base_url + "/?q=" + q + "&part=" + part + "&key=" + key
+   
+    resp = requests.get(search_url)
+    return resp.text
+
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()

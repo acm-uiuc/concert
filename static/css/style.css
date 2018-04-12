@@ -153,7 +153,6 @@ body {
   transform: translate(-50%, 320%);
 }
 #search-bar {
-    background-color: black;
     height: 50px;
     width: 100%;
 }
@@ -163,7 +162,6 @@ body {
 #url-textbox {
     border: solid 1px #CCC;
     height: 100%;
-    font-size: 15px;
     width: 90%;
     float: left;
     padding-left: 15px;
@@ -663,4 +661,42 @@ ol#playlist li:first-child {
 @keyframes animatezoom {
     from {transform: scale(0)} 
     to {transform: scale(1)}
+}
+
+.select2-container {
+  position: absolute;
+}
+
+.select2-container--default .select2-selection--multiple {
+    height: 50px;
+    padding-top: 7.5px;
+    padding-left: 10px;
+    font-size: 1.2em;
+}
+
+.select2-results__option[aria-selected] {
+    padding: 6px;
+    height: 60px;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.select2-result-repository__title {
+    color: black;
+    font-weight: 300;
+    word-wrap: break-word;
+    line-height: 1.1;
+    margin-bottom: 4px;
+    margin-left: 10px;
+    display: inline;
+    float: left;
+}
+
+.select2-result-repository__avatar img {
+    height: 50px;
+    width: 50px;
+    height: auto;
+    border-radius: 2px;
+    display: inline;
+    float: left;
 }
