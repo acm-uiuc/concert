@@ -1,7 +1,7 @@
 $(document).ready(function() {
 	$("#url-textbox").select2({
-      allowClear: true,
-      multiple: true,
+	  allowClear: true,
+	  multiple: true,
       maximumSelectionSize: 1,
 	  ajax: {
 	    url: '/ytsearch',
@@ -19,9 +19,19 @@ $(document).ready(function() {
 	      // alter the remote JSON data, except to indicate that infinite
 	      // scrolling can be used
 	      params.page = params.page || 1;
+			var res = []
+	      for (var i = 0; i < data.items.length; i++) {
+	      	item = data.items[i];
+	      	var videoId = item.id.videoId;
+	      	item.id = videoId;
+	      	if(item.id != undefined) {
+	      		res.push(item);
+	      	}
+			
+	      }
 
 	      return {
-	        results: data.items,
+	        results: res,
 	        pagination: {
 	          more: (params.page * 30) < data.total_count
 	        }
@@ -29,11 +39,14 @@ $(document).ready(function() {
 	    },
 	    cache: true
 	  },
+	  id: function(obj) {
+	  	return obj.id;
+	  },
 	  placeholder: 'Search for a Youtube Video',
 	  escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
 	  minimumInputLength: 1,
 	  templateResult: formatVideo,
-	  templateSelection: formatRepoSelection
+	  templateSelection: formatRepoSelection,
 	});
 });
 
@@ -51,6 +64,7 @@ function formatVideo (video) {
 	return markup;
 }
 
-function formatRepoSelection (repo) {
-  return repo.full_name || repo.text;
+function formatRepoSelection (video) {
+	console.log(video);
+	return "https://www.youtube.com/watch?v=" + video.id;
 }

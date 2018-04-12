@@ -84,8 +84,10 @@ $(document).ready(function () {
     });
 
     windowUI.importBtn.click(function(e) {
-        if (windowUI.searchBox.val().trim() != ""){
-            var currentUrl = windowUI.searchBox.val();
+        var inputVal = $('.select2-selection__choice').text();
+        if (inputVal.trim() != ""){
+            var currentUrl = inputVal.replace(/[^\x00-\x7F]/g, "");
+            console.log(currentUrl);
             if (loggedin) {
                 if (!isURL(currentUrl) || (!currentUrl.includes("youtube.com") && !currentUrl.includes("soundcloud.com"))) {
                     alert("Please enter a valid url");
