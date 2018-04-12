@@ -9,7 +9,6 @@ Flask==0.12.2
 Flask-Login==0.4.1
 Flask-SocketIO==2.9.3
 fudge==1.1.1
-gevent==1.2.2
 greenlet==0.4.13
 idna==2.6
 itsdangerous==0.24

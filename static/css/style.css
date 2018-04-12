@@ -217,14 +217,14 @@ body {
   width: 0;
 }
 
-#player {
+#player-content {
   margin: 0 auto;
   position: relative;
   width: 400px;
   height: 400px;
 }
 
-#player #main {
+#player-content #main {
   width: 400px;
   height: 400px;
   overflow: hidden;
@@ -245,11 +245,11 @@ body {
   transition: transform 0.4s ease-in-out;
   transition: transform 0.4s ease-in-out, -webkit-transform 0.4s ease-in-out;
 }
-#player.show #main {
+#player-content.show #main {
   -webkit-transform: translateX(-200px);
           transform: translateX(-200px);
 }
-#player.show ol {
+#player-content.show ol {
   -webkit-transform: translateX(200px);
           transform: translateX(200px);
   box-shadow: 1px 2px 10px rgba(0, 0, 0, 0.3);
@@ -258,7 +258,7 @@ body {
   transition: transform 0.4s ease-in-out, 0s box-shadow 0.05s;
   transition: transform 0.4s ease-in-out, 0s box-shadow 0.05s, -webkit-transform 0.4s ease-in-out;
 }
-#player .playback_controls {
+#player-content .playback_controls {
   opacity: 0;
   color: rgba(0, 0, 0, 0.55);
   font-size: 22px;
@@ -276,22 +276,22 @@ body {
   background: rgba(255, 255, 255, 0.95);
   z-index: 1;
 }
-#player .playback_controls .buttons {
+#player-content .playback_controls .buttons {
   text-align: center;
   padding-left: 15px;
 }
-#player .playback_controls .buttons i {
+#player-content .playback_controls .buttons i {
   display: inline-block;
   padding: 0 15px;
   width: 48px;
   text-align: center;
   cursor: pointer;
 }
-#player .playback_controls .buttons i#playpause.loading {
+#player-content .playback_controls .buttons i#playpause.loading {
   opacity: 0.4;
   position: relative;
 }
-#player .playback_controls .buttons i#playpause.loading:after {
+#player-content .playback_controls .buttons i#playpause.loading:after {
   position: absolute;
   content: '';
   display: block;
@@ -313,7 +313,7 @@ body {
   -webkit-animation-timing-function: linear;
           animation-timing-function: linear;
 }
-#player .playback_controls .menu {
+#player-content .playback_controls .menu {
   float: right;
   cursor: pointer;
   opacity: 0.2;
@@ -343,7 +343,7 @@ body {
   transition: opacity 0.2s;
 }
 
-#player .playback_controls .menu:hover {
+#player-content .playback_controls .menu:hover {
   opacity: 0.6;
 }
 

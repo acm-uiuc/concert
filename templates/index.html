@@ -65,43 +65,43 @@
 
     <div class="table">
       <div class="table-cell">
-        <div id="player" class="audio-player">
-        <div id="main">
-          <div>
-            <div class="playback_controls">
-              <h2 id="title">ACM Concert</h2>
-              <!--<h3 id="artist">Migos</h3>-->
-              <div class="time-holder">
-                <progress id="progress-slider" value="0" max="1"></progress>
-              </div>
-              <div class="bottom-controls">
-                <div class="volume">
-                  <div class="volume-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                      <path fill="#566574" fill-rule="evenodd" d="M14.667 0v2.747c3.853 1.146 6.666 4.72 6.666 8.946 0 4.227-2.813 7.787-6.666 8.934v2.76C20 22.173 24 17.4 24 11.693 24 5.987 20 1.213 14.667 0zM18 11.693c0-2.36-1.333-4.386-3.333-5.373v10.707c2-.947 3.333-2.987 3.333-5.334zm-18-4v8h5.333L12 22.36V1.027L5.333 7.693H0z" id="speaker"/>
-                    </svg>
-                  </div>
-                  <div class="volume-controls hidden">
-                    <div class="slider" data-direction="vertical">
-                      <div class="progress">
-                        <div class="pin" id="volume-pin" data-method="changeVolume"></div>
+        <div id="player-content" class="audio-player">
+          <div id="main">
+            <div>
+              <div class="playback_controls">
+                <h2 id="title">ACM Concert</h2>
+                <!--<h3 id="artist">Migos</h3>-->
+                <div class="time-holder">
+                  <progress id="progress-slider" value="0" max="1"></progress>
+                </div>
+                <div class="bottom-controls">
+                  <div class="volume">
+                    <div class="volume-btn">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path fill="#566574" fill-rule="evenodd" d="M14.667 0v2.747c3.853 1.146 6.666 4.72 6.666 8.946 0 4.227-2.813 7.787-6.666 8.934v2.76C20 22.173 24 17.4 24 11.693 24 5.987 20 1.213 14.667 0zM18 11.693c0-2.36-1.333-4.386-3.333-5.373v10.707c2-.947 3.333-2.987 3.333-5.334zm-18-4v8h5.333L12 22.36V1.027L5.333 7.693H0z" id="speaker"/>
+                      </svg>
+                    </div>
+                    <div class="volume-controls hidden">
+                      <div class="slider" data-direction="vertical">
+                        <div class="progress">
+                          <div class="pin" id="volume-pin" data-method="changeVolume"></div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <i class="fa fa-bars menu"></i>
-                <i class="fa fa-window-close clear-queue clear-queue-hidden"></i>
-                <div class="buttons">
-                  <i class="fa fa-backward" id="back"></i>
-                  <i class="fa fa-play loading" id="play-pause-button"></i>
-                  <i class="fa fa-forward" id="next"></i>
+                  <i class="fa fa-bars menu"></i>
+                  <i class="fa fa-window-close clear-queue clear-queue-hidden" id="clear"></i>
+                  <div class="buttons">
+                    <i class="fa fa-backward" id="back"></i>
+                    <i class="fa fa-play loading" id="play-pause-button"></i>
+                    <i class="fa fa-forward" id="next"></i>
+                  </div>
                 </div>
               </div>
+              <audio id="playbar" controls></audio>
             </div>
-            <audio id="playbar" controls></audio>
           </div>
-        </div>
-        <ol id="playlist"></ol>
+          <ol id="playlist"></ol>
       </div>
     </div>
 
@@ -113,7 +113,9 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js'></script>
     <script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js'></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+    <script src="static/js/helpers.js"></script>
     <script src="static/js/app.js"></script>
+    <script src="static/js/socket-handler.js"></script>
     <script src="static/js/volume-control.js"></script>
     <script src="static/js/quantize.js"></script>
     <script src="static/js/color-thief.js"></script>
