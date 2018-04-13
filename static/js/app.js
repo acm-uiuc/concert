@@ -47,12 +47,10 @@ $(document).keyup(function(e) {
             loginModal.css('display', "none");
         }
     }
+    if (e.keyCode == 32 && !searchCurrentlyActive) {
+        socket.emit('pause');
+    }
     userJustClicked = false;
-});
-
-$('.select2-results__option').mousedown(function(e) {
-    searchJustActive = false;
-    alert("a: " + searchJustActive);
 });
 
 /* Login Functions */
