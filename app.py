@@ -21,6 +21,7 @@ from utils.logutils import configure_app_logger
 LOGS_PATH = 'logs'
 THUMBNAIL_PATH = 'static/thumbnails'
 REDIS_URL = 'redis://localhost:6379/1'
+YT_BASE_URL = 'https://www.googleapis.com/youtube/v3/search'
 
 # Flask setup
 app = Flask(__name__)
@@ -109,21 +110,47 @@ def index():
 
 @app.route('/search', methods=['GET'])
 def search():
-    # Get Youtube Serach results
-    base_url = request.args.get('baseURL')
     q = request.args.get('q')
     part = request.args.get('part')
     max_results = request.args.get('maxResults')
+
+    # Get Youtube Serach results
     key = config['YT_API_KEY']
-    search_url  = base_url + "/?q=" + q + "&part=" + part + "&maxResults=" + max_results + "&key=" + key
+    search_url  = YT_BASE_URL + "/?q=" + q + "&part=" + part + "&maxResults=" + max_results + "&key=" + key
     resp = requests.get(search_url)
+    yt_tracks_temp = resp.json()["items"]
+    yt_tracks = []
+    for track in yt_tracks_temp:
+        try:
+            vid = track["id"]["videoId"]
+            yt_track = {
+                "id": vid,
+                "snippet": track["snippet"],
+                "trackType": "YouTube"
+            }
+            yt_tracks.append(yt_track)
+        except:
+            pass
 
     # Get SoundCloud results
-    #client = soundcloud.Client(client_id=config['SOUNDCLOUD_CLIENT_ID'])
-    #tracks = client.get('/tracks', q='https://soundcloud.com/chancetherapper/favorite-song-ft-childish')
-    #print(tracks)
+    sc_tracks = []
+    client = soundcloud.Client(client_id=config['SOUNDCLOUD_CLIENT_ID'])
+    tracks = client.get('/tracks.json', q=q, limit=15)
+    for track in tracks:
+        if track.artwork_url == None:
+            track.artwork_url = ""
+        sc_track = {
+            "id": track.id,
+            "snippet": {
+                "thumbnails": {"high": {"url": track.artwork_url}},
+                "title": track.title,
+                "url": track.permalink_url
+            },
+            "trackType": "SoundCloud"
+        }
+        sc_tracks.append(sc_track)
 
-    return resp.text
+    return json.dumps({"items": yt_tracks + sc_tracks})
 
 @app.route('/login', methods=['POST'])
 def login():
