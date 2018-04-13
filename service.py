@@ -43,6 +43,7 @@ class MusicService:
         return self._get_json_queue()
 
     def remove_song(self, song_id):
+        print(song_id)
         self.db.Queue.delete_one({"mid": song_id})
         return self._get_json_queue()
 

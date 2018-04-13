@@ -113,7 +113,7 @@ def _add_song_to_queue(sd, user_name, db):
 	logger.info("Finished Downloading Thumbnail")
 
 	# Tell client we've finished downloading
-	new_song = Song(sd["song_id"], sd["stream_url"], sd["song_title"], sd["song_duration"], thumbnail_path, user_name)
+	new_song = Song(str(sd["song_id"]), sd["stream_url"], sd["song_title"], sd["song_duration"], thumbnail_path, user_name)
 	db.Queue.insert_one(new_song.dictify())
 	socketio.emit('queue_change', json.dumps(_get_queue(db)), include_self=True)
 

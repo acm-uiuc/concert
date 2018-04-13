@@ -1,4 +1,5 @@
 var searchJustActive = false;
+var userJustClicked = false;
 
 $(document).ready(function() {	
 	$("#url-textbox").select2({
@@ -24,14 +25,18 @@ $(document).ready(function() {
 	    },
 	    cache: true
 	  },
-	  placeholder: 'Search for a Youtube Video',
+	  placeholder: 'Search for a Youtube or SoundCloud Video',
 	  escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
 	  minimumInputLength: 1,
 	  templateResult: formatVideo,
 	  templateSelection: formatRepoSelection,
 	}).on("select2:select", function() {
-		searchJustActive = true;
+		if (!userJustClicked) {
+			searchJustActive = true;
+		}
 		document.activeElement.blur();
+	}).on("select2:opening", function() {
+		$("#url-textbox").val(null).trigger('change');
 	});
 
 	if (!loggedin) {
@@ -54,7 +59,12 @@ function formatVideo (video) {
 	"<div class='select2-result-repository__title'>" + video.snippet.title + "</div>" +
 	"<div class='select2-result-repository__description'>" + video.trackType + "</div></div>";
 
-	return markup;
+	var testObj = $(markup);
+	testObj.on('mouseup', function(evt) {
+		userJustClicked = true;
+	});
+
+	return testObj;
 }
 
 function formatRepoSelection (video) {

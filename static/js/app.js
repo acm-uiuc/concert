@@ -29,13 +29,13 @@ $('.menu').click(function() {
   playerUI.clearBtn.toggleClass('clear-queue-hidden');
 });
 
-/* Login Functions */
+/* Document key detection */
 $(document).keyup(function(e) {
     if (e.keyCode == 13) {
         if (loginModal.css('display') == "block") {
             windowUI.loginBtn.click();
         } else {
-            if (!searchJustActive) {
+            if (!searchJustActive || userJustClicked) {
                 windowUI.importBtn.click();
             } else {
                 searchJustActive = false;
@@ -47,8 +47,15 @@ $(document).keyup(function(e) {
             loginModal.css('display', "none");
         }
     }
+    userJustClicked = false;
 });
 
+$('.select2-results__option').mousedown(function(e) {
+    searchJustActive = false;
+    alert("a: " + searchJustActive);
+});
+
+/* Login Functions */
 windowUI.loginBtn.click(function () {
     var username = $('#uname-input').val();
     var password = $('#password-input').val();
@@ -112,8 +119,6 @@ function reloadQueue(queueData){
         var firstSong = createQueueItem(audioState.song, audioState.endTime, null, true);
         var queued_songs = JSON.parse(queueData);
         var len = queued_songs.length;
-        console.log(queued_songs.length);
-        console.log(queued_songs);
         queue.empty();
         queue.append(firstSong);
         for(var i = 0; i < len; i++){
