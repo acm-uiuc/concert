@@ -103,6 +103,11 @@ def handle_download(url):
 def clear_queue():
     socketio.emit('cleared', ms.clear_queue(), include_self=True)
 
+@socketio.on('remove_song')
+@authenticated_only
+def clear_queue(song_id):
+    socketio.emit('removed', ms.remove_song(song_id), include_self=True)
+
 # Flask Routes
 @app.route('/')
 def index():

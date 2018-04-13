@@ -74,10 +74,16 @@ windowUI.loginBtn.click(function () {
 });
 
 /* Queue Functions */
-function createQueueItem(title, time, songPlaying) {
+function createQueueItem(title, time, mid, songPlaying) {
     var entry = document.createElement('li');
-    if(songPlaying){
+    if (songPlaying) {
         entry.className += "playing";
+    } else {
+        entry.className += "playlist-item";
+        entry.setAttribute("onclick", "playlistAction(this)");
+    }
+    if (mid) {
+        entry.dataset.songId = mid;
     }
 
     var content = document.createElement('a');
@@ -88,23 +94,43 @@ function createQueueItem(title, time, songPlaying) {
     timeInfo.className += "time";
     timeInfo.innerText = formatSeconds(time/1000);
 
+    var spanClear = document.createElement('span');
+    spanClear.style.display = "none";
+    spanClear.className += "time";
+    var itemClearBtn = document.createElement('i');
+    itemClearBtn.className += "fa fa-times item-clear";
+    spanClear.appendChild(itemClearBtn);
+
     entry.appendChild(content);
     entry.appendChild(timeInfo);
+    entry.appendChild(spanClear);
     return entry;
 }
 
 function reloadQueue(queueData){
     if (audioState.song != null) {
-        var firstSong = createQueueItem(audioState.song, audioState.endTime, true);
+        var firstSong = createQueueItem(audioState.song, audioState.endTime, null, true);
         var queued_songs = JSON.parse(queueData);
         var len = queued_songs.length;
+        console.log(queued_songs.length);
+        console.log(queued_songs);
         queue.empty();
         queue.append(firstSong);
         for(var i = 0; i < len; i++){
             var curSong = queued_songs[i];
-            var newQueuedSong = createQueueItem(curSong.title, curSong.duration, false);
+            var newQueuedSong = createQueueItem(curSong.title, curSong.duration, curSong.mid, false);
             queue.append(newQueuedSong);
         }
+    }
+}
+
+function playlistAction(obj) {
+    //var timeHolder = $($(obj).children()[1]);
+    //var clearHolder = $($(obj).children()[2]);
+    //timeHolder.toggle();
+    //clearHolder.toggle();
+    if (confirm("Clear From Queue?")) {
+        socket.emit('remove_song', obj.dataset.songId);
     }
 }
 

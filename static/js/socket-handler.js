@@ -54,6 +54,10 @@ $(document).ready(function () {
         reloadQueue(queueData);
     });
 
+    socket.on('removed', function(queueData) {
+        reloadQueue(queueData);
+    });
+
     socket.on('volume_changed', function(volumeResponse) {
         volumeState = JSON.parse(volumeResponse);
         player.volume = volumeState.volume / 100;
@@ -67,7 +71,7 @@ $(document).ready(function () {
     });
 
     socket.on('queue_change', function(queueData) {
-        reloadQueue(queueData);
+        reloadQueue(JSON.parse(queueData));
     });
 
     /* Play Controls */
@@ -81,6 +85,10 @@ $(document).ready(function () {
         } else {
             alert("Please login to skip this song");
         }
+    });
+
+    playerUI.clearBtn.click(function() {
+        socket.emit('clear');
     });
 
     windowUI.importBtn.click(function(e) {
@@ -98,9 +106,5 @@ $(document).ready(function () {
             }
             $("#url-textbox").val(null).trigger('change');
         }
-    });
-
-    playerUI.clearBtn.click(function() {
-        socket.emit('clear');
     });
 });

@@ -1,7 +1,8 @@
 from flask_login import UserMixin
 
 class Song:
-    def __init__(self, mrl, title, duration, thumbnail, played_by):
+    def __init__(self, mid, mrl, title, duration, thumbnail, played_by):
+        self.mid = mid
         self.mrl = mrl
         self.title = title
         self.duration = duration
@@ -10,6 +11,7 @@ class Song:
 
     def dictify(self):
         return {
+            'mid': self.mid,
             'mrl': self.mrl,
             'title': self.title,
             'duration': self.duration,

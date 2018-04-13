@@ -12,7 +12,7 @@ $(document).ready(function() {
 	      return {
 	        q: params.term, // search term
 	        part: 'snippet',
-	        maxResults: 10
+	        maxResults: 15
 	      };
 	    },
 	    processResults: function (data, params) {
@@ -46,7 +46,6 @@ function formatVideo (video) {
 	if (video.loading) {
 		return video.text;
 	}
-	console.log(video);
 
 	var markup = 
  	"<div class='select2-result-repository clearfix'>" +
