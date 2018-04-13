@@ -714,3 +714,7 @@ ol#playlist li:first-child {
     margin-right: 2px;
     display: none;
 }
+
+.select2-container--focus {
+  color: transparent;
+}

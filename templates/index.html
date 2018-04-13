@@ -65,8 +65,8 @@
           <!--<input type="text" id="url-textbox" placeholder="Hi, {{current_user.first_name}}. Please enter a Youtube or Soundcloud URL"/>-->
           <select id="url-textbox" class="js-example-responsive" multiple="multiple" style="width: 90%"></select>
         {% else %}
-          <!--<input type="text" id="url-textbox" placeholder="Please login to add to the queue."/>-->
-          <select id="url-textbox" class="js-example-responsive" multiple="multiple" style="width: 90%"></select>
+          <input type="text" id="url-textbox" placeholder="Please login to add to the queue."/>
+          <!--<select id="url-textbox" class="js-example-responsive" multiple="multiple" style="width: 90%"></select>-->
         {% endif %}
         <button type="submit" id="import-btn">Import</button>
       </div>        
@@ -113,10 +113,6 @@
           <ol id="playlist"></ol>
       </div>
     </div>
-
-    <script type="text/javascript">
-      var loggedin = "{{current_user.first_name}}" != "";
-    </script>
     <script src="static/js/search.js"></script>
     <script src="static/js/helpers.js"></script>
     <script src="static/js/app.js"></script>
@@ -125,5 +121,8 @@
     <script src="static/js/quantize.js"></script>
     <script src="static/js/color-thief.js"></script>
     <script src="static/js/hsv.js"></script>
+    <script type="text/javascript">
+      var loggedin = "{{current_user.first_name}}" != "";
+    </script>
   </body>
 </html>

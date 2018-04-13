@@ -7,6 +7,7 @@ import json
 import flask_login
 import validators
 import logging
+import soundcloud
 from flask import Flask, Response, request, url_for, render_template, redirect, url_for, current_app, session
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from flask_socketio import SocketIO, send, emit, disconnect
@@ -106,15 +107,22 @@ def clear_queue():
 def index():
     return render_template("index.html")
 
-@app.route('/ytsearch', methods=['GET'])
-def ytsearch():
+@app.route('/search', methods=['GET'])
+def search():
+    # Get Youtube Serach results
     base_url = request.args.get('baseURL')
     q = request.args.get('q')
     part = request.args.get('part')
+    max_results = request.args.get('maxResults')
     key = config['YT_API_KEY']
-    search_url  = base_url + "/?q=" + q + "&part=" + part + "&key=" + key
-   
+    search_url  = base_url + "/?q=" + q + "&part=" + part + "&maxResults=" + max_results + "&key=" + key
     resp = requests.get(search_url)
+
+    # Get SoundCloud results
+    #client = soundcloud.Client(client_id=config['SOUNDCLOUD_CLIENT_ID'])
+    #tracks = client.get('/tracks', q='https://soundcloud.com/chancetherapper/favorite-song-ft-childish')
+    #print(tracks)
+
     return resp.text
 
 @app.route('/login', methods=['POST'])

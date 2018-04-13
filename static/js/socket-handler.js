@@ -87,7 +87,6 @@ $(document).ready(function () {
         var inputVal = $('.select2-selection__choice').text();
         if (inputVal.trim() != ""){
             var currentUrl = inputVal.replace(/[^\x00-\x7F]/g, "");
-            console.log(currentUrl);
             if (loggedin) {
                 if (!isURL(currentUrl) || (!currentUrl.includes("youtube.com") && !currentUrl.includes("soundcloud.com"))) {
                     alert("Please enter a valid url");
@@ -97,7 +96,7 @@ $(document).ready(function () {
             } else {
                 alert("Please login to add to queue");
             }
-            windowUI.searchBox.val("");
+            $("#url-textbox").val(null).trigger('change');
         }
     });
 

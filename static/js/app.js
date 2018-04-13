@@ -35,7 +35,11 @@ $(document).keyup(function(e) {
         if (loginModal.css('display') == "block") {
             windowUI.loginBtn.click();
         } else {
-            windowUI.importBtn.click();
+            if (!searchJustActive) {
+                windowUI.importBtn.click();
+            } else {
+                searchJustActive = false;
+            }
         }
     }
     if (e.keyCode == 27) {
