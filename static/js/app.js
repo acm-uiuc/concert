@@ -2,7 +2,8 @@ audioState = {
     song: null,
     time: 0,
     endTime: 0,
-    progressInterval: null
+    progressInterval: null,
+    playedby: null
 };
 windowUI = {
     body: $('body'),
@@ -79,7 +80,9 @@ windowUI.loginBtn.click(function () {
 });
 
 /* Queue Functions */
-function createQueueItem(title, time, mid, songPlaying) {
+function createQueueItem(title, time, mid, playedby, songPlaying) {
+    time = formatSeconds(time/1000);
+
     var entry = document.createElement('li');
     if (songPlaying) {
         entry.className += "playing";
@@ -87,9 +90,12 @@ function createQueueItem(title, time, mid, songPlaying) {
         entry.className += "playlist-item";
         entry.setAttribute("onclick", "playlistAction(this)");
     }
-    if (mid) {
-        entry.dataset.songId = mid;
-    }
+    entry.setAttribute("onmouseover", "viewWhoPlayed(this)");
+    entry.setAttribute("onmouseout", "hideWhoPlayed(this)");
+    entry.dataset.title = title;
+    entry.dataset.songId = mid;
+    entry.dataset.time = time;
+    entry.dataset.playedby = playedby;
 
     var content = document.createElement('a');
     content.className += "track";
@@ -97,34 +103,44 @@ function createQueueItem(title, time, mid, songPlaying) {
 
     var timeInfo = document.createElement('span');
     timeInfo.className += "time";
-    timeInfo.innerText = formatSeconds(time/1000);
+    timeInfo.innerText = time;
 
-    var spanClear = document.createElement('span');
-    spanClear.style.display = "none";
-    spanClear.className += "time";
+    var playlistClearSpan = document.createElement('span');
+    playlistClearSpan.style.display = "none";
+    playlistClearSpan.className += "time";
     var itemClearBtn = document.createElement('i');
     itemClearBtn.className += "fa fa-times item-clear";
-    spanClear.appendChild(itemClearBtn);
+    playlistClearSpan.appendChild(itemClearBtn);
 
     entry.appendChild(content);
     entry.appendChild(timeInfo);
-    entry.appendChild(spanClear);
+    entry.appendChild(playlistClearSpan);
     return entry;
 }
 
 function reloadQueue(queueData){
     if (audioState.song != null) {
-        var firstSong = createQueueItem(audioState.song, audioState.endTime, null, true);
+        var firstSong = createQueueItem(audioState.song, audioState.endTime, null, audioState.playedby, true);
         var queued_songs = JSON.parse(queueData);
         var len = queued_songs.length;
         queue.empty();
         queue.append(firstSong);
         for(var i = 0; i < len; i++){
             var curSong = queued_songs[i];
-            var newQueuedSong = createQueueItem(curSong.title, curSong.duration, curSong.mid, false);
+            var newQueuedSong = createQueueItem(curSong.title, curSong.duration, curSong.mid, curSong.playedby, false);
             queue.append(newQueuedSong);
         }
     }
+}
+
+function viewWhoPlayed(obj) {
+    var titleHolder = $($(obj).children()[0]);
+    titleHolder.text(obj.dataset.playedby);
+}
+
+function hideWhoPlayed(obj) {
+    var titleHolder = $($(obj).children()[0]);
+    titleHolder.text(obj.dataset.title);
 }
 
 function playlistAction(obj) {
@@ -200,6 +216,7 @@ function updateClient(state) {
         audioState.song = jsonState.current_track
         audioState.time = jsonState.current_time;
         audioState.endTime = jsonState.duration;
+        audioState.playedby = jsonState.playedby
         if(jsonState.audio_status != "State.Paused"){
             audioState.progressInterval = setInterval(updateProgress, 1000);
         }
@@ -220,6 +237,7 @@ function updateClient(state) {
         audioState.song = null;
         audioState.time = 0;
         audioState.endTime = 0;
+        audioState.playedby = null;
         playerUI.thumbnail = null;
         playerUI.playerMain.css("background-image", "url(static/images/acm-logo.png)"); 
         playerUI.playerMain.css("background-size", "100%"); 
