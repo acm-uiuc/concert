@@ -75,7 +75,7 @@ def handle_pause():
 @socketio.on('volume')
 @authenticated_only
 def handle_volume(newVolume):
-    socketio.emit('volume_changed', ms.set_volume(newVolume), include_self=True)
+    socketio.emit('volume_changed', ms.set_volume(newVolume), include_self=False)
 
 @socketio.on('skip')
 @authenticated_only
