@@ -1,135 +1,145 @@
 <!DOCTYPE html>
-<html >
-  <head>
-    <meta charset="UTF-8">
-    <title>ACM Concert</title>
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto+Mono" rel="stylesheet"> 
-    <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
-    <link rel="stylesheet" href="static/css/style.css">
-  </head>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>ACM Concert</title>
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js'></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js'></script>
+        <script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js'></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+        <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+        <link rel="stylesheet" href="static/css/style.css">
+        <link rel="stylesheet" href="static/css/search.css">
+    </head>
 
-  <body>
-    <div id="acm-title">
-      <div id="title-content">
-        <img id="acm-logo" src="static/images/acm-logo.png" class="logo">
-        <div class="title-text light">
-          <h3 id="title-header">ACM@UIUC</h3>
-          <h5 id="title-sub">Concert</h5>          
-        </div>
-      </div>
-    </div>
-
-    {% if current_user.is_authenticated %}
-        <div class="top-bar nav">
-          <form action="/logout" method="post">
-            <button id="logout-btn" name="logout" class="button light">Logout</button>
-          </form>
-        </div>
-    {% else %}
-      <div class="top-bar nav">
-        <button id="login-btn" class="button light"
-        onclick="document.getElementById('login-modal').style.display='block'">Login</button>
-      </div>
-
-      <!-- Login Modal -->
-      <div id="login-modal" class="modal">
-        <div class="modal-content animate">
-          <div class="container">
-            <div class="login-input">
-              <label for="uname">NetID
-                <div class="field">
-                  <input class="login-text" type="text" id="uname-input" placeholder="" name="username" readonly onfocus="this.removeAttribute('readonly');" required>
+    <body>
+        <div id="acm-title">
+            <div id="title-content">
+                <img id="acm-logo" src="static/images/acm-logo.png" class="logo">
+                <div class="title-text light">
+                <h3 id="title-header">ACM@UIUC</h3>
+                <h5 id="title-sub">Concert</h5>          
                 </div>
-              </label>
             </div>
-
-            <div class="login-input">
-              <label for="psw">ActiveDirectory Password
-                <div class="field">
-                  <input class="login-text" type="password" id="password-input" placeholder="" name="password" readonly onfocus="this.removeAttribute('readonly');" required>
-                </div>    
-              </label>
-            </div>
-            <div class="spinner">
-              <div class="rect1"></div>
-              <div class="rect2"></div>
-              <div class="rect3"></div>
-              <div class="rect4"></div>
-              </div>
-            <button id="submit-btn">Login</button>
-          </div>
         </div>
-      </div>
-    {% endif %}
 
-    <div class="search-container">
-      <div id="search-bar">
         {% if current_user.is_authenticated %}
-          <input type="text" id="url-textbox" class="light" placeholder="Hi, {{current_user.first_name}}. Please enter a Youtube or Soundcloud URL"/>
-        {% else %}
-          <input type="text" id="url-textbox" class="light" placeholder="Please login to add to the queue."/>
-        {% endif %}
-        <button type="submit" id="import-btn">Import</button>
-      </div>        
-    </div>
-
-    <div class="table">
-      <div class="table-cell">
-        <div id="player" class="audio-player">
-        <div id="main">
-          <div>
-            <div class="playback_controls">
-              <h2 id="title">ACM Concert</h2>
-              <!--<h3 id="artist">Migos</h3>-->
-              <div class="time-holder">
-                <progress id="progress-slider" value="0" max="1"></progress>
-              </div>
-              <div class="bottom-controls">
-                <div class="volume">
-                  <div class="volume-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                      <path fill="#566574" fill-rule="evenodd" d="M14.667 0v2.747c3.853 1.146 6.666 4.72 6.666 8.946 0 4.227-2.813 7.787-6.666 8.934v2.76C20 22.173 24 17.4 24 11.693 24 5.987 20 1.213 14.667 0zM18 11.693c0-2.36-1.333-4.386-3.333-5.373v10.707c2-.947 3.333-2.987 3.333-5.334zm-18-4v8h5.333L12 22.36V1.027L5.333 7.693H0z" id="speaker"/>
-                    </svg>
-                  </div>
-                  <div class="volume-controls hidden">
-                    <div class="slider" data-direction="vertical">
-                      <div class="progress">
-                        <div class="pin" id="volume-pin" data-method="changeVolume"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <i class="fa fa-bars menu"></i>
-                <i class="fa fa-window-close clear-queue clear-queue-hidden"></i>
-                <div class="buttons">
-                  <i class="fa fa-backward" id="back"></i>
-                  <i class="fa fa-play loading" id="play-pause-button"></i>
-                  <i class="fa fa-forward" id="next"></i>
-                </div>
-              </div>
-            </div>
-            <audio id="playbar" controls></audio>
-          </div>
+        <div class="top-bar nav">
+            <form action="/logout" method="post">
+                <button id="logout-btn" name="logout" class="button light">Logout</button>
+            </form>
         </div>
-        <ol id="playlist"></ol>
-      </div>
-    </div>
+        {% else %}
+        <div class="top-bar nav">
+            <button id="login-btn" class="button light"
+            onclick="document.getElementById('login-modal').style.display='block'">Login</button>
+        </div>
 
-    <script type="text/javascript">
-      var loggedin = "{{current_user.first_name}}" != "";
-    </script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js'></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js'></script>
-    <script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js'></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
-    <script src="static/js/app.js"></script>
-    <script src="static/js/volume-control.js"></script>
-    <script src="static/js/quantize.js"></script>
-    <script src="static/js/color-thief.js"></script>
-    <script src="static/js/hsv.js"></script>
-  </body>
+        <!-- Login Modal -->
+        <div id="login-modal" class="modal">
+            <div class="modal-content animate">
+                <div class="container">
+                    <div class="login-input">
+                        <label for="uname">NetID
+                        <div class="field">
+                            <input class="login-text" type="text" id="uname-input" placeholder="" name="username" readonly onfocus="this.removeAttribute('readonly');" required>
+                        </div>
+                        </label>
+                    </div>
+
+                    <div class="login-input">
+                        <label for="psw">ActiveDirectory Password
+                        <div class="field">
+                            <input class="login-text" type="password" id="password-input" placeholder="" name="password" readonly onfocus="this.removeAttribute('readonly');" required>
+                        </div>    
+                        </label>
+                    </div>
+                    <div class="spinner">
+                        <div class="rect1"></div>
+                        <div class="rect2"></div>
+                        <div class="rect3"></div>
+                        <div class="rect4"></div>
+                    </div>
+                    <button id="submit-btn">Login</button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="search-container">
+            <div id="search-bar">
+                {% if current_user.is_authenticated %}
+                <select id="url-textbox" class="js-example-responsive light" multiple="multiple" style="width: 90%"></select>
+                {% else %}
+                <select id="url-textbox" class="js-example-responsive light" multiple="multiple" style="width: 90%"></select>
+                {% endif %}
+                <!---{% if current_user.is_authenticated %}
+                <input type="text" id="url-textbox" class="light" placeholder="Hi, {{current_user.first_name}}. Please enter a Youtube or Soundcloud URL"/>
+                {% else %}
+                <input type="text" id="url-textbox" class="light" placeholder="Please login to add to the queue."/>
+                {% endif %}-->
+                <button type="submit" class"light" id="import-btn">Import</button>
+            </div>        
+        </div>
+
+        <div class="table">
+            <div class="table-cell">
+                <div id="player-content" class="audio-player">
+                    <div id="main">
+                        <div>
+                            <div class="playback_controls">
+                                <h2 id="title">ACM Concert</h2>
+                                <!--<h3 id="artist">Migos</h3>-->
+                                <div class="time-holder">
+                                    <progress id="progress-slider" value="0" max="1"></progress>
+                                </div>
+                                <div class="bottom-controls">
+                                    <div class="volume">
+                                        <div class="volume-btn">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                                <path fill="#566574" fill-rule="evenodd" d="M14.667 0v2.747c3.853 1.146 6.666 4.72 6.666 8.946 0 4.227-2.813 7.787-6.666 8.934v2.76C20 22.173 24 17.4 24 11.693 24 5.987 20 1.213 14.667 0zM18 11.693c0-2.36-1.333-4.386-3.333-5.373v10.707c2-.947 3.333-2.987 3.333-5.334zm-18-4v8h5.333L12 22.36V1.027L5.333 7.693H0z" id="speaker"/>
+                                            </svg>
+                                        </div>
+                                        <div class="volume-controls hidden">
+                                            <div class="slider" data-direction="vertical">
+                                                <div class="progress">
+                                                    <div class="pin" id="volume-pin" data-method="changeVolume"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <i class="fa fa-bars menu"></i>
+                                    <i class="fa fa-window-close clear-queue clear-queue-hidden" id="clear"></i>
+                                    <div class="buttons">
+                                        <i class="fa fa-backward" id="back"></i>
+                                        <i class="fa fa-play loading" id="play-pause-button"></i>
+                                        <i class="fa fa-forward" id="next"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <audio id="playbar" controls></audio>
+                        </div>
+                    </div>
+                    <ol id="playlist"></ol>
+                </div>
+            </div>
+        </div>
+        <script src="static/js/search.js"></script>
+        <script src="static/js/helpers.js"></script>
+        <script src="static/js/app.js"></script>
+        <script src="static/js/socket-actions.js"></script>
+        <script src="static/js/volume-control.js"></script>
+        <script src="static/js/quantize.js"></script>
+        <script src="static/js/color-thief.js"></script>
+        <script src="static/js/hsv.js"></script>
+        <script type="text/javascript">
+            var loggedin = "{{current_user.first_name}}" != "";
+        </script>
+    </body>
 </html>

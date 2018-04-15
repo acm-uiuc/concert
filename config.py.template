@@ -6,7 +6,23 @@ NEVER COMMIT YOUR API KEYS IN GIT (config.py will be ignored by git)
 '''
 
 config = {
-    "GROOT_TOKEN" : "MY CONSUMER KEY",
-    "DEBUG" : False,
-    "SOUNDCLOUD" : "SOUNDCLOUD KEY",
+    "debug" : False,
+    "service": {
+        "player_update_interval": 0.8,
+        "heartbeat_delay": 30,
+        "player": {
+            "network_timeout": 60
+        },
+        "providers": {
+            "soundcloud": {
+                "api_key" : "",
+            },
+            "youtube": {
+                "api_key" : ""
+            } 
+        }
+    },
+    "http" : {
+        "groot_token" : "",
+    }
 }
