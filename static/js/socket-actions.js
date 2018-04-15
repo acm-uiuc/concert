@@ -104,7 +104,7 @@ $(document).ready(function () {
             } else {
                 alert("Please login to add to queue");
             }
-            $("#url-textbox").val(null).trigger('change');
+            windowUI.searchBox.val(null).trigger('change');
         }
     });
 });

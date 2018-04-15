@@ -3,7 +3,7 @@ var userJustClicked = false;
 var searchCurrentlyActive = false;
 
 $(document).ready(function() {	
-	$("#url-textbox").select2({
+	windowUI.searchBox.select2({
 	  allowClear: false,
 	  multiple: true,
       maximumSelectionSize: 1,
@@ -37,15 +37,15 @@ $(document).ready(function() {
 		}
 		document.activeElement.blur();
 	}).on("select2:opening", function() {
-		$("#url-textbox").val(null).trigger('change');
+		windowUI.searchBox.val(null).trigger('change');
 		searchCurrentlyActive = true;
 	}).on("select2:close", function() {
 		searchCurrentlyActive = false;
 	});
 
 	if (!loggedin) {
-		$("#url-textbox").select2('enable', false);
-		$("#url-textbox").select2({
+		windowUI.searchBox.select2('enable', false);
+		windowUI.searchBox.select2({
 			placeholder: 'Please login to add to the queue'
 		});
 	}
