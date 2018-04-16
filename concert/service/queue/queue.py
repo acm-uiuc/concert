@@ -7,15 +7,21 @@ class ConcertQueue():
     def add_to_queue(self, music):
         if type(music) is list:
             for song in music:
+                print("------QUEUEING------")
+                print("Title: %s" % song['title'])
+                print("------QUEUEING------")
                 self.queue.append(song)
         elif type(music) is dict:
             self.queue.append(music)
+            print("------QUEUEING------")
+            print("Title: %s" % music['title'])
+            print("------QUEUEING------")
 
     def remove_song_from_queue(self, track_id):
         pass
 
     def remove_last_song_from_queue(self):
-        self.queue.pop()
+        self.queue.pop(0)
 
     def get_queue(self):
         return self.queue

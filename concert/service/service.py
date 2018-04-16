@@ -16,7 +16,7 @@ from concert.service.searchers import YoutubeSearcher, SoundcloudSearcher
 
 class ConcertService:
     state = {
-        "has_stopped": False,
+        "playing": False,
         "should_skip": False
     }
 
@@ -87,22 +87,14 @@ class ConcertService:
         if queue_size > 0:
             next_song = self.queue.get_next_song()
             self.player.current_track = next_song
-            print(next_song)
-            
             self.player.play(next_song)
-
             notifiers.notify_new_song_playing(self.service_state())
-
-            self.state["has_stopped"] = False
+            self.state["playing"] = True
         else:
-            # We need to emit a signal to stop clients, but this should only occur once while
-            # there is no media in the player
-            if (not self.state["has_stopped"]):
+            if self.state["playing"]:
                 self.player.stop()
-
                 notifiers.notify_no_song_playing(self.service_state())
-
-                self.state["has_stopped"] = True
+                self.state["playing"] = False
 
     def skip(self):
         self.state["should_skip"] = True

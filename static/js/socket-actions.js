@@ -62,11 +62,6 @@ $(document).ready(function () {
         updateClient(serverState);
     });
 
-    socket.on('s_removed', function(queueData) {
-        serverState = JSON.parse(state);
-        reloadQueue(serverState.queue);
-    });
-
     socket.on('s_volume_changed', function(volumeResponse) {
         volumeState = JSON.parse(volumeResponse);
         player.volume = volumeState.volume / 100;
@@ -79,8 +74,10 @@ $(document).ready(function () {
         playerUI.progressBar.val(curTime/totalTime);
     });
 
-    socket.on('s_queue_change', function(queueData) {
-        reloadQueue(JSON.parse(queueData));
+    //Add, Remove, Clear, Response
+    socket.on('s_queue_changed', function(serverState) {
+        queueData = JSON.parse(serverState).queue;
+        reloadQueue(queueData);
     });
 
     /* Play Controls */

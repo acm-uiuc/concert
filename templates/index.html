@@ -75,9 +75,9 @@
         <div class="search-container">
             <div id="search-bar">
                 {% if current_user.is_authenticated %}
-                <select id="url-textbox" class="js-example-responsive light" multiple="multiple" style="width: 90%"></select>
+                <select id="url-textbox" class="js-example-responsive light" multiple="multiple" ></select>
                 {% else %}
-                <select id="url-textbox" class="js-example-responsive light" multiple="multiple" style="width: 90%"></select>
+                <select id="url-textbox" class="js-example-responsive light" multiple="multiple"></select>
                 {% endif %}
                 <!---{% if current_user.is_authenticated %}
                 <input type="text" id="url-textbox" class="light" placeholder="Hi, {{current_user.first_name}}. Please enter a Youtube or Soundcloud URL"/>
