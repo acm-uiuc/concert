@@ -28,7 +28,7 @@ def parse_search_query(q, part, max_results):
             if sc_object.fields()["kind"] == "playlist":
                 playlist = sc_client.get('/playlists/' + str(sc_object.id))
                 first_song = playlist.tracks[0]
-                sc_track = parse_sc_track(first_song, title=q, url=q)
+                sc_track = parse_sc_track(first_song, title=playlist.title, url=q)
                 all_tracks.append(sc_track)
             else:
                 track = sc_client.get('/tracks/' + str(sc_object.id)).fields()
@@ -92,7 +92,7 @@ def parse_yt_playlist(yt_playlist, q):
     playlist_object = {
         "id": yt_playlist["playlist_id"],
         "thumbnail": thumbnail_url,
-        "title": q,
+        "title": yt_playlist["title"],
         "url": q,
         "trackType": "YouTubePlaylist"
     }
