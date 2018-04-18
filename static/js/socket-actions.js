@@ -26,6 +26,8 @@ $(document).ready(function () {
         playerUI.playBtn.removeClass('play');
         clearInterval(audioState.progressInterval);
         audioState.progressInterval = setInterval(updateProgress, 1000);
+        var jsonState = JSON.parse(state);
+        notifyPlayed(jsonState.thumbnail, jsonState.current_track);
     });
 
     socket.on('heartbeat', function(state) {

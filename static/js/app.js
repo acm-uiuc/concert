@@ -24,7 +24,29 @@ playerUI = {
 var loginModal = $('#login-modal');
 var queue = $('#playlist');
 
-// Setup queue menu button
+/* Setup Desktop Notifcations */
+document.addEventListener('DOMContentLoaded', function () {
+  if (!Notification) {
+    alert('Desktop notifications not available in your browser. Try Chromium.'); 
+    return;
+  }
+  if (Notification.permission !== "granted") {
+    Notification.requestPermission();
+  }
+});
+
+function notifyPlayed(thumbnail, songTitle) {
+    if (Notification.permission !== "granted")
+        Notification.requestPermission();
+    else {
+        var notification = new Notification('Now Playing', {
+          icon: thumbnail,
+          body: songTitle,
+        });
+    }
+}
+
+/* Setup queue menu button */
 $('.menu').click(function() {
   playerUI.playerContent.toggleClass('show');
   playerUI.clearBtn.toggleClass('clear-queue-hidden');
