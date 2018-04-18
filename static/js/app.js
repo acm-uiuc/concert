@@ -88,7 +88,7 @@ function createQueueItem(title, time, mid, playedby, songPlaying) {
         entry.className += "playing";
     } else {
         entry.className += "playlist-item";
-        entry.setAttribute("onclick", "playlistAction(this)");
+        entry.setAttribute("onclick", "clearSingleSong(this)");
     }
     entry.setAttribute("onmouseover", "viewWhoPlayed(this)");
     entry.setAttribute("onmouseout", "hideWhoPlayed(this)");
@@ -143,11 +143,7 @@ function hideWhoPlayed(obj) {
     titleHolder.text(obj.dataset.title);
 }
 
-function playlistAction(obj) {
-    //var timeHolder = $($(obj).children()[1]);
-    //var clearHolder = $($(obj).children()[2]);
-    //timeHolder.toggle();
-    //clearHolder.toggle();
+function clearSingleSong(obj) {
     if (confirm("Clear From Queue?")) {
         socket.emit('remove_song', obj.dataset.songId);
     }

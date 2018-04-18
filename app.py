@@ -7,6 +7,7 @@ import json
 import flask_login
 import validators
 import logging
+import pafy
 import soundcloud
 from flask import Flask, Response, request, url_for, render_template, redirect, url_for, current_app, session
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
@@ -17,11 +18,10 @@ from service import MusicService
 from models import User
 from config import config
 from utils.logutils import configure_app_logger
+from utils.songutils import parse_search_query
 
-LOGS_PATH = 'logs'
 THUMBNAIL_PATH = 'static/thumbnails'
 REDIS_URL = 'redis://localhost:6379/1'
-YT_BASE_URL = 'https://www.googleapis.com/youtube/v3/search'
 
 # Flask setup
 app = Flask(__name__)
@@ -118,44 +118,7 @@ def search():
     q = request.args.get('q')
     part = request.args.get('part')
     max_results = request.args.get('maxResults')
-
-    # Get Youtube Serach results
-    key = config['YT_API_KEY']
-    search_url  = YT_BASE_URL + "/?q=" + q + "&part=" + part + "&maxResults=" + max_results + "&key=" + key
-    resp = requests.get(search_url)
-    yt_tracks_temp = resp.json()["items"]
-    yt_tracks = []
-    for track in yt_tracks_temp:
-        try:
-            vid = track["id"]["videoId"]
-            yt_track = {
-                "id": vid,
-                "snippet": track["snippet"],
-                "trackType": "YouTube"
-            }
-            yt_tracks.append(yt_track)
-        except:
-            pass
-
-    # Get SoundCloud results
-    sc_tracks = []
-    client = soundcloud.Client(client_id=config['SOUNDCLOUD_CLIENT_ID'])
-    tracks = client.get('/tracks.json', q=q, limit=15)
-    for track in tracks:
-        if track.artwork_url == None:
-            track.artwork_url = ""
-        sc_track = {
-            "id": track.id,
-            "snippet": {
-                "thumbnails": {"high": {"url": track.artwork_url}},
-                "title": track.title,
-                "url": track.permalink_url
-            },
-            "trackType": "SoundCloud"
-        }
-        sc_tracks.append(sc_track)
-
-    return json.dumps({"items": yt_tracks + sc_tracks})
+    return parse_search_query(q, part, max_results)
 
 @app.route('/login', methods=['POST'])
 def login():

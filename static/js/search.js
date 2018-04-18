@@ -18,8 +18,6 @@ $(document).ready(function() {
 	      };
 	    },
 	    processResults: function (data, params) {
-	      // Filter by results with video ids
-	      //console.log(data.items);
 	      return {
 	        results: data.items
 	      };
@@ -58,9 +56,9 @@ function formatVideo (video) {
 
 	var markup = 
  	"<div class='select2-result-repository clearfix'>" +
-	"<div class='select2-result-repository__avatar'><img src='" + video.snippet.thumbnails.high.url + "' /></div>" +
+	"<div class='select2-result-repository__avatar'><img src='" + video.thumbnail + "' /></div>" +
 	"<div class='select2-result-repository__meta'>" + 
-	"<div class='select2-result-repository__title'>" + video.snippet.title + "</div>" +
+	"<div class='select2-result-repository__title'>" + video.title + "</div>" +
 	"<div class='select2-result-repository__description'>" + video.trackType + "</div></div>";
 
 	var resultItem = $(markup);
@@ -72,8 +70,5 @@ function formatVideo (video) {
 }
 
 function formatVideoSelection (video) {
-	if (video.trackType == "SoundCloud") {
-		return video.snippet.url;
-	}
-	return "https://www.youtube.com/watch?v=" + video.id;
+	return video.url;
 }

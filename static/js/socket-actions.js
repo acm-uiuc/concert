@@ -88,7 +88,10 @@ $(document).ready(function () {
     });
 
     playerUI.clearBtn.click(function() {
-        socket.emit('clear');
+        if (queue.length == 0) return;
+        if (confirm("Clear Queue?")) {
+            socket.emit('clear');
+        }
     });
 
     windowUI.importBtn.click(function(e) {
