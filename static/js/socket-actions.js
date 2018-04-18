@@ -37,6 +37,12 @@ $(document).ready(function () {
         console.log("hrbt recieved");
     });
 
+    socket.on('s_artwork_available', function(state) {
+        serverState = JSON.parse(state);
+        updateClient(serverState);
+        console.log("new artwork recieved");
+    });
+
     socket.on('s_paused', function(state) {
         var playState = JSON.parse(state).player;
         console.log(playState);

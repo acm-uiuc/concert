@@ -63,8 +63,9 @@ def notify_volume_change(state):
 def notify_position_change(state):
     _notify_on_channel("s_position_changed", state)
 
+def notify_artwork_available(state):
+    _notify_on_channel("s_artwork_available", state)
 
 def _notify_on_channel(channel, msg_dict):
     ConcertEventsSockets.emit(channel, json.dumps(msg_dict), include_self=True)
-
 

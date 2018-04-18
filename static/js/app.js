@@ -10,7 +10,16 @@ windowUI = {
     loginBtn: $('#submit-btn'),
     importBtn: $('#import-btn'),
     searchBox: $('#url-textbox'),
-    spinner: $('.spinner')
+    spinner: $('.spinner'),
+    acm_logo: $('#acm-logo'),
+    title_text: $('.title-text'),
+    button: $('.button'),
+    import_btn: $('#import-btn'),
+    search_bar: $(".select2-container"),
+    search_text: $(".select2-search__field"),
+    bg_color: null,
+    fg_color: null,
+    other_styles: null
 };
 playerUI = {
     thumbnail: null,
@@ -29,6 +38,12 @@ var queue = $('#playlist');
 $('.menu').click(function() {
   playerUI.playerContent.toggleClass('show');
   playerUI.clearBtn.toggleClass('clear-queue-hidden');
+});
+
+$(document).ready(function() {
+    var sheet = document.createElement('style');
+    document.head.appendChild(sheet);
+    windowUI.other_styles = sheet.sheet;
 });
 
 /* Document key detection */
@@ -155,47 +170,43 @@ function playlistAction(obj) {
     }
 }
 
-/* UI Functions */
-function toggleDarkMode(on) {
-    if (on) {
-        $('.title-text').removeClass('light');
-        $('.title-text').addClass('dark');
-        $('.button').removeClass('light');
-        $('.button').addClass('dark'); 
-        $('#url-textbox').removeClass('light');
-        $('#url-textbox').addClass('dark'); 
-        $('#import-btn').removeClass('light');
-        $('#import-btn').addClass('dark');     
-        $("#acm-logo").attr("src", "static/images/acm-logo-inverted.png"); 
-    } else {
-        $('.title-text').addClass('light');
-        $('.title-text').removeClass('dark');
-        $('.button').addClass('light');
-        $('.button').removeClass('dark');
-        $('#url-textbox').removeClass('dark');
-        $('#url-textbox').addClass('light'); 
-        $('#import-btn').removeClass('dark');
-        $('#import-btn').addClass('light');  
-        $("#acm-logo").attr("src", "static/images/acm-logo.png"); 
+function get_handlers() {
+    windowUI.search_bar = $(".select2-container");
+    windowUI.search_text = $(".select2-search__field");
+    windowUI.search_selection = $(".select2-selection__choice");
+}
+
+function color_style(button_color, bg_color) {
+    windowUI.body.css('background-color', bg_color);
+    windowUI.acm_logo.css("fill", button_color);
+    windowUI.title_text.css('color', button_color);
+    windowUI.button.css('background-color', button_color);
+    windowUI.button.css('color', bg_color);
+    windowUI.import_btn.css("background-color", button_color);
+    windowUI.import_btn.css("color", bg_color);
+    windowUI.search_bar.attr('style',`border-bottom-color:${button_color}; color:${button_color};`);
+    windowUI.search_text.attr('style',`width:58vw; color:${button_color};`);
+    if (windowUI.other_styles.cssRules.length > 0) {
+        windowUI.other_styles.deleteRule(1);
+        windowUI.other_styles.deleteRule(0);
     }
+    windowUI.other_styles.insertRule(`.select2-search__field::placeholder { color: ${button_color}; }`, 0);
+    windowUI.other_styles.insertRule(`.select2-selection__choice{ color: ${button_color} !important; }`, 1);
+    windowUI.search_text.attr('style',`width:58vw; color:${button_color};`);
 }
 
 function setDynamicBackground() {
     var image = new Image;
     image.src = playerUI.thumbnail;
+    get_handlers();
     image.onload = function() {
         var colorThief = new ColorThief();
         var paletteArray = colorThief.getPalette(image, 2);
         var dominantColor = paletteArray[0];
-        var rbgVal = `rgb(${dominantColor[0]}, ${dominantColor[1]}, ${dominantColor[2]})`;
-        console.log(rbgVal);
-        windowUI.body.css('background-color', rbgVal);
-        var brightness = RGBtoHSV(dominantColor[0], dominantColor[1], dominantColor[2])['v'];
-        if (brightness < 0.6) {
-            toggleDarkMode(true);
-        } else {
-            toggleDarkMode(false);
-        }
+        var otherColor = paletteArray[1];
+        windowUI.bg_color = `rgb(${dominantColor[0]}, ${dominantColor[1]}, ${dominantColor[2]})`;
+        windowUI.fg_color = `rgb(${otherColor[0]}, ${otherColor[1]}, ${otherColor[2]})`;
+        color_style(windowUI.fg_color, windowUI.bg_color);
     }
 }
 
@@ -239,8 +250,8 @@ function updateClient(serverState) {
             playerUI.thumbnail = serverState.player.current_track_info.thumbnail_url;
             playerUI.playerMain.css("background-image", `url(${playerUI.thumbnail})`);  
             playerUI.playerMain.css("background-size", "cover"); 
-            setDynamicBackground();
         }
+        setDynamicBackground();
         playerUI.progressBar.val(audioState.time/audioState.endTime);
         playerUI.playerTitle.text(serverState.player.current_track_info.title);
 
@@ -258,7 +269,9 @@ function updateClient(serverState) {
         playerUI.progressBar.val(0);
         playerUI.playerTitle.text("ACM Concert");
         windowUI.body.css('background-color', 'rgba(34, 34, 34, 0.1)');
-        toggleDarkMode(false);
+        windowUI.bg_color = 'rgb(255, 255, 255)';
+        windowUI.fg_color = 'rgb(0, 0, 0)';
+        color_style(windowUI.fg_color, windowUI.bg_color); 
         queue.empty();
     }
 

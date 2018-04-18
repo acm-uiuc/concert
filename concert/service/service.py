@@ -3,6 +3,8 @@ import threading
 import sys
 import random
 import json
+from urllib.request import urlretrieve
+import os
 from copy import deepcopy
 
 from concert.models import Song
@@ -22,6 +24,8 @@ class ConcertService:
 
     def __init__(self):
         self.queue = ConcertQueue()
+        self.artwork_download_queue = []
+        self.artwork_delete_queue = []
 
     def init_app(self, config):
         self.youtube_fetcher = YoutubeFetcher(config["providers"]["youtube"])
@@ -41,6 +45,10 @@ class ConcertService:
         heartbeat_thread = threading.Thread(target=self.heartbeat_thread)
         heartbeat_thread.daemon = True
         heartbeat_thread.start()
+
+        downloader_thread = threading.Thread(target=self.artwork_downloader_thread)
+        downloader_thread.daemon = True
+        downloader_thread.start()
 
     def player_thread(self):
         while True:
@@ -85,8 +93,13 @@ class ConcertService:
     def play_next(self):
         queue_size = self.queue.get_queue_size()
         if queue_size > 0:
+            if self.player.current_track != None:
+                self.artwork_delete_queue.append(os.getcwd() + self.player.current_track["thumbnail_url"]) 
             next_song = self.queue.get_next_song()
             self.player.current_track = next_song
+            self.get_artwork(next_song)
+            self.player.current_track["thumbnail_url_src"] = self.player.current_track["thumbnail_url"] 
+            self.player.current_track["thumbnail_url"] = "/static/images/artwork/" + self.player.current_track["id"] + ".png"
             self.player.play(next_song)
             notifiers.notify_new_song_playing(self.service_state())
             self.state["playing"] = True
@@ -95,6 +108,9 @@ class ConcertService:
                 self.player.stop()
                 notifiers.notify_no_song_playing(self.service_state())
                 self.state["playing"] = False
+                if self.player.current_track != None:
+                    self.artwork_delete_queue.append(os.getcwd() + self.player.current_track["thumbnail_url"]) 
+                self.player.current_track = None
 
     def skip(self):
         self.state["should_skip"] = True
@@ -134,4 +150,24 @@ class ConcertService:
         return {
             "player": player_state,
             "queue": queue_state
-        }
+    }
+
+    def artwork_downloader_thread(self):
+        while True:
+            if len(self.artwork_download_queue) != 0:
+                url = self.artwork_download_queue.pop(0)
+                try:
+                    self.download_artwork(url)
+                    notifiers.notify_artwork_available(self.service_state())
+                except:
+                    pass
+            if len(self.artwork_delete_queue) != 0:
+                f = self.artwork_delete_queue.pop(0)
+                os.remove(f)
+            time.sleep(self.PLAYER_UPDATE_INTERVAL)
+
+    def get_artwork(self, track):
+        self.artwork_download_queue.append({"url": track["thumbnail_url"], "id": track["id"]})
+
+    def download_artwork(self, download_info):
+        urlretrieve(download_info["url"], os.getcwd() + "/static/images/artwork/" + download_info["id"] + ".png")
