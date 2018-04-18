@@ -102,10 +102,12 @@ class Player:
                 state['current_track'] = self.current_track['title']
                 state['duration'] = self.current_track['duration']
                 state['thumbnail'] = self.current_track['thumbnail']
+                state['playedby'] = self.current_track['playedby']
             else:
                 state['current_track'] = None
                 state['duration'] = -1
                 state['thumbnail'] = ''
+                state['playedby'] = ''
         else:
             state['media'] = None
 

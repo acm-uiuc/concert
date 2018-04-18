@@ -153,7 +153,6 @@ body {
   transform: translate(-50%, 320%);
 }
 #search-bar {
-    background-color: black;
     height: 50px;
     width: 100%;
 }
@@ -163,7 +162,6 @@ body {
 #url-textbox {
     border: solid 1px #CCC;
     height: 100%;
-    font-size: 15px;
     width: 90%;
     float: left;
     padding-left: 15px;
@@ -417,6 +415,9 @@ a {
   font-weight: bold;
   opacity: 0.3;
   float: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 ol#playlist {
@@ -663,4 +664,8 @@ ol#playlist li:first-child {
 @keyframes animatezoom {
     from {transform: scale(0)} 
     to {transform: scale(1)}
+}
+
+.item-clear {
+    font-size: 24px;
 }

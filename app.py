@@ -7,6 +7,8 @@ import json
 import flask_login
 import validators
 import logging
+import pafy
+import soundcloud
 from flask import Flask, Response, request, url_for, render_template, redirect, url_for, current_app, session
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from flask_socketio import SocketIO, send, emit, disconnect
@@ -16,8 +18,8 @@ from service import MusicService
 from models import User
 from config import config
 from utils.logutils import configure_app_logger
+from utils.songutils import parse_search_query
 
-LOGS_PATH = 'logs'
 THUMBNAIL_PATH = 'static/thumbnails'
 REDIS_URL = 'redis://localhost:6379/1'
 
@@ -73,7 +75,7 @@ def handle_pause():
 @socketio.on('volume')
 @authenticated_only
 def handle_volume(newVolume):
-    socketio.emit('volume_changed', ms.set_volume(newVolume), include_self=True)
+    socketio.emit('volume_changed', ms.set_volume(newVolume), include_self=False)
 
 @socketio.on('skip')
 @authenticated_only
@@ -101,10 +103,22 @@ def handle_download(url):
 def clear_queue():
     socketio.emit('cleared', ms.clear_queue(), include_self=True)
 
+@socketio.on('remove_song')
+@authenticated_only
+def clear_queue(song_id):
+    socketio.emit('removed', ms.remove_song(song_id), include_self=True)
+
 # Flask Routes
 @app.route('/')
 def index():
     return render_template("index.html")
+
+@app.route('/search', methods=['GET'])
+def search():
+    q = request.args.get('q')
+    part = request.args.get('part')
+    max_results = request.args.get('maxResults')
+    return parse_search_query(q, part, max_results)
 
 @app.route('/login', methods=['POST'])
 def login():

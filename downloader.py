@@ -98,8 +98,12 @@ def _get_sc_song(track):
 	s["song_duration"] = track["duration"]
 	logger.info("Getting info for: {}".format(s["song_title"]))
 
-	s["thumbnail_url_1"] = track["artwork_url"].replace('large', 't500x500')
-	s["thumbnail_url_2"] = track["artwork_url"].replace('large', 'crop')
+	try:
+		s["thumbnail_url_1"] = track["artwork_url"].replace('large', 't500x500')
+		s["thumbnail_url_2"] = track["artwork_url"].replace('large', 'crop')
+	except:
+		s["thumbnail_url_1"] = "https://i.ytimg.com/vi/gh_dFH-Waes/maxresdefault.jpg"
+		s["thumbnail_url_2"] = "https://i.ytimg.com/vi/gh_dFH-Waes/maxresdefault.jpg"
 	return s
 
 def _add_song_to_queue(sd, user_name, db):
@@ -109,7 +113,7 @@ def _add_song_to_queue(sd, user_name, db):
 	logger.info("Finished Downloading Thumbnail")
 
 	# Tell client we've finished downloading
-	new_song = Song(sd["stream_url"], sd["song_title"], sd["song_duration"], thumbnail_path, user_name)
+	new_song = Song(str(sd["song_id"]), sd["stream_url"], sd["song_title"], sd["song_duration"], thumbnail_path, user_name)
 	db.Queue.insert_one(new_song.dictify())
 	socketio.emit('queue_change', json.dumps(_get_queue(db)), include_self=True)
 
@@ -119,12 +123,12 @@ def _file_exists(mrl):
 
 def _get_queue(db):
 	queue = []
-	mongo_queue = db.Queue.find().sort('date', pymongo.ASCENDING)
-	for item in mongo_queue:
-		song = Song(item['mrl'], item['title'], item['duration'], 
+	cur_queue = db.Queue.find().sort('date', pymongo.ASCENDING)
+	for item in cur_queue:
+		song = Song(item['mid'], item['mrl'], item['title'], item['duration'], 
 			item['thumbnail'], item['playedby'])
 		queue.append(song.dictify())
-	return queue
+	return json.dumps(queue)
 
 def _download_thumbnail(primary_url, secondary_url, song_id):
 	path = "{}{}{}".format(THUMBNAIL_PATH, song_id, JPG_EXTENSION)

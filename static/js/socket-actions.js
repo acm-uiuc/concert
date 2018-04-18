@@ -54,6 +54,10 @@ $(document).ready(function () {
         reloadQueue(queueData);
     });
 
+    socket.on('removed', function(queueData) {
+        reloadQueue(queueData);
+    });
+
     socket.on('volume_changed', function(volumeResponse) {
         volumeState = JSON.parse(volumeResponse);
         player.volume = volumeState.volume / 100;
@@ -67,7 +71,7 @@ $(document).ready(function () {
     });
 
     socket.on('queue_change', function(queueData) {
-        reloadQueue(queueData);
+        reloadQueue(JSON.parse(queueData));
     });
 
     /* Play Controls */
@@ -83,9 +87,17 @@ $(document).ready(function () {
         }
     });
 
+    playerUI.clearBtn.click(function() {
+        if (queue.length == 0) return;
+        if (confirm("Clear Queue?")) {
+            socket.emit('clear');
+        }
+    });
+
     windowUI.importBtn.click(function(e) {
-        if (windowUI.searchBox.val().trim() != ""){
-            var currentUrl = windowUI.searchBox.val();
+        var inputVal = $('.select2-selection__choice').text();
+        if (inputVal.trim() != ""){
+            var currentUrl = inputVal.replace(/[^\x00-\x7F]/g, "");
             if (loggedin) {
                 if (!isURL(currentUrl) || (!currentUrl.includes("youtube.com") && !currentUrl.includes("soundcloud.com"))) {
                     alert("Please enter a valid url");
@@ -95,11 +107,7 @@ $(document).ready(function () {
             } else {
                 alert("Please login to add to queue");
             }
-            windowUI.searchBox.val("");
+            windowUI.searchBox.val(null).trigger('change');
         }
-    });
-
-    playerUI.clearBtn.click(function() {
-        socket.emit('clear');
     });
 });
