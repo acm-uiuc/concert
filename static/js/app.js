@@ -1,5 +1,6 @@
 audioState = {
     song: null,
+    id: null, 
     time: 0,
     endTime: 0,
     progressInterval: null,
@@ -57,7 +58,6 @@ document.addEventListener('DOMContentLoaded', function () {
           });
           notification.onshow = function(event) { 
               setTimeout(function() { notification.close(); }, 3000);
-              cancelReminders(event); 
           }
       }
   }
@@ -126,7 +126,7 @@ windowUI.loginBtn.click(function () {
 });
 
 /* Queue Functions */
-function createQueueItem(title, time, mid, playedby, songPlaying) {
+function createQueueItem(title, time, id, playedby, songPlaying) {
     time = formatSeconds(time/1000);
 
     var entry = document.createElement('li');
@@ -139,7 +139,7 @@ function createQueueItem(title, time, mid, playedby, songPlaying) {
     entry.setAttribute("onmouseover", "viewWhoPlayed(this)");
     entry.setAttribute("onmouseout", "hideWhoPlayed(this)");
     entry.dataset.title = title;
-    entry.dataset.songId = mid;
+    entry.dataset.id = id;
     entry.dataset.time = time;
     entry.dataset.playedby = playedby;
 
@@ -166,13 +166,13 @@ function createQueueItem(title, time, mid, playedby, songPlaying) {
 
 function reloadQueue(serverQueue){
     if (audioState.song != null) {
-        var firstSong = createQueueItem(audioState.song, audioState.endTime, null, audioState.playedby, true);
+        var firstSong = createQueueItem(audioState.song, audioState.endTime, audioState.id, audioState.playedby, true);
         var len = serverQueue.length;
         queue.empty();
         queue.append(firstSong);
         for(var i = 0; i < len; i++){
             var curSong = serverQueue[i];
-            var newQueuedSong = createQueueItem(curSong.title, curSong.duration, curSong.mid, curSong.playedby, false);
+            var newQueuedSong = createQueueItem(curSong.title, curSong.duration, curSong.id, curSong.playedby, false);
             queue.append(newQueuedSong);
         }
     }
@@ -194,7 +194,7 @@ function playlistAction(obj) {
     //timeHolder.toggle();
     //clearHolder.toggle();
     if (confirm("Clear From Queue?")) {
-        socket.emit('c_remove_song', obj.dataset.songId);
+        socket.emit('c_remove_song', obj.dataset.id);
     }
 }
 
@@ -269,6 +269,7 @@ function updateClient(serverState) {
     // Update Audio, playerUI, and Queue State
     if(serverState.player.is_playing == true) {
         audioState.song = serverState.player.current_track_info.title;
+        audioState.id = serverState.player.current_track_info.id;
         audioState.time = serverState.player.current_track_info.current_time;
         audioState.endTime = serverState.player.current_track_info.duration;
         audioState.playedby = serverState.player.current_track_info.playedby

@@ -18,7 +18,7 @@ $(document).ready(function () {
     });
 
     socket.on('s_stopped', function(serverState) {
-        serverState = JSON.parse(state);
+        serverState = JSON.parse(serverState);
         updateClient(serverState);
     });
 

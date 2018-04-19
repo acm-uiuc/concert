@@ -60,3 +60,8 @@ def register_handlers():
     @authenticated_only
     def handle_queue_clearing():
         concert.get_service().clear_queue()
+
+    @ConcertEventsSockets.on('c_remove_song')
+    @authenticated_only
+    def handle_song_removal(id):
+        concert.get_service().remove_song(id)

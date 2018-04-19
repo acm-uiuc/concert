@@ -23,7 +23,12 @@ class ConcertQueue():
             self.queue.append(music)
 
     def remove_song_from_queue(self, track_id):
-        pass
+        for i in range(len(self.queue)):
+            if self.queue[i]["id"] == track_id:
+                self.queue.pop(i)
+                print(self.queue)
+                return
+        
 
     def remove_last_song_from_queue(self):
         self.queue.pop()

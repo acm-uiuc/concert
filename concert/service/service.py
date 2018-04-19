@@ -84,6 +84,10 @@ class ConcertService:
 
         notifiers.notify_queue_change(self.service_state())
 
+    def remove_song(self, id):
+        self.queue.remove_song_from_queue(id)
+        notifiers.notify_queue_change(self.service_state())
+
     def clear_queue(self):
         self.queue.clear_queue()
         notifiers.notify_queue_change(self.service_state())
