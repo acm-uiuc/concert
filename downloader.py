@@ -1,4 +1,5 @@
 import soundcloud
+import spotipy
 import pymongo
 import pafy
 import requests
@@ -7,11 +8,13 @@ import shutil
 import os
 import logging
 from pathlib import Path
+from urllib.parse import urlparse
 from celery import Celery
 from celery.utils.log import get_task_logger
 from flask_socketio import SocketIO
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+from spotipy.oauth2 import SpotifyClientCredentials
 from models import Song
 from config import config
 from utils.logutils import configure_celery_logger
@@ -23,6 +26,7 @@ MAXRES_THUMBNAIL = '/maxresdefault.jpg'
 MQ_THUMBNAIL = '/mqdefault.jpg'
 THUMBNAIL_PATH = 'static/thumbnails/'
 JPG_EXTENSION = '.jpg'
+YT_BASE_URL = 'https://www.googleapis.com/youtube/v3/search'
 
 # Celery Setup
 CELERY_NAME = 'concert'
@@ -38,6 +42,14 @@ configure_celery_logger(logger)
 # Setup Soundcloud
 SOUNDCLOUD_CLIENT_ID = config["SOUNDCLOUD_CLIENT_ID"]
 sc_client = soundcloud.Client(client_id=SOUNDCLOUD_CLIENT_ID)
+
+# Setup Spotify
+client_credentials_manager = SpotifyClientCredentials(client_id=config["SPOTIFY_CLIENT_ID"],
+    client_secret=config["SPOTIFY_CLIENT_SECRET"])
+sp_client = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+
+# YouTube Key
+yt_key = config['YT_API_KEY']
 
 @celery.task
 def async_download(url, user_name):
@@ -75,6 +87,19 @@ def async_download(url, user_name):
 			track = sc_client.get('/tracks/' + str(sc_object.id)).fields()
 			song_dict = _get_sc_song(track)
 			_add_song_to_queue(song_dict, user_name, db)
+	elif "spotify.com" in url:
+		o = urlparse(url)
+		path = o.path
+		username = path.split('/')[2]
+		playlist_id = path.split('/')[4]
+		playlist = sp_client.user_playlist_tracks(username, playlist_id, fields="items(track(name,artists(name),album(name,images)))")
+		spotify_tracks = [_parse_spotify_track(track["track"]) for track in playlist["items"]]
+		for spotify_track in spotify_tracks:
+			try:
+				song_dict = _get_spotify_song(spotify_track)
+				_add_song_to_queue(song_dict, user_name, db)
+			except:
+				pass
 	
 def _get_yt_song(video):
 	s = {}
@@ -105,6 +130,38 @@ def _get_sc_song(track):
 		s["thumbnail_url_1"] = "https://i.ytimg.com/vi/gh_dFH-Waes/maxresdefault.jpg"
 		s["thumbnail_url_2"] = "https://i.ytimg.com/vi/gh_dFH-Waes/maxresdefault.jpg"
 	return s
+
+def _get_spotify_song(spotify_track):
+	# Get video information
+	track_name = spotify_track["name"] + " - " + ', '.join(spotify_track["artists"])
+	s = _get_yt_version(spotify_track, track_name)
+
+	# Overwrite with Spotify Info
+	s["song_title"] = track_name
+	s["thumbnail_url_1"] = spotify_track["art"]
+	s["thumbnail_url_2"] = "https://i.ytimg.com/vi/gh_dFH-Waes/maxresdefault.jpg"
+	return s
+
+def _parse_spotify_track(sp_track):
+	spotify_track = {}
+	spotify_track["name"] = sp_track["name"]
+	spotify_track["artists"] = [artist["name"] for artist in sp_track["artists"]]
+	if len(sp_track["album"]["images"]) > 0:
+		spotify_track["art"] = sp_track["album"]["images"][0]["url"]
+	else:
+		spotify_track["art"] = ""
+	return spotify_track
+
+def _get_yt_version(spotify_track, q):
+	# Get the best YouTube match
+	search_url  = YT_BASE_URL + "/?q=" + q + "&part=snippet" + "&maxResults=1" + "&key=" + yt_key
+	resp = requests.get(search_url)
+	yt_track = resp.json()["items"][0]
+	
+	# Get Song Info from Pafy
+	video_url = "https://www.youtube.com/watch?v=" + yt_track["id"]["videoId"]
+	video = pafy.new(video_url)
+	return _get_yt_song(video)
 
 def _add_song_to_queue(sd, user_name, db):
 	# Download Thumbnail

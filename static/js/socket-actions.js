@@ -101,11 +101,7 @@ $(document).ready(function () {
         if (inputVal.trim() != ""){
             var currentUrl = inputVal.replace(/[^\x00-\x7F]/g, "");
             if (loggedin) {
-                if (!isURL(currentUrl) || (!currentUrl.includes("youtube.com") && !currentUrl.includes("soundcloud.com"))) {
-                    alert("Please enter a valid url");
-                } else {
-                    socket.emit('download', currentUrl);
-                }
+                socket.emit('download', currentUrl);
             } else {
                 alert("Please login to add to queue");
             }

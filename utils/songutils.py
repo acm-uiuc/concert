@@ -1,11 +1,18 @@
 import soundcloud
+import spotipy
 import pafy
 import requests
 import json
 from config import config
+from spotipy.oauth2 import SpotifyClientCredentials
+from urllib.parse import urlparse
 
 sc_client = soundcloud.Client(client_id=config['SOUNDCLOUD_CLIENT_ID'])
 yt_key = config['YT_API_KEY']
+
+client_credentials_manager = SpotifyClientCredentials(client_id=config["SPOTIFY_CLIENT_ID"],
+    client_secret=config["SPOTIFY_CLIENT_SECRET"])
+sp_client = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
 YT_BASE_URL = 'https://www.googleapis.com/youtube/v3/search'
 YOUTUBE_THUMBNAIL_URL = 'https://i.ytimg.com/vi/'
@@ -36,6 +43,12 @@ def parse_search_query(q, part, max_results):
                 all_tracks.append(sc_track)
         except requests.exceptions.HTTPError:
             logger.warning('Soundcloud track unavailable')
+    elif "spotify.com" in q:
+        try:
+            spotify_playlist = parse_spotify_playlist(q)
+            all_tracks.append(spotify_playlist)
+        except Exception as e:
+            pass
 
     if len(all_tracks) > 0:
         return json.dumps({"items": all_tracks})
@@ -95,5 +108,20 @@ def parse_yt_playlist(yt_playlist, q):
         "title": yt_playlist["title"],
         "url": q,
         "trackType": "YouTubePlaylist"
+    }
+    return playlist_object
+
+def parse_spotify_playlist(url):
+    o = urlparse(url)
+    path = o.path
+    username = path.split('/')[2]
+    playlist_id = path.split('/')[4]
+    playlist = sp_client.user_playlist(username, playlist_id, fields="images,name")
+    playlist_object = {
+        "id": playlist_id,
+        "thumbnail": playlist["images"][0]["url"],
+        "title": playlist["name"],
+        "url": url,
+        "trackType": "SpotifyPlaylist"
     }
     return playlist_object
