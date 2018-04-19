@@ -170,7 +170,7 @@ def logout():
         logger.warning("User not logged in")
     return redirect(url_for('index'))
 
-@app.route('/iosconfig', methods=['GET'])
+@app.route('/apple-app-site-assocation', methods=['GET'])
 def serve_ios_config():
     return app.send_static_file('ios-config/apple-app-site-assocation.txt')
 
