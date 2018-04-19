@@ -90,7 +90,7 @@ function changeVolume(event) {
     console.log("Previous: " + player.volume + ", Current: " + getCoefficient(event));
     player.volume = getCoefficient(event);
     updateVolume();
-    socket.emit('volume', parseInt(player.volume * 100));
+    socket.emit('c_volume', parseInt(player.volume * 100));
   }
 }
 

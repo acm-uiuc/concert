@@ -769,3 +769,27 @@ select.focus {
     -webkit-transform: scaleY(1.0);
   }
 }
+
+.playlist {
+  position: absolute;
+  width: 100vw;
+  height: 50vh;
+  top: 50vh;
+  overflow: hidden;
+  background-color: #000; 
+  color: #FFF;
+  transition: all 1s;
+  display: flex;
+  flex-direction: column;
+}
+
+.playlist-row {
+  display: flex;
+  flex-direction: row;
+  width:100%;
+}
+
+.playlist.close {
+  top: 100vh;
+  height: 0;
+}

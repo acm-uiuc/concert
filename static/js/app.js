@@ -17,6 +17,7 @@ windowUI = {
     import_btn: $('#import-btn'),
     search_bar: $(".select2-container"),
     search_text: $(".select2-search__field"),
+    playlist: $(".playlist"),
     bg_color: null,
     fg_color: null,
     other_styles: null
@@ -33,6 +34,33 @@ playerUI = {
 };
 var loginModal = $('#login-modal');
 var queue = $('#playlist');
+
+
+/* Setup Desktop Notifcations */
+document.addEventListener('DOMContentLoaded', function () {
+    if (!Notification) {
+      alert('Desktop notifications not available in your browser. Try Firefox.'); 
+      return;
+    }
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+  });
+  
+  function notifyPlayed() {
+      if (Notification.permission !== "granted")
+          Notification.requestPermission();
+      else {
+          var notification = new Notification(`Now Playing ${audioState.song}`, {
+            icon: playerUI.thumbnail,
+            body: `Queued by ${audioState.playedby}`,
+          });
+          notification.onshow = function(event) { 
+              setTimeout(function() { notification.close(); }, 3000);
+              cancelReminders(event); 
+          }
+      }
+  }
 
 // Setup queue menu button
 $('.menu').click(function() {
@@ -193,6 +221,8 @@ function color_style(button_color, bg_color) {
     windowUI.other_styles.insertRule(`.select2-search__field::placeholder { color: ${button_color}; }`, 0);
     windowUI.other_styles.insertRule(`.select2-selection__choice{ color: ${button_color} !important; }`, 1);
     windowUI.search_text.attr('style',`width:58vw; color:${button_color};`);
+    windowUI.playlist.css('background-color', button_color);
+    windowUI.playlist.css('color', bg_color);
 }
 
 function setDynamicBackground() {
@@ -282,3 +312,7 @@ function updateClient(serverState) {
         playerUI.playBtn.addClass('fa-play').removeClass('fa-pause');
     }
 }
+
+$('.trigger, .slider').click(function() {
+    $('.slider').toggleClass('close');
+  });

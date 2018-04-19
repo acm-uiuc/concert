@@ -64,7 +64,7 @@ class ConcertService:
 
     def search(self, query, part, max_length, timeout):
         ''' Need to figure out rate limiting for youtube'''
-        return self.soundcloud_searcher.search(query, part, max_length)# + self.youtube_searcher.search(query, part, max_length)
+        return self.soundcloud_searcher.search(query, part, max_length) + self.youtube_searcher.search(query, part, max_length)
 
     def queue_new_song(self, song_url, user):
         song_info_list = None
@@ -82,13 +82,11 @@ class ConcertService:
         print(song_info_list)
         self.queue.add_to_queue(song_info_list)
 
-        #notifiers.notify_song_queue(self.service_state())
         notifiers.notify_queue_change(self.service_state())
 
     def clear_queue(self):
         self.queue.clear_queue()
         notifiers.notify_queue_change(self.service_state())
-        #notifiers.notify_clear_queue(self.service_state())
 
     def play_next(self):
         queue_size = self.queue.get_queue_size()

@@ -12,7 +12,6 @@ class YoutubeFetcher(Fetcher):
             raise ValueError("URL is not a Youtube URL")
 
         tracks = []
-        print(tracks)
         try:
             playlist = pafy.get_playlist(url)
             print(playlist)
@@ -37,5 +36,5 @@ class YoutubeFetcher(Fetcher):
             "track_url": track.audiostreams[0].url,
             "title": track.title,
             "duration": track.length * 1000,
-            "thumbnail_url": "{}{}{}".format(self.YOUTUBE_THUMBNAIL_URL, track["song_id"], self.MAXRES_THUMBNAIL)
+            "thumbnail_url": "{}{}{}".format(self.YOUTUBE_THUMBNAIL_URL, track.videoid, self.MAXRES_THUMBNAIL)
         }

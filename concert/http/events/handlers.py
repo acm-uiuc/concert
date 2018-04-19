@@ -46,7 +46,7 @@ def register_handlers():
     @authenticated_only
     def handle_stop():
         concert.get_service().stop()
-
+        
 
     @ConcertEventsSockets.on('c_queue_song')
     @authenticated_only

@@ -29,6 +29,7 @@ $(document).ready(function () {
         playerUI.playBtn.removeClass('play');
         clearInterval(audioState.progressInterval);
         audioState.progressInterval = setInterval(updateProgress, 1000);
+        notifyPlayed();
     });
 
     socket.on('s_heartbeat', function(state) {
