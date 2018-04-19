@@ -43,6 +43,7 @@ function notifyPlayed(thumbnail, songTitle) {
           icon: thumbnail,
           body: songTitle,
         });
+        notification.onclose = function(event) { cancelReminders(event) }
     }
 }
 

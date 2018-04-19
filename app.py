@@ -176,4 +176,4 @@ if __name__ == '__main__':
     if not os.path.exists(THUMBNAIL_PATH):
         os.mkdir(THUMBNAIL_PATH)
     logger.info("Starting Concert")
-    socketio.run(app, debug=False, use_reloader=False, host='0.0.0.0', log_output=False)
+    socketio.run(app, debug=False, host='0.0.0.0', log_output=False)
