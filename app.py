@@ -9,7 +9,7 @@ import validators
 import logging
 import pafy
 import soundcloud
-from flask import Flask, Response, request, url_for, render_template, redirect, url_for, current_app, session
+from flask import Flask, Response, request, url_for, render_template, redirect, url_for, current_app, session, send_from_directory
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from flask_socketio import SocketIO, send, emit, disconnect
 from pymongo import MongoClient
@@ -24,7 +24,7 @@ THUMBNAIL_PATH = 'static/thumbnails'
 REDIS_URL = 'redis://localhost:6379/1'
 
 # Flask setup
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 app.config['SECRET_KEY'] = binascii.hexlify(os.urandom(24))
 
 # Flask-Login
@@ -169,6 +169,10 @@ def logout():
     except AttributeError:
         logger.warning("User not logged in")
     return redirect(url_for('index'))
+
+@app.route('/iosconfig', methods=['GET'])
+def serve_ios_config():
+    return app.send_static_file('ios-config/apple-app-site-assocation.txt')
 
 if __name__ == '__main__':
     # Clear users before starting up 
