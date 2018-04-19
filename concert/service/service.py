@@ -50,6 +50,22 @@ class ConcertService:
         downloader_thread.daemon = True
         downloader_thread.start()
 
+    # Combine the player's state with the current queue
+    def service_state(self):
+        # Remove track url to prevent leaking client_id
+        player_state = deepcopy(self.player.player_state())
+        if "track_url" in player_state:
+            del player_state['track_url']
+        queue_state = deepcopy(self.queue.get_queue())
+        for q in queue_state:
+            if "track_url" in q:
+                del q["track_url"]
+        return {
+            "player": player_state,
+            "queue": queue_state
+    }
+
+
     def player_thread(self):
         while True:
             if not self.player.is_playing() or self.state["should_skip"]:
@@ -62,9 +78,18 @@ class ConcertService:
             notifiers.notify_heartbeat(self.service_state())
             time.sleep(self.HEARTBEAT_DELAY)
 
+
+    '''
+    SEARCH
+    '''
     def search(self, query, part, max_length, timeout):
         ''' Need to figure out rate limiting for youtube'''
         return self.soundcloud_searcher.search(query, part, max_length) + self.youtube_searcher.search(query, part, max_length)
+
+    
+    '''
+    QUEUE MANAGEMENT
+    '''
 
     def queue_new_song(self, song_url, user):
         song_info_list = None
@@ -114,6 +139,10 @@ class ConcertService:
                     self.artwork_delete_queue.append(os.getcwd() + self.player.current_track["thumbnail_url"]) 
                 self.player.current_track = None
 
+
+    '''
+    PLAYER CONTROLS
+    '''
     def skip(self):
         self.state["should_skip"] = True
         notifiers.notify_song_skip(self.service_state())
@@ -139,21 +168,9 @@ class ConcertService:
         self.player.set_time(percent)
         notifiers.notify_set_time(self.service_state())
 
-    # Combine the player's state with the current queue
-    def service_state(self):
-        # Remove track url to prevent leaking client_id
-        player_state = deepcopy(self.player.player_state())
-        if "track_url" in player_state:
-            del player_state['track_url']
-        queue_state = deepcopy(self.queue.get_queue())
-        for q in queue_state:
-            if "track_url" in q:
-                del q["track_url"]
-        return {
-            "player": player_state,
-            "queue": queue_state
-    }
-
+    '''
+    ARTWORK MANAGEMENT 
+    '''
     def artwork_downloader_thread(self):
         while True:
             if len(self.artwork_download_queue) != 0:
