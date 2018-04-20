@@ -20,7 +20,6 @@ from config import config
 from utils.logutils import configure_celery_logger
 from utils.songutils import get_spotify_playlist, yt_search
 
-LOGS_PATH = 'logs'
 REDIS_URL = 'redis://localhost:6379/1'
 YOUTUBE_THUMBNAIL_URL = 'https://i.ytimg.com/vi/'
 MAXRES_THUMBNAIL = '/maxresdefault.jpg'

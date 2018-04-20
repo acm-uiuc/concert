@@ -7,6 +7,9 @@ NEVER COMMIT YOUR API KEYS IN GIT (config.py will be ignored by git)
 
 config = {
     "GROOT_TOKEN" : "MY CONSUMER KEY",
-    "SOUNDCLOUD_CLIENT_ID": "SC_CLIENT_ID",
+    "SOUNDCLOUD_CLIENT_ID": "Soundcloud Client Id",
+    "YT_API_KEY": "YouTube API Key",
+    "SPOTIFY_CLIENT_ID", "Spotify Client Id",
+    "SPOTIFY_CLIENT_SECRET", "Spotify Client Secret",
     "LOGS_PATH": "path/to/logs",
 }
