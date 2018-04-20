@@ -18,8 +18,9 @@ YT_BASE_URL = 'https://www.googleapis.com/youtube/v3/search'
 YOUTUBE_THUMBNAIL_URL = 'https://i.ytimg.com/vi/'
 MAXRES_THUMBNAIL = '/maxresdefault.jpg'
 MQ_THUMBNAIL = '/mqdefault.jpg'
+MAX_RESULTS = 15
 
-def parse_search_query(q, part, max_results):
+def parse_search_query(q):
     all_tracks = []
     # Check for user given urls
     if "youtube.com" in q:
@@ -48,15 +49,14 @@ def parse_search_query(q, part, max_results):
             spotify_playlist = parse_spotify_playlist(q)
             all_tracks.append(spotify_playlist)
         except Exception as e:
+            print(e)
             pass
 
     if len(all_tracks) > 0:
         return json.dumps({"items": all_tracks})
 
     # Get General Search Results
-    search_url  = YT_BASE_URL + "/?q=" + q + "&part=" + part + "&maxResults=" + max_results + "&key=" + yt_key
-    resp = requests.get(search_url)
-    yt_tracks = resp.json()["items"]
+    yt_tracks = yt_search(q, MAX_RESULTS)
     for track in yt_tracks:
         try:
             vid = track["id"]["videoId"]
@@ -71,6 +71,12 @@ def parse_search_query(q, part, max_results):
         all_tracks.append(sc_track)
 
     return json.dumps({"items": all_tracks})
+
+def yt_search(q, max_results=MAX_RESULTS):
+    search_url  = YT_BASE_URL + "/?q=" + q + "&part=snippet&maxResults=" + str(max_results) + "&key=" + yt_key
+    resp = requests.get(search_url)
+    yt_tracks = resp.json()["items"]
+    return yt_tracks
 
 def parse_sc_track(track, title=None, url=None):
     if track["artwork_url"] == None:
@@ -111,14 +117,21 @@ def parse_yt_playlist(yt_playlist, q):
     }
     return playlist_object
 
-def parse_spotify_playlist(url):
+def get_spotify_playlist(url, fields, only_tracks=False):
     o = urlparse(url)
     path = o.path
     username = path.split('/')[2]
     playlist_id = path.split('/')[4]
-    playlist = sp_client.user_playlist(username, playlist_id, fields="images,name")
+    if not only_tracks:
+        return sp_client.user_playlist(username, playlist_id, fields=fields)
+    else:
+        return sp_client.user_playlist_tracks(username, playlist_id, fields=fields)
+
+def parse_spotify_playlist(url):
+    playlist = get_spotify_playlist(url, "images,name,id")
+    print(playlist)
     playlist_object = {
-        "id": playlist_id,
+        "id": playlist["id"],
         "thumbnail": playlist["images"][0]["url"],
         "title": playlist["name"],
         "url": url,

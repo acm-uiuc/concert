@@ -13,8 +13,6 @@ $(document).ready(function() {
 	    data: function (params) {
 	      return {
 	        q: params.term, // search term
-	        part: 'snippet',
-	        maxResults: 15
 	      };
 	    },
 	    processResults: function (data, params) {

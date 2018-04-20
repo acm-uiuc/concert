@@ -116,9 +116,7 @@ def index():
 @app.route('/search', methods=['GET'])
 def search():
     q = request.args.get('q')
-    part = request.args.get('part')
-    max_results = request.args.get('maxResults')
-    return parse_search_query(q, part, max_results)
+    return parse_search_query(q)
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -170,7 +168,7 @@ def logout():
         logger.warning("User not logged in")
     return redirect(url_for('index'))
 
-@app.route('/apple-app-site-assocation', methods=['GET'])
+@app.route('/apple-app-site-association', methods=['GET'])
 def serve_ios_config():
     return app.send_static_file('ios-config/apple-app-site-assocation.txt')
 
