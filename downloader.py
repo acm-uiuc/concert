@@ -18,7 +18,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 from models import Song
 from config import config
 from utils.logutils import configure_celery_logger
-from utils.songutils import get_spotify_playlist, yt_search
+from utils.songutils import get_spotify_playlist, yt_search, get_spotify_track
 
 REDIS_URL = 'redis://localhost:6379/1'
 YOUTUBE_THUMBNAIL_URL = 'https://i.ytimg.com/vi/'
@@ -88,6 +88,12 @@ def async_download(url, user_name):
 				_add_song_to_queue(song_dict, user_name, db)
 			except Exception as e:
 				print(traceback.format_exc())
+	elif "spotify:track" in url:
+		uri_parts = url.split(':')
+		track_id = uri_parts[2]
+		sp_track = _parse_spotify_track(get_spotify_track(track_id))
+		song_dict = _get_spotify_song(sp_track)
+		_add_song_to_queue(song_dict, user_name, db)
 	
 def _get_yt_song(video):
 	s = {}

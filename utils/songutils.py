@@ -7,18 +7,20 @@ from config import config
 from spotipy.oauth2 import SpotifyClientCredentials
 from urllib.parse import urlparse
 
-sc_client = soundcloud.Client(client_id=config['SOUNDCLOUD_CLIENT_ID'])
-yt_key = config['YT_API_KEY']
-
-client_credentials_manager = SpotifyClientCredentials(client_id=config["SPOTIFY_CLIENT_ID"],
-    client_secret=config["SPOTIFY_CLIENT_SECRET"])
-sp_client = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
-
 YT_BASE_URL = 'https://www.googleapis.com/youtube/v3/search'
 YOUTUBE_THUMBNAIL_URL = 'https://i.ytimg.com/vi/'
 MAXRES_THUMBNAIL = '/maxresdefault.jpg'
 MQ_THUMBNAIL = '/mqdefault.jpg'
-MAX_RESULTS = 15
+MAX_RESULTS = 10
+
+# Setup Soundcloud API
+sc_client = soundcloud.Client(client_id=config['SOUNDCLOUD_CLIENT_ID'])
+yt_key = config['YT_API_KEY']
+
+# Setup Spotify API
+client_credentials_manager = SpotifyClientCredentials(client_id=config["SPOTIFY_CLIENT_ID"],
+    client_secret=config["SPOTIFY_CLIENT_SECRET"])
+sp_client = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
 def parse_search_query(q):
     all_tracks = []
@@ -49,7 +51,6 @@ def parse_search_query(q):
             spotify_playlist = parse_spotify_playlist(q)
             all_tracks.append(spotify_playlist)
         except Exception as e:
-            print(e)
             pass
 
     if len(all_tracks) > 0:
@@ -65,8 +66,13 @@ def parse_search_query(q):
         except:
             pass
 
-    tracks = sc_client.get('/tracks.json', q=q, limit=15)
-    for track in tracks:
+    sp_tracks = sp_client.search(q=q, type='track', limit=5)["tracks"]["items"]
+    for track in sp_tracks:
+        sp_track = parse_sp_track(track)
+        all_tracks.append(sp_track)
+
+    sc_tracks = sc_client.get('/tracks.json', q=q, limit=MAX_RESULTS)
+    for track in sc_tracks:
         sc_track = parse_sc_track(track.fields())
         all_tracks.append(sc_track)
 
@@ -77,6 +83,9 @@ def yt_search(q, max_results=MAX_RESULTS):
     resp = requests.get(search_url)
     yt_tracks = resp.json()["items"]
     return yt_tracks
+
+def get_spotify_track(track_id):
+    return sp_client.track(track_id)
 
 def parse_sc_track(track, title=None, url=None):
     if track["artwork_url"] == None:
@@ -105,6 +114,22 @@ def parse_yt_video(vid, snippet):
     }
     return yt_track
 
+def parse_sp_track(track):
+    artists = [artist["name"] for artist in track["artists"]]
+    title = track["name"] + " - " + ', '.join(artists)
+    if len(track["album"]["images"]) > 0:
+        thumbnail = track["album"]["images"][0]["url"]
+    else:
+        thumbnail = ""
+    sp_track = {
+        "id": track["id"],
+        "title": title,
+        "thumbnail": thumbnail,
+        "url": track["uri"],
+        "trackType": "Spotify"
+    }
+    return sp_track
+
 def parse_yt_playlist(yt_playlist, q):
     first_song = yt_playlist["items"][0]["pafy"]
     thumbnail_url = "{}{}{}".format(YOUTUBE_THUMBNAIL_URL, first_song.videoid, MQ_THUMBNAIL)
@@ -129,7 +154,6 @@ def get_spotify_playlist(url, fields, only_tracks=False):
 
 def parse_spotify_playlist(url):
     playlist = get_spotify_playlist(url, "images,name,id")
-    print(playlist)
     playlist_object = {
         "id": playlist["id"],
         "thumbnail": playlist["images"][0]["url"],
