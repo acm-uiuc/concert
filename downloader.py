@@ -1,13 +1,13 @@
-import soundcloud
-import spotipy
-import pymongo
-import pafy
-import requests
 import json
 import shutil
 import os
 import logging
 import traceback
+import soundcloud
+import spotipy
+import pymongo
+import pafy
+import requests
 from pathlib import Path
 from celery import Celery
 from celery.utils.log import get_task_logger
@@ -24,7 +24,7 @@ REDIS_URL = 'redis://localhost:6379/1'
 YOUTUBE_THUMBNAIL_URL = 'https://i.ytimg.com/vi/'
 MAXRES_THUMBNAIL = '/maxresdefault.jpg'
 MQ_THUMBNAIL = '/mqdefault.jpg'
-THUMBNAIL_PATH = 'static/thumbnails/'
+THUMBNAIL_PATH = os.path.join('static', 'thumbnails/')
 JPG_EXTENSION = '.jpg'
 DEFAULT_THUMBNAIL = "https://i.ytimg.com/vi/gh_dFH-Waes/maxresdefault.jpg"
 

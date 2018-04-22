@@ -170,7 +170,7 @@ def logout():
 
 @app.route('/apple-app-site-association', methods=['GET'])
 def serve_ios_config():
-    return app.send_static_file('ios-config/apple-app-site-assocation.txt')
+    return app.send_static_file(os.path.join('ios-config', 'apple-app-site-association.txt'))
 
 if __name__ == '__main__':
     # Clear users before starting up 
