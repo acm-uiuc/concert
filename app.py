@@ -18,7 +18,7 @@ from service import MusicService
 from models import User
 from config import config
 from utils.logutils import configure_app_logger
-from utils.songutils import parse_search_query
+from utils.searchutils import parse_search_query
 
 THUMBNAIL_PATH = 'static/thumbnails'
 REDIS_URL = 'redis://localhost:6379/1'

@@ -36,11 +36,11 @@ class Player:
 
     def play(self, song):
         self.vlc_player.stop()
-        mrl = song['mrl']
-        m = self.instance.media_new(mrl)
+        stream = song['stream']
+        m = self.instance.media_new(stream)
 
         network_attempts = 0
-        while not self._network_available(mrl):
+        while not self._network_available(stream):
             network_attempts += 1
             if network_attempts == MAX_NETWORK_PINGS:
                 return self.cur_state()
@@ -113,8 +113,8 @@ class Player:
 
         return json.dumps(state)
 
-    def _file_exists(self, mrl):
-        file = Path(mrl)
+    def _file_exists(self, stream):
+        file = Path(stream)
         return file.is_file()
 
     def _network_available(self, url):

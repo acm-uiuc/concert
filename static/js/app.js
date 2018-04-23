@@ -45,7 +45,6 @@ function notifyPlayed(thumbnail, songTitle) {
         });
         notification.onshow = function(event) { 
             setTimeout(function() { notification.close(); }, 5000);
-            cancelReminders(event); 
         }
     }
 }
@@ -106,7 +105,7 @@ windowUI.loginBtn.click(function () {
 });
 
 /* Queue Functions */
-function createQueueItem(title, time, mid, playedby, songPlaying) {
+function createQueueItem(title, time, id, playedby, songPlaying) {
     time = formatSeconds(time/1000);
 
     var entry = document.createElement('li');
@@ -119,7 +118,7 @@ function createQueueItem(title, time, mid, playedby, songPlaying) {
     entry.setAttribute("onmouseover", "viewWhoPlayed(this)");
     entry.setAttribute("onmouseout", "hideWhoPlayed(this)");
     entry.dataset.title = title;
-    entry.dataset.songId = mid;
+    entry.dataset.songId = id;
     entry.dataset.time = time;
     entry.dataset.playedby = playedby;
 
@@ -153,7 +152,7 @@ function reloadQueue(queueData){
         queue.append(firstSong);
         for(var i = 0; i < len; i++){
             var curSong = queued_songs[i];
-            var newQueuedSong = createQueueItem(curSong.title, curSong.duration, curSong.mid, curSong.playedby, false);
+            var newQueuedSong = createQueueItem(curSong.title, curSong.duration, curSong.id, curSong.playedby, false);
             queue.append(newQueuedSong);
         }
     }
