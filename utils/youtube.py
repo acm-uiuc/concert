@@ -2,6 +2,7 @@ import requests
 import pafy
 from config import config
 
+# YouTube API Key
 yt_key = config['YT_API_KEY']
 
 YT_BASE_URL = 'https://www.googleapis.com/youtube/v3/search'
@@ -24,6 +25,9 @@ def search_yt_video(q, max_results=MAX_RESULTS):
 			pass
 	return yt_tracks
 
+def get_yt_video(url):
+	return pafy.new(url)
+
 def parse_yt_video(vid, snippet):
 	url = "https://www.youtube.com/watch?v=" + vid
 	yt_track = {
@@ -34,6 +38,9 @@ def parse_yt_video(vid, snippet):
 		"trackType": "YouTube"
 	}
 	return yt_track
+
+def get_yt_playlist(url):
+	return pafy.get_playlist(url)
 
 def parse_yt_playlist(yt_playlist, q):
 	first_song = yt_playlist["items"][0]["pafy"]

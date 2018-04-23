@@ -3,9 +3,7 @@ import shutil
 import os
 import logging
 import traceback
-import spotipy
 import pymongo
-import pafy
 import requests
 from pathlib import Path
 from celery import Celery
@@ -13,11 +11,10 @@ from celery.utils.log import get_task_logger
 from flask_socketio import SocketIO
 from pymongo import MongoClient
 from bson.objectid import ObjectId
-from spotipy.oauth2 import SpotifyClientCredentials
 from models import Song
 from config import config
 from utils.logutils import configure_celery_logger
-from utils.youtube import search_yt_video, get_yt_audio
+from utils.youtube import search_yt_video, get_yt_audio, get_yt_playlist, get_yt_video
 from utils.soundcloud import get_sc_object, get_sc_playlist, get_sc_track
 from utils.spotify import get_sp_playlist, get_sp_track, extract_sp_track_info
 
@@ -42,7 +39,8 @@ def async_download(url, user_name):
 	if "youtube.com" in url:
 		# Try to parse url as playlist otherwise treat it as single song
 		try:
-			playlist = pafy.get_playlist(url)
+			playlist = get_yt_playlist(url)
+			logger.info("Getting YouTube Playlist")
 			videos = playlist["items"]
 			for video in videos:
 				try:
@@ -51,7 +49,8 @@ def async_download(url, user_name):
 				except Exception as e:
 					logger.error('Invalid Youtube url', exc_info=True)
 		except Exception as e:
-			video = pafy.new(url)
+			logger.info("Getting YouTube Video")
+			video = get_yt_video(url)
 			song = Song.from_yt_video(video, user_name)
 			_add_song_to_queue(song, db)
 	elif "soundcloud.com" in url:
@@ -61,15 +60,18 @@ def async_download(url, user_name):
 			logger.warning('Soundcloud track unavailable')
 			return
 		if sc_object.fields()["kind"] == "playlist":
+			logger.info("Getting Soundcloud Playlist")
 			playlist = get_sc_playlist(sc_object.id)
 			for track in playlist:
 				song = Song.from_sc_track(track, user_name)
 				_add_song_to_queue(song, db)
 		else:
+			logger.info("Getting Soundcloud Track")
 			track = get_sc_track(sc_object.id)
 			song = Song.from_sc_track(track, user_name)
 			_add_song_to_queue(song, db)
 	elif "spotify.com" in url:
+		logger.info("Getting Spotify Playlist")
 		playlist = get_sp_playlist(url, "items(track(name,artists(name),album(name,images)))", True)
 		sp_tracks = [extract_sp_track_info(track["track"]) for track in playlist["items"]]
 		for sp_track in sp_tracks:
@@ -88,7 +90,7 @@ def async_download(url, user_name):
 		_add_song_to_queue(song, db)
 
 def _add_song_to_queue(song, db):
-	# Tell client we've finished downloading
+	logger.info("Adding {} to the queue".format(song.title))
 	db.Queue.insert_one(song.dictify())
 	socketio.emit('queue_change', json.dumps(_get_queue(db)), include_self=True)
 
