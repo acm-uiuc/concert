@@ -1,11 +1,8 @@
-import soundcloud
-import spotipy
-import pafy
 import requests
 import json
 import shutil
 import os
-from utils.youtube import search_yt_video, parse_yt_playlist
+from utils.youtube import search_yt_video, parse_yt_playlist, get_yt_playlist
 from utils.soundcloud import get_sc_object, get_sc_playlist, get_sc_track, search_sc_tracks, parse_sc_track
 from utils.spotify import format_sp_playlist_result, search_sp_tracks
 
@@ -19,10 +16,11 @@ def parse_search_query(q):
     # Check for user given urls
     if "youtube.com" in q:
         try:
-            yt_playlist = pafy.get_playlist(q)
+            yt_playlist = get_yt_playlist(q)
             yt_playlist_result = parse_yt_playlist(yt_playlist, q)
             all_tracks.append(yt_playlist_result)
         except Exception as e:
+            print(e)
             pass
     elif "soundcloud.com" in q:
         try:
