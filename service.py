@@ -44,7 +44,7 @@ class MusicService:
 
     def remove_song(self, song_id):
         print(song_id)
-        self.db.Queue.delete_one({"mid": song_id})
+        self.db.Queue.delete_one({"id": song_id})
         return self._get_json_queue()
 
     # Combine the player's state with the current queue
@@ -64,7 +64,7 @@ class MusicService:
         queue = []
         cur_queue = self.db.Queue.find().sort('date', pymongo.ASCENDING)
         for item in cur_queue:
-            song = Song(item['mid'], item['mrl'], item['title'], item['duration'], 
+            song = Song(item['id'], item['stream'], item['title'], item['duration'], 
                 item['thumbnail'], item['playedby'])
             queue.append(song.dictify())
         return json.dumps(queue)
