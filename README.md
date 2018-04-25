@@ -1,4 +1,5 @@
 # Concert
+[![Build Status](https://travis-ci.org/acm-uiuc/concert.svg?branch=master)](https://travis-ci.org/acm-uiuc/concert)
 
 Concert is ACM's music system for the office. You can find a link to the website [here](https://concert.acm.illinois.edu/)
 
