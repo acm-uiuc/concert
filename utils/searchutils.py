@@ -20,7 +20,6 @@ def parse_search_query(q):
             yt_playlist_result = parse_yt_playlist(yt_playlist, q)
             all_tracks.append(yt_playlist_result)
         except Exception as e:
-            print(e)
             pass
     elif "soundcloud.com" in q:
         try:
