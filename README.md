@@ -65,9 +65,9 @@ celery worker -A downloader
 
 ## Running the tests
 
-Tests are currently a WIP, but currently there are some tests for testing song downloading functionality
+Tests are currently a WIP, but currently there are tests for testing song/playlist grabbing functionalities
 ```
-python3 -m tests.songtests
+python3 -m unittest discover -s tests -p '*.py'
 ```
 
 ## Authors
