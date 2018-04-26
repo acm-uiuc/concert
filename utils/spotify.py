@@ -48,8 +48,8 @@ def format_sp_playlist_result(url):
     }
     return playlist_object
 
-def search_sp_tracks(q):
-    tracks = sp_client.search(q=q, type='track', limit=5)["tracks"]["items"]
+def search_sp_tracks(q, limit=5):
+    tracks = sp_client.search(q=q, type='track', limit=limit)["tracks"]["items"]
     return [parse_sp_track(track) for track in tracks]
 
 def extract_sp_track_info(sp_track):

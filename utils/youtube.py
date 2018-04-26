@@ -19,7 +19,7 @@ def search_yt_video(q, max_results=MAX_RESULTS):
 	for track in tracks:
 		try:
 			vid = track["id"]["videoId"]
-			yt_track = parse_yt_video(vid, track["snippet"])
+			yt_track = format_yt_result(vid, track["snippet"])
 			yt_tracks.append(yt_track)
 		except:
 			pass
@@ -28,7 +28,7 @@ def search_yt_video(q, max_results=MAX_RESULTS):
 def get_yt_video(url):
 	return pafy.new(url)
 
-def parse_yt_video(vid, snippet):
+def format_yt_result(vid, snippet):
 	url = "https://www.youtube.com/watch?v=" + vid
 	yt_track = {
 		"id": vid,
