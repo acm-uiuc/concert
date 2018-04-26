@@ -18,6 +18,16 @@ PAUSE_DELAY = 0.1
 logger = logging.getLogger('concert')
 
 class Player:
+    """The Player class is an abstraction layer on top of the vlc media player object
+
+    The vlc python bindings can be found here: https://www.olivieraubert.net/vlc/python-ctypes/doc/vlc-module.html
+
+    Attributes:
+        instance (vlc instance): Instance of vlc to interact with vlc
+        vlc_player (media player instance): vlc media player
+        volume (int): volume of the vlc player
+        current_track (Song): Current playing song
+    """
     def __init__(self):
         self.instance = vlc.Instance('--no-video', '--network-caching=1500')
         self.vlc_player = self.instance.media_player_new()
@@ -26,6 +36,13 @@ class Player:
         self.current_track = None
 
     def set_volume(self, value):
+        """Sets the volume of the player
+
+        Args:
+            value (int): New volume of the player
+        Returns:
+            JSON string containing new val of volume
+        """
         value = min(value, MAX_VOLUME)
         self.volume = value
         self.vlc_player.audio_set_volume(value)
@@ -35,6 +52,16 @@ class Player:
         return json.dumps(payload)
 
     def play(self, song):
+        """Stops the current song and plays a new song
+
+        Will first check to see if the network is available, and then will
+        attempt to load the song's stream url several times before giving up
+
+        Args:
+            song (Song): New song to play
+        Returns:
+            Dictionary of the current player state
+        """
         self.vlc_player.stop()
         stream = song['stream']
         m = self.instance.media_new(stream)
@@ -60,6 +87,10 @@ class Player:
         return self.cur_state()
 
     def pause(self):
+        """Toggle play/pause
+
+        Either plays or pauses the player
+        """
         self.vlc_player.pause()
         logger.info("Play/Pause toggled")
         # We need this so the vlc library can update
@@ -72,12 +103,14 @@ class Player:
         return json.dumps(payload)
 
     def stop(self):
+        """Stops the current Track"""
         if self.current_track != None:
             self.vlc_player.stop()
             self.current_track = None
         return self.cur_state()
 
     def is_playing(self):
+        """Check to see if the vlc player is playing any media"""
         audio_status = self.vlc_player.get_state()
         if audio_status in {vlc.State.Ended, vlc.State.Stopped, vlc.State.NothingSpecial, vlc.State.Error}:
             self.vlc_player.set_media(None)
@@ -85,12 +118,19 @@ class Player:
             return False
         return True
 
+    """
     def set_time(self, percent):
         duration = self.cur_state()['duration']
         self.vlc_player.set_time(int(duration * percent))
         return self.cur_state()
+    """
 
     def cur_state(self):
+        """Returns the current state of the vlc player
+
+        Returns:
+            Dictionary containing the audio status, volume, and current track playing
+        """
         media = self.vlc_player.get_media()
         audio_status = self.vlc_player.get_state()
         state = {'audio_status': str(audio_status), 'volume': self.volume, 'is_playing': self.is_playing()}
@@ -113,11 +153,14 @@ class Player:
 
         return json.dumps(state)
 
-    def _file_exists(self, stream):
-        file = Path(stream)
-        return file.is_file()
-
     def _network_available(self, url):
+        """Check to see if network is available
+
+        Args:
+            url (str): Url to ping
+        Returns:
+            Bool whether or not the network is available
+        """
         try:
             urllib.request.urlopen(url, timeout=NETWORK_ATTEMPT_DELAY)
             logger.info("Pinged: {}".format(url))
