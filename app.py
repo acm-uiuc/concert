@@ -149,7 +149,7 @@ def login():
 
     user_data = user_resp.json()['user']
     cur_user = User(user_data['name'], user_data['first-name'], user_data['last-name'])
-    db.Users.insert_one(cur_user.__dict__)
+    db.Users.insert_one(vars(cur_user))
 
     # Register User Session
     val = login_user(cur_user, remember=True)

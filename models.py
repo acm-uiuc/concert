@@ -95,17 +95,6 @@ class Song:
         s.thumbnail = download_thumbnail(thumbnail_1, thumbnail_2, s.id)
         return s
 
-    def dictify(self):
-        """Returns a dictionary version of the Song object"""
-        return {
-            'id': self.id,
-            'stream': self.stream,
-            'title': self.title,
-            'duration': self.duration,
-            'thumbnail': self.thumbnail,
-            'playedby': self.playedby
-        }
-
 
 class User(UserMixin):
     """User class used for Flask_login"""

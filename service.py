@@ -120,7 +120,7 @@ class MusicService:
         for item in cur_queue:
             song = Song(item['id'], item['stream'], item['title'], item['duration'], 
                 item['thumbnail'], item['playedby'])
-            queue.append(song.dictify())
+            queue.append(vars(song))
         return json.dumps(queue)
 
     def _remove_song_from_queue(self, _id):
@@ -129,7 +129,7 @@ class MusicService:
         Args:
             _id (string): Mongo id of the song to remove
         """
-        self.db.Queue.update({"_id": ObjectId(_id)})
+        self.db.Queue.delete_one({"_id": ObjectId(_id)})
 
     def _player_thread(self):
         """Thread that controls music playing

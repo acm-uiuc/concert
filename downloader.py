@@ -35,7 +35,6 @@ configure_celery_logger(logger)
 def async_download(url, user_name):
 	client = MongoClient()
 	db = client.concert
-
 	if "youtube.com" in url:
 		# Try to parse url as playlist otherwise treat it as single song
 		try:
@@ -91,7 +90,7 @@ def async_download(url, user_name):
 
 def _add_song_to_queue(song, db):
 	logger.info("Adding {} to the queue".format(song.title))
-	db.Queue.insert_one(song.dictify())
+	db.Queue.insert_one(vars(song))
 	socketio.emit('queue_change', json.dumps(_get_queue(db)), include_self=True)
 
 def _get_queue(db):
@@ -100,5 +99,5 @@ def _get_queue(db):
 	for item in cur_queue:
 		song = Song(item['id'], item['stream'], item['title'], item['duration'], 
 			item['thumbnail'], item['playedby'])
-		queue.append(song.dictify())
+		queue.append(vars(song))
 	return json.dumps(queue)
