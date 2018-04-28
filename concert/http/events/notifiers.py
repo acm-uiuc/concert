@@ -64,3 +64,5 @@ def notify_artwork_available(state):
 
 def _notify_on_channel(channel, msg_dict):
     ConcertEventsSockets.emit(channel, json.dumps(msg_dict), include_self=True)
+
+    
