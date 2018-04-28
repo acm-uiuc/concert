@@ -93,7 +93,7 @@ $(document).keyup(function(e) {
         }
     }
     if (e.keyCode == 32 && !searchCurrentlyActive) {
-        socket.emit('pause');
+        socket.emit('c_pause');
     }
     userJustClicked = false;
 });

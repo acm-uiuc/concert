@@ -17,12 +17,12 @@ $(document).ready(function () {
         console.log("Invalid URL");
     });
 
-    socket.on('s_stopped', function(serverState) {
+    socket.on('s_stop', function(serverState) {
         serverState = JSON.parse(serverState);
         updateClient(serverState);
     });
 
-    socket.on('s_played', function(state) {
+    socket.on('s_play', function(state) {
         serverState = JSON.parse(state);
         updateClient(serverState);
         playerUI.playBtn.addClass('pause');
@@ -44,7 +44,7 @@ $(document).ready(function () {
         console.log("new artwork recieved");
     });
 
-    socket.on('s_paused', function(state) {
+    socket.on('s_pause', function(state) {
         var playState = JSON.parse(state).player;
         console.log(playState);
         if (playState.is_playing && (playState.audio_status == "State.Playing" || playState.audio_status == "State.Opening")){
