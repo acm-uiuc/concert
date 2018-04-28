@@ -91,7 +91,7 @@ class MusicService:
 
         Returns:
             json string containing the player state and queue
-        """"
+        """
         player_state = json.loads(self._player.cur_state())
         player_state['queue'] = self._get_json_queue()
         return json.dumps(player_state)

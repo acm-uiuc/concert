@@ -6,7 +6,17 @@ MAXRES_THUMBNAIL = '/maxresdefault.jpg'
 MQ_THUMBNAIL = '/mqdefault.jpg'
 
 class Song:
-    def __init__(self, id="", stream="", title="", duration="", thumbnail="", playedby=""):
+    """The Song class encapsulates song data so it can be used by VLC and clients
+
+    Args/Params:
+        id (str): id of the song
+        stream (str): url of the stream of the song
+        title (str): title of the song
+        duration (int): duration in milliseconds of the song
+        thumbnail (str): the local path to the thumbnail of the song
+        playedby (str): the name of the person who added the song
+    """
+    def __init__(self, id="", stream="", title="", duration=0, thumbnail="", playedby=""):
         self.id = id
         self.stream = stream
         self.title = title
@@ -15,8 +25,15 @@ class Song:
         self.playedby = playedby
 
     def from_yt_video(yt_video, playedby):
+        """Converts a yt_video to a Song instance
+
+        Args:
+            yt_video (Pafy video object): Video to transform
+            playedby (str): Who played the song
+        Returns:
+            Song object containing the youtube video info
+        """
         s = Song()
-        # Get video information
         s.title = yt_video.title
         s.id = str(yt_video.videoid)
         s.duration = yt_video.length * 1000
@@ -29,6 +46,14 @@ class Song:
         return s
 
     def from_sc_track(sc_track, playedby):
+        """Converts a sc_track to a Song instance
+
+        Args:
+            sc_track (Soundcloud track object): Track to transform
+            playedby (str): Who played the song
+        Returns:
+            Song object containing the soundcloud track info
+        """
         s = Song()
         # Get song information
         s.title = sc_track["title"]
@@ -47,6 +72,16 @@ class Song:
         return s
     
     def from_sp_track(sp_track, yt_video, playedby):
+        """Converts a sp_track to a Song instance
+
+        Uses Spotify's meta data to find the best matching YouTube audio stream
+
+        Args:
+            sp_track (Soundcloud track object): Track to transform
+            playedby (str): Who played the song
+        Returns:
+            Song object containing the spotify track metadata with the youtube stream info
+        """
         s = Song()
         # Merge Spotify Metadata with Youtube Stream
         s.title = sp_track["name"] + " - " + ', '.join(sp_track["artists"])
@@ -61,6 +96,7 @@ class Song:
         return s
 
     def dictify(self):
+        """Returns a dictionary version of the Song object"""
         return {
             'id': self.id,
             'stream': self.stream,
@@ -72,6 +108,7 @@ class Song:
 
 
 class User(UserMixin):
+    """User class used for Flask_login"""
     def __init__(self, uid, first_name, last_name):
         self.uid = str(uid)
         self.first_name = first_name
