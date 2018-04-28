@@ -18,7 +18,7 @@ def index():
 
 @ConcertRESTRoutes.route('/apple-app-site-association')
 def apple():
-    return ConcertRESTRoutes.send_static_file(os.getcwd() + "/static/ios-config/apple-app-site-association")
+    return ConcertRESTRoutes.send_static_file(os.path.join('ios-config', 'apple-app-site-association.txt'))
 
 @ConcertRESTRoutes.route('/static/<path:path>')
 def serve_static_files(path):
