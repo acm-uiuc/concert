@@ -19,9 +19,9 @@ class SearchUtilsTest(unittest.TestCase):
 	def test_search_hard(self):
 		"""
 		Test to see if search is only returning a single link
-		representing the video below (Casey Neistat - Why I Wear a Suit??)
+		representing the video below (Casey Neistat - Restaraunt Review Checkers in Newport)
 		"""
-		q = 'https://www.youtube.com/watch?v=66DMQMSUvII'
+		q = 'https://www.youtube.com/watch?v=XTOy3-FrXg4'
 		results = json.loads(parse_search_query(q))["items"]
 		first_result = results[0]
 		self.assertEqual(len(results), 1)
