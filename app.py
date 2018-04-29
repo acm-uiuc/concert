@@ -114,6 +114,10 @@ def search():
     q = request.args.get('q')
     return parse_search_query(q)
 
+@app.route('/state', methods=['GET'])
+def state():
+    return ms.player_state()
+
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()

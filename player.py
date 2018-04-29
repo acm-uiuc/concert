@@ -150,6 +150,8 @@ class Player:
                 state['playedby'] = ''
         else:
             state['media'] = None
+            state['duration'] = 0
+            state['current_time'] = 0
 
         return json.dumps(state)
 
