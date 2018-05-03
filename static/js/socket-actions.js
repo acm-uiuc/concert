@@ -26,7 +26,7 @@ $(document).ready(function () {
         playerUI.playBtn.removeClass('play');
         clearInterval(audioState.progressInterval);
         audioState.progressInterval = setInterval(updateProgress, 1000);
-        var jsonState = JSON.parse(state);
+        var jsonState = state;
         notifyPlayed(jsonState.thumbnail, jsonState.current_track);
     });
 
@@ -35,7 +35,7 @@ $(document).ready(function () {
     });
 
     socket.on('paused', function(state) {
-        var playState = JSON.parse(state);
+        var playState = state;
         if (playState.is_playing && (playState.audio_status == "State.Playing" || playState.audio_status == "State.Opening")){
             audioState.progressInterval = setInterval(updateProgress, 1000); 
             playerUI.playBtn.removeClass('fa-play').addClass('fa-pause');
@@ -61,7 +61,7 @@ $(document).ready(function () {
     });
 
     socket.on('volume_changed', function(volumeResponse) {
-        volumeState = JSON.parse(volumeResponse);
+        volumeState = volumeResponse;
         player.volume = volumeState.volume / 100;
         updateVolume();
     });
@@ -73,7 +73,7 @@ $(document).ready(function () {
     });
 
     socket.on('queue_change', function(queueData) {
-        reloadQueue(JSON.parse(queueData));
+        reloadQueue(queueData);
     });
 
     /* Play Controls */

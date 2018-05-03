@@ -26,7 +26,7 @@ def parse_search_query(q):
     all_tracks = []
     if "youtube.com" in q:
         try:
-            yt_playlist = get_yt_playlist(q)
+            yt_playlist = format_yt_playlist_result(get_yt_playlist(q), q)
             all_tracks.append(yt_playlist)
         except Exception as e:
             pass

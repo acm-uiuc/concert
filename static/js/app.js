@@ -146,7 +146,7 @@ function createQueueItem(title, time, id, playedby, songPlaying) {
 function reloadQueue(queueData){
     if (audioState.song != null) {
         var firstSong = createQueueItem(audioState.song, audioState.endTime, null, audioState.playedby, true);
-        var queued_songs = JSON.parse(queueData);
+        var queued_songs = queueData;
         var len = queued_songs.length;
         queue.empty();
         queue.append(firstSong);
@@ -223,7 +223,7 @@ function updateProgress() {
 /* Updates overall state of the Player, Queue, and Window */
 function updateClient(state) {
     if (state == null) return;
-    var jsonState = JSON.parse(state);
+    var jsonState = state;
 
     // Update Volume State
     player.volume = jsonState.volume / 100;

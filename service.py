@@ -92,9 +92,9 @@ class MusicService:
         Returns:
             json string containing the player state and queue
         """
-        player_state = json.loads(self._player.cur_state())
+        player_state = self._player.cur_state()
         player_state['queue'] = self._get_json_queue()
-        return json.dumps(player_state)
+        return player_state
 
     def _get_next_song(self):
         """Gets the next song from the queue stored in Mongo
@@ -121,7 +121,7 @@ class MusicService:
             song = Song(item['id'], item['stream'], item['title'], item['duration'], 
                 item['thumbnail'], item['playedby'])
             queue.append(vars(song))
-        return json.dumps(queue)
+        return queue
 
     def _remove_song_from_queue(self, _id):
         """Removes a song on the queue with the given id

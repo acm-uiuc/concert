@@ -70,7 +70,7 @@ def get_yt_playlist(url):
 	Returns:
 		Formatted pafy playlist object
 	"""
-	return format_yt_playlist_result(pafy.get_playlist(url), url)
+	return pafy.get_playlist(url)
 
 def format_yt_playlist_result(yt_playlist, url):
 	"""Formats a pafy playlist object to be displayed to clients

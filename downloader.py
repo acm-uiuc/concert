@@ -50,6 +50,7 @@ def async_download(url, user_name):
 		except Exception as e:
 			logger.info("Getting YouTube Video")
 			video = get_yt_video(url)
+			print(video.audiostreams[0].url)
 			song = Song.from_yt_video(video, user_name)
 			_add_song_to_queue(song, db)
 	elif "soundcloud.com" in url:
@@ -91,7 +92,7 @@ def async_download(url, user_name):
 def _add_song_to_queue(song, db):
 	logger.info("Adding {} to the queue".format(song.title))
 	db.Queue.insert_one(vars(song))
-	socketio.emit('queue_change', json.dumps(_get_queue(db)), include_self=True)
+	socketio.emit('queue_change', _get_queue(db), include_self=True)
 
 def _get_queue(db):
 	queue = []
@@ -100,4 +101,4 @@ def _get_queue(db):
 		song = Song(item['id'], item['stream'], item['title'], item['duration'], 
 			item['thumbnail'], item['playedby'])
 		queue.append(vars(song))
-	return json.dumps(queue)
+	return queue

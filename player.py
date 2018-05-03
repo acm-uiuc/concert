@@ -49,7 +49,7 @@ class Player:
         payload = {
             'volume': self.volume
         }
-        return json.dumps(payload)
+        return payload
 
     def play(self, song):
         """Stops the current song and plays a new song
@@ -100,7 +100,7 @@ class Player:
         if media:
             payload['current_time'] = self.vlc_player.get_time()
             payload['duration'] = self.current_track['duration']
-        return json.dumps(payload)
+        return payload
 
     def stop(self):
         """Stops the current Track"""
@@ -153,7 +153,7 @@ class Player:
             state['duration'] = 0
             state['current_time'] = 0
 
-        return json.dumps(state)
+        return state
 
     def _network_available(self, url):
         """Check to see if network is available
