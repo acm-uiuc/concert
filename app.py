@@ -9,7 +9,7 @@ import validators
 import logging
 import pafy
 import soundcloud
-from flask import Flask, Response, request, url_for, render_template, redirect, url_for, current_app, session, send_from_directory
+from flask import Flask, Response, request, url_for, render_template, redirect, url_for, current_app, session, send_from_directory, jsonify
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from flask_socketio import SocketIO, send, emit, disconnect
 from pymongo import MongoClient
@@ -116,7 +116,7 @@ def search():
 
 @app.route('/state', methods=['GET'])
 def state():
-    return ms.player_state()
+    return jsonify(ms.player_state())
 
 @app.route('/login', methods=['POST'])
 def login():
