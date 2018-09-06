@@ -30,6 +30,15 @@ def login():
     username = data.get('username')
     password = data.get('password')
 
+    if ConcertHTTPServer.config["authentication"] == False:
+        first_name = 'ACM'
+        last_name = 'Dev'
+        cur_user = User('ACM Dev', first_name, last_name)
+
+        ConcertDBConnector.add_user_session(cur_user)
+        val = login_user(cur_user, remember=True)
+        return Response("Success", 200)
+
     headers = {
         'Authorization': ConcertHTTPServer.config["GROOT_TOKEN"],
         'Content-Type': 'application/json',
@@ -58,7 +67,7 @@ def login():
 
     user_data = user_resp.json()['user']
     cur_user = User(user_data['name'], user_data['first-name'], user_data['last-name'])
-    
+
     ConcertDBConnector.add_user_session(cur_user)
 
     # Register User Session

@@ -1,4 +1,4 @@
-import os 
+import os
 import binascii
 from flask import Flask, Response, Blueprint, request, url_for, render_template, redirect, url_for, current_app, session
 
@@ -13,6 +13,7 @@ ConcertServiceInstance = ConcertService()
 
 def start_concert(config):
     ConcertHTTPServer.config["GROOT_TOKEN"] = config["http"]["groot_token"]
+    ConcertHTTPServer.config["authentication"] = config["http"]["authentication"]
     handlers.register_handlers()
 
     ConcertLoginManager.init_app(ConcertHTTPServer)
@@ -22,5 +23,5 @@ def start_concert(config):
 
     ConcertEventsSockets.run(ConcertHTTPServer, debug=config["debug"], use_reloader=config["debug"], log_output=config["debug"], host='0.0.0.0')
 
-def get_service(): 
+def get_service():
     return ConcertServiceInstance
