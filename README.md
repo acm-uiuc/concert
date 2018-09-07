@@ -1,24 +1,28 @@
 # Concert
 
-Concert will be the new music system in the ACM Office.
+Concert is the new music system for the ACM Office: https://concert.acm.illinois.edu/
 
-Instructions on how to run:
+## Prerequisites
 
-First make sure you have virtualenv installed on your computer (http://docs.python-guide.org/en/latest/dev/virtualenvs/)
-Also make sure you have VLC bindings and mongodb installed 
+1. Make sure you have Python 3 installed: `python3 --version`
+  - If you don't have Python 3 installed, install [here](https://www.python.org/downloads/)
+- Make sure you have virtualenv installed: `virtualenv --version`
+  - If you don't have virtualenv installed, install with `pip3 install virtualenv`
+- Make sure you have MongoDB installed: `mongod --version`
+  - If you don't have MongoDB installed, install [here](https://docs.mongodb.com/manual/installation/#tutorials)
+- Make sure you have Redis installed: `redis-server --version`
+  - If you don't have Redis installed, install [here](https://redis.io/topics/quickstart)
+- Make sure you have PulseAudio installed: `pulseaudio --version`
+  - If you don't have PulseAudio installed, install with either `brew install pulseaudio` or `apt-get install pulseaudio` (which requires having either [brew](https://brew.sh) or [apt-get](https://wiki.debian.org/apt-get) on your system)
+- Install the VLC media player desktop application [here](https://www.videolan.org/vlc/index.html)
 
-Concert targets Python 3 
+## Setup
+1. In this project's main directory, run `virtualenv venv`
+- Run `source venv/bin/activate`
+- Run `pip3 install --upgrade -r requirements.txt`
 
-Run `virtualenv venv`
-
-Run `source venv/bin/activate`
-
-Run `pip install --upgrade -r requirements.txt`
-
-Install redis, vlc, pluseaudio and mongodb
-
-To start, begin by starting ```redis-server``` and mongodb ```sudo service mongod start``` 
-
-Then run ```python3 main.py```  
-
-The client will be served at ```http://localhost:5000```
+## Usage
+1. In a separate terminal session, run `redis-server` (to start Redis)
+- In another separate terminal session, run `mongod` (to start MongoDB)
+- Lastly, in another separate terminal session, run `python3 main.py`
+  - The client will be served at http://localhost:5000
