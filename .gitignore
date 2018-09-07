@@ -8,3 +8,4 @@ config.py
 /.idea
 static/thumbnails
 .vscode
+/static/images/artwork
