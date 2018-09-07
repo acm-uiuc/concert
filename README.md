@@ -5,15 +5,15 @@ Concert is the new music system for the ACM Office: https://concert.acm.illinois
 ## Prerequisites
 
 1. Make sure you have Python 3 installed: `python3 --version`
-  - If you don't have Python 3 installed, install [here](https://www.python.org/downloads/)
+    - If you don't have Python 3 installed, install [here](https://www.python.org/downloads/)
 2. Make sure you have virtualenv installed: `virtualenv --version`
-  - If you don't have virtualenv installed, install with `pip3 install virtualenv`
+    - If you don't have virtualenv installed, install with `pip3 install virtualenv`
 3. Make sure you have MongoDB installed: `mongod --version`
-  - If you don't have MongoDB installed, install [here](https://docs.mongodb.com/manual/installation/#tutorials)
+    - If you don't have MongoDB installed, install [here](https://docs.mongodb.com/manual/installation/#tutorials)
 4. Make sure you have Redis installed: `redis-server --version`
-  - If you don't have Redis installed, install [here](https://redis.io/topics/quickstart)
+    - If you don't have Redis installed, install [here](https://redis.io/topics/quickstart)
 5. Make sure you have PulseAudio installed: `pulseaudio --version`
-  - If you don't have PulseAudio installed, install with either `brew install pulseaudio` or `apt-get install pulseaudio` (which requires having either [brew](https://brew.sh) or [apt-get](https://wiki.debian.org/apt-get) on your system)
+    - If you don't have PulseAudio installed, install with either `brew install pulseaudio` or `apt-get install pulseaudio` (which requires having either [brew](https://brew.sh) or [apt-get](https://wiki.debian.org/apt-get) on your system)
 6. Install the VLC media player desktop application [here](https://www.videolan.org/vlc/index.html)
 
 ## Setup
