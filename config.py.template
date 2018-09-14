@@ -24,5 +24,6 @@ config = {
     },
     "http" : {
         "groot_token" : "",
+        "authentication": False
     }
 }

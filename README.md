@@ -16,6 +16,7 @@ Concert is the new music system for the ACM Office: https://concert.acm.illinois
 1. In this project's main directory, run `virtualenv venv`
 2. Run `source venv/bin/activate`
 3. Run `pip3 install --upgrade -r requirements.txt`
+4. Copy `config.py.template` into a new file called `config.py`. In that file, enter your various API keys and tokens.
 
 ## Usage
 1. In a separate terminal session, run `redis-server` (to start Redis)
