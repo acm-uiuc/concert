@@ -9,3 +9,4 @@ config.py
 static/thumbnails
 .vscode
 /static/images/artwork/*
+!/static/images/artwork/example.png
