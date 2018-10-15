@@ -14,6 +14,7 @@ ConcertServiceInstance = ConcertService()
 def start_concert(config):
     ConcertHTTPServer.config["GROOT_TOKEN"] = config["http"]["groot_token"]
     ConcertHTTPServer.config["authentication"] = config["http"]["authentication"]
+    ConcertHTTPServer.config["dev_user"] = config["http"]["dev_user"]
     handlers.register_handlers()
 
     ConcertLoginManager.init_app(ConcertHTTPServer)
