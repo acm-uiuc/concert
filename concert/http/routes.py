@@ -30,10 +30,12 @@ def login():
     username = data.get('username')
     password = data.get('password')
 
-    if ConcertHTTPServer.config["authentication"] == False:
-        first_name = 'ACM'
-        last_name = 'Dev'
-        cur_user = User('ACM Dev', first_name, last_name)
+    if not ConcertHTTPServer.config["authentication"]:
+        cur_user = User(
+            ConcertHTTPServer.config['dev_user']['first_name'] + ' ' + ConcertHTTPServer.config['dev_user']['last_name'],
+            ConcertHTTPServer.config['dev_user']['first_name'],
+            ConcertHTTPServer.config['dev_user']['last_name']
+        )
 
         ConcertDBConnector.add_user_session(cur_user)
         val = login_user(cur_user, remember=True)
