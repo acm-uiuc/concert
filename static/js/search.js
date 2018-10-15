@@ -2,11 +2,11 @@ var searchJustActive = false;
 var userJustClicked = false;
 var searchCurrentlyActive = false;
 
-$(document).ready(function() {	
+$(document).ready(function() {
 	$("#url-textbox").select2({
 	  allowClear: false,
 	  multiple: true,
-      maximumSelectionSize: 1,
+    maximumSelectionSize: 1,
 	  ajax: {
 	    url: '/search',
 	    dataType: 'json',
@@ -31,7 +31,7 @@ $(document).ready(function() {
 	  escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
 	  minimumInputLength: 1,
 	  templateResult: formatVideo,
-	  templateSelection: formatVideoSelection,
+		templateSelection: formatVideoSelection,
 	}).on("select2:select", function() {
 		if (!userJustClicked) {
 			searchJustActive = true;
@@ -42,6 +42,19 @@ $(document).ready(function() {
 		searchCurrentlyActive = true;
 	}).on("select2:close", function() {
 		searchCurrentlyActive = false;
+	}).on('select2:closing', function() {
+		if (userJustClicked) {
+			return;
+		}
+		
+		$('.select2-search__field').css('color', 'white');
+		const currentQuery = $('.select2-search__field').prop('value');
+		setTimeout(function() {
+			if(currentQuery && currentQuery.length) {
+				$('.select2-search__field').val(currentQuery);
+				$('.select2-search__field').css('color', 'black');
+			};
+		}, 0);
 	});
 
 	if (!loggedin) {
