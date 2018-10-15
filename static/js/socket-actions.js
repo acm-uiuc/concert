@@ -105,8 +105,9 @@ $(document).ready(function () {
     });
 
     windowUI.importBtn.click(function(e) {
-        var inputVal = $('.select2-selection__choice').text();
-        if (inputVal.trim() != ""){
+        var inputVal = $('.select2-selection__choice').text() || $('.select2-search__field').val();
+
+        if (inputVal.trim() != "") {
             var currentUrl = inputVal.replace(/[^\x00-\x7F]/g, "");
             if (loggedin) {
                 if (!isURL(currentUrl) || (!currentUrl.includes("youtube.com") && !currentUrl.includes("soundcloud.com"))) {
