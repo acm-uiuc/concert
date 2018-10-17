@@ -5,15 +5,18 @@
         <title>ACM Concert</title>
         <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+
         <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
         <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js'></script>
         <script src='https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js'></script>
         <script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js'></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
         <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+
         <link rel="stylesheet" href="static/css/style.css">
         <link rel="stylesheet" href="static/css/search.css">
         <link rel="stylesheet" href="static/css/playlist.css">
@@ -27,9 +30,10 @@
                         <path id="acm-logo" fill="#000000" d="M348.450674,0 L696.679542,347.981526 L348.450674,696.01066 L0,348.031197 L348.450674,0 Z M347.468066,540.012613 C453.782881,540.012613 539.968066,453.827427 539.968066,347.512613 C539.968066,241.197799 453.782881,155.012613 347.468066,155.012613 C241.153252,155.012613 154.968066,241.197799 154.968066,347.512613 C154.968066,453.827427 241.153252,540.012613 347.468066,540.012613 Z M348.468066,519.012613 C253.751232,519.012613 176.968066,442.229448 176.968066,347.512613 C176.968066,252.795778 253.751232,176.012613 348.468066,176.012613 C443.184901,176.012613 519.968066,252.795778 519.968066,347.512613 C519.968066,442.229448 443.184901,519.012613 348.468066,519.012613 Z M195.409235,330.011039 L217.628053,330.011039 C219.610722,322.51622 223.062621,318.580977 227.983752,318.205312 C229.49473,318.089968 240.922555,316.092286 242.13648,322.785193 C242.371122,324.078876 243.409672,326.593497 242.857883,331.15318 C242.594986,333.325615 225.101872,336.62454 213.312536,339.786133 C208.555625,341.061813 205.365557,342.937869 204.379439,343.35895 C195.47338,347.161908 191.482584,358.167621 192.014986,368.323335 C192.430373,376.24694 195.896958,383.527566 199.983411,387.287276 C208.919455,395.508816 223.586905,396.760794 233.337486,392.962743 C236.615657,391.685828 240.961626,388.391251 246.375394,383.07901 L249.304474,392.962743 L274.641029,392.962743 L274.641029,388.986444 C271.71545,385.550231 270.215875,382.875425 270.142303,380.962028 C268.965038,350.344651 270.456166,335.535938 268.50481,318.205312 C268.085223,314.478823 266.714082,310.399752 262.38372,306.04136 C261.234924,304.885128 258.867482,303.112959 255.281393,300.724854 C251.385852,299.527661 247.086133,298.68058 242.382234,298.18361 C239.71839,297.902174 237.517361,297.682508 234.54473,297.60084 C229.67208,297.466972 223.911891,297.836516 221.554385,298.071806 C217.758648,298.450638 211.998559,300.041284 210.060196,301.05853 C208.583754,301.83336 206.204537,303.490841 205.444647,304.046234 C202.518582,306.18485 201.542415,309.428093 200.514611,310.931687 C198.560791,313.789966 196.858999,320.14975 195.409235,330.011039 Z M346.225439,385.382291 C348.358741,383.334258 351.986655,380.004301 353.981025,375.984854 C355.136837,373.655434 356.886009,370.007984 358.209787,364.517688 C358.477434,363.407639 358.716835,361.509734 358.927992,358.823973 L336.595338,358.823973 C335.035333,368.571271 329.560068,373.503548 320.169542,373.620806 C317.114286,373.658957 310.79228,372.434205 306.825651,366.614372 C303.697409,362.024619 303.732133,354.185673 303.696762,343.722831 C303.660799,333.084737 305.10558,328.835075 308.252426,324.365558 C312.125071,318.865177 318.28332,318.212133 320.968066,318.125966 C330.302421,317.826379 335.41653,322.654325 336.310393,332.609804 C352.140134,332.886561 360.052351,332.886561 360.047043,332.609804 C359.754287,317.345418 352.530665,307.031204 342.280707,301.628743 C335.880757,298.255512 327.858249,297.012613 320.968066,297.012613 C311.955683,297.012613 300.12784,300.69966 292.274667,309.317139 C284.246669,318.126458 280.292039,332.006246 280.292039,344.756966 C280.292039,352.793775 281.128264,365.08139 285.502692,374.813164 C288.964519,382.514677 294.95419,388.325688 302.314111,391.192458 C308.59617,393.639389 318.815426,395.00415 327.394133,393.749051 C335.924464,392.50103 342.822427,388.649286 346.225439,385.382291 Z M370.210801,299.419705 L370.210801,391.656693 L394.68907,391.656693 L394.68907,335.180264 C394.90372,324.133985 399.038152,318.610845 407.092365,318.610845 C415.146579,318.610845 419.548481,324.365002 420.298073,335.873316 L420.298073,392.248245 L443.536935,392.443737 L443.536935,335.873316 C445.282717,324.365002 449.974397,318.610845 457.611973,318.610845 C465.24955,318.610845 469.714867,324.133985 471.007926,335.180264 L471.007926,392.248245 L494.968066,392.443737 L494.727012,327.991777 C493.915185,308.943729 485.362293,299.048548 469.068338,298.306235 C455.352586,297.681379 446.005122,302.463853 441.025948,312.653657 C436.2219,303.088709 428.542732,298.306235 417.988446,298.306235 C407.434159,298.306235 399.088756,302.768609 392.952236,311.693358 L392.952236,299.419705 L370.210801,299.419705 Z M226.408143,376.345409 C220.253485,376.345409 215.511598,371.777328 215.797048,366.899274 C216.082498,362.02122 215.494758,358.989373 220.180975,356.066598 C220.849642,355.649554 225.950129,353.543763 226.982037,353.327677 C229.884698,352.71985 236.237625,351.157406 246.04082,348.640346 C245.966123,356.74162 245.884616,361.993081 245.7963,364.394729 C245.663826,367.997201 231.98919,376.345409 226.408143,376.345409 Z"></path>
                     </svg>
                 </div>
+                
                 <div class="title-text light">
-                <h3 id="title-header">ACM@UIUC</h3>
-                <h5 id="title-sub">Concert</h5>          
+                    <h3 id="title-header">ACM@UIUC</h3>
+                    <h5 id="title-sub">Concert</h5>          
                 </div>
             </div>
         </div>
@@ -40,6 +44,7 @@
                 <button id="logout-btn" name="logout" class="button light">Logout</button>
             </form>
         </div>
+
         {% else %}
         <div class="top-bar nav">
             <button id="login-btn" class="button light"
@@ -65,12 +70,14 @@
                         </div>    
                         </label>
                     </div>
+
                     <div class="spinner">
                         <div class="rect1"></div>
                         <div class="rect2"></div>
                         <div class="rect3"></div>
                         <div class="rect4"></div>
                     </div>
+
                     <button id="submit-btn">Login</button>
                 </div>
             </div>
@@ -79,26 +86,8 @@
 
         <div class="search-container">
             <div id="search-bar">
-                {% if current_user.is_authenticated %}
                 <select id="url-textbox" class="js-example-responsive light" multiple="multiple" ></select>
-                {% else %}
-                <select id="url-textbox" class="js-example-responsive light" multiple="multiple"></select>
-                {% endif %}
-                <!---{% if current_user.is_authenticated %}
-                <input type="text" id="url-textbox" class="light" placeholder="Hi, {{current_user.first_name}}. Please enter a Youtube or Soundcloud URL"/>
-                {% else %}
-                <input type="text" id="url-textbox" class="light" placeholder="Please login to add to the queue."/>
-                {% endif %}-->
-                <button type="submit" class"light" id="import-btn">Add</button>
-                <script>
-                var input = document.getElementById("myInput");
-                input.addEventListener("keyup", function(event) {
-                    event.preventDefault();
-                    if (event.keyCode === 13) {
-                        document.getElementById("myBtn").click();
-                    }
-                });
-                </script>
+                <button type="submit" class="light" id="import-btn">Add</button>
             </div>        
         </div>
 
@@ -109,10 +98,11 @@
                         <div>
                             <div class="playback_controls">
                                 <h2 id="title">ACM Concert</h2>
-                                <!--<h3 id="artist">Migos</h3>-->
+
                                 <div class="time-holder">
                                     <progress id="progress-slider" value="0" max="1"></progress>
                                 </div>
+
                                 <div class="bottom-controls">
                                     <div class="volume">
                                         <div class="volume-btn">
@@ -120,6 +110,7 @@
                                                 <path fill="#566574" fill-rule="evenodd" d="M14.667 0v2.747c3.853 1.146 6.666 4.72 6.666 8.946 0 4.227-2.813 7.787-6.666 8.934v2.76C20 22.173 24 17.4 24 11.693 24 5.987 20 1.213 14.667 0zM18 11.693c0-2.36-1.333-4.386-3.333-5.373v10.707c2-.947 3.333-2.987 3.333-5.334zm-18-4v8h5.333L12 22.36V1.027L5.333 7.693H0z" id="speaker"/>
                                             </svg>
                                         </div>
+
                                         <div class="volume-controls hidden">
                                             <div class="slider" data-direction="vertical">
                                                 <div class="progress">
@@ -128,8 +119,10 @@
                                             </div>
                                         </div>
                                     </div>
+
                                     <i class="fa fa-bars menu"></i>
                                     <i class="fa fa-window-close clear-queue clear-queue-hidden" id="clear"></i>
+
                                     <div class="buttons">
                                         <i class="fa fa-backward" id="back"></i>
                                         <i class="fa fa-play loading" id="play-pause-button"></i>
@@ -144,14 +137,7 @@
                 </div>
             </div>
         </div>
-        <!--<div class="playlist">
-            <div class="playlist-row playlist-header">
-                <div class="playlist-cell playlist-header"></div>
-                <div class="playlist-cell playlist-header">Title</div>
-                <div class="playlist-cell playlist-header">Duration</div>
-                <div class="playlist-cell playlist-header">Submitter</div>
-            </div>
-        </div>-->
+
         <script src="static/js/search.js"></script>
         <script src="static/js/helpers.js"></script>
         <script src="static/js/app.js"></script>
@@ -161,7 +147,7 @@
         <script src="static/js/third-party/color-thief.js"></script>
         <script src="static/js/third-party/hsv.js"></script>
         <script type="text/javascript">
-            var loggedin = "{{current_user.first_name}}" != "";
+            const isUserLoggedIn = "{{current_user.first_name}}" != "";
         </script>
     </body>
 </html>
