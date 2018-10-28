@@ -40,7 +40,7 @@ $(document).ready(() => {
         searchCurrentlyActive = true;
     }).on("select2:close", () => {
         searchCurrentlyActive = false;
-    }).on('select2:closing', function() {
+    }).on('select2:closing', () => {
 	if (userJustClicked) {
     	    return;
 	}
