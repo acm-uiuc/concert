@@ -24,6 +24,10 @@ config = {
     },
     "http" : {
         "groot_token" : "",
-        "authentication": False
+        "authentication": False,
+        "dev_user": {
+            "first_name": "ACM",
+            "last_name": "Dev"
+        }
     }
 }
