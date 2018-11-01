@@ -11,6 +11,8 @@
         <script src='https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js'></script>
         <script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js'></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+        <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
         <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
@@ -23,7 +25,8 @@
     </head>
 
     <body>
-        <div id="acm-title">
+        <div id="main-container"></div>
+        <!-- <div id="acm-title">
             <div id="title-content">
                 <div class="logo">
                     <svg id="logo-vector" width="750px" height="750px" viewBox="0 0 750 750" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -51,7 +54,6 @@
             onclick="document.getElementById('login-modal').style.display='block'">Login</button>
         </div>
 
-        <!-- Login Modal -->
         <div id="login-modal" class="modal">
             <div class="modal-content animate">
                 <div class="container">
@@ -136,8 +138,9 @@
                     <ol id="playlist"></ol>
                 </div>
             </div>
-        </div>
+        </div> -->
 
+        <script src="static/js/main_container.js"></script>
         <script src="static/js/search.js"></script>
         <script src="static/js/helpers.js"></script>
         <script src="static/js/app.js"></script>
