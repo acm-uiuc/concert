@@ -40,6 +40,20 @@ $(document).ready(() => {
         searchCurrentlyActive = true;
     }).on("select2:close", () => {
         searchCurrentlyActive = false;
+    }).on('select2:closing', () => {
+	if (userJustClicked) {
+    	    return;
+	}
+	
+	$('.select2-search__field').css('color', 'white');
+	const currentQuery = $('.select2-search__field').prop('value');
+    
+        setTimeout(() => {
+	    if(currentQuery && currentQuery.length) {
+ 		$('.select2-search__field').val(currentQuery);
+        	$('.select2-search__field').css('color', 'black');
+	    }
+    	}, 0);
     });
 
     if (!isUserLoggedIn) {

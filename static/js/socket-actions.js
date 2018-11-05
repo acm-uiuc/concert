@@ -94,7 +94,7 @@ $(document).ready(() => {
     });
 
     windowUI.importBtn.click((e) => {
-        const inputVal = $('.select2-selection__choice').text();
+        const inputVal = $('.select2-selection__choice').text() || $('.select2-search__field').val();
 
         if (inputVal.trim() == "") {
             return;
