@@ -3,6 +3,7 @@
 /venv
 /music
 .DS_Store
+node_modules
 *.pyc
 config.py
 /.idea
