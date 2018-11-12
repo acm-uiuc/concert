@@ -22,6 +22,6 @@ Concert is the new music system for the ACM Office: https://concert.acm.illinois
 
 ## Usage
 1. In a separate terminal session, run `redis-server` (to start Redis)
-2. In another separate terminal session, run `mongod` (to start MongoDB)
+2. In a different terminal session, run `systemctl start mongodb` (to start MongoDB)
 3. Lastly, in another separate terminal session in the project's main directory, run `source venv/bin/activate` and then run `python3 main.py`
     - The client will be served at http://localhost:5000
