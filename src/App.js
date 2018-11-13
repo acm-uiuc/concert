@@ -4,7 +4,14 @@ import "./App.css";
 class App extends Component {
   render() {
     return (
-      <div id="main"></div>
+      <div>
+        <div class="sidenav">
+          <a href="#about">Link 1</a>
+          <a href="#services">Link 2</a>
+          <a href="#clients">Link 3</a>
+          <a href="#contact">Link 4</a>
+        </div>
+      </div>
     );
   }
 }
