@@ -21,10 +21,10 @@ Concert is the new music system for the ACM Office: https://concert.acm.illinois
 4. Copy `config.py.template` into a new file called `config.py`. In that file, enter your various API keys and tokens.
 
 ## Usage
-1. Run `systemctl start redis` (to start Redis)
+1. Start Redis: Run `systemctl start redis`
     - to check if it is currently running, replace `start` with `status`
         - replace `start` with `restart` if it is already running
-2. Run `systemctl start mongodb` (to start MongoDB)
+2. Start MongoDB: Run `systemctl start mongodb` (may be `mongod` depending on your version)
     - use `status` and `restart` to check if it is currently running
-3. Lastly, in another separate terminal session in the project's main directory, run `source venv/bin/activate` and then run `python3 main.py`
+3. In the project's main directory, run `source venv/bin/activate` (if not already in a virual enviroment) and then run `python3 main.py`
     - The client will be served at http://localhost:5000
