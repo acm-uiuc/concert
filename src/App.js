@@ -4,7 +4,9 @@ import "./App.css";
 class App extends Component {
   render() {
     return (
-      <div id="main"></div>
+      <div className = "StatusBar">
+      	<h1>"This is text."</h1>
+      </div>
     );
   }
 }

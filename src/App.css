@@ -1,0 +1,16 @@
+.StatusBar {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	height: 15%;
+	background: linear-gradient(90deg, #000428 30%, #323156 70%);
+}
+
+.StatusBar:hover {
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.StatusBar h1 {
+	color: white;
+	text-align: center;
+}
