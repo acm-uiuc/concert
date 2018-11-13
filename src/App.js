@@ -11,6 +11,9 @@ class App extends Component {
           <a href="#clients">Link 3</a>
           <a href="#contact">Link 4</a>
         </div>
+        <div className="StatusBar">
+          <h1>"This is text."</h1>
+        </div>
       </div>
     );
   }
