@@ -1,14 +1,14 @@
-<<<<<<< HEAD
 .sidenav {
   width: 20%;
   height: 85%;
   position: fixed;
   z-index: 1;
-  /* top: 20px; */
   background: linear-gradient(90deg, #2193b0 30%, #6dd5ed 70%);
   overflow-x: hidden;
-  padding: 8px 0;
-  border-radius: 5px;
+}
+
+.sidenav:hover{
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 
 .sidenav a {
@@ -24,15 +24,10 @@
   color: #064579;
 }
 
-.main {
-  margin-left: 140px; /* Same width as the sidebar + left position in px */
-  font-size: 28px; /* Increased text to enable scrolling */
-  padding: 0px 10px;
-}
-
 body {
   font-family: "Lato", sans-serif;
-=======
+}
+
 .StatusBar {
 	position: absolute;
 	bottom: 0;
@@ -48,5 +43,4 @@ body {
 .StatusBar h1 {
 	color: white;
 	text-align: center;
->>>>>>> 6bac3d36b0efa03aabf737bd168e4c54a549a756
 }
