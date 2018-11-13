@@ -23,12 +23,6 @@
   color: #064579;
 }
 
-.main {
-  margin-left: 140px; /* Same width as the sidebar + left position in px */
-  font-size: 28px; /* Increased text to enable scrolling */
-  padding: 0px 10px;
-}
-
 body {
   font-family: "Lato", sans-serif;
 }
