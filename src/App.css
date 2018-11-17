@@ -1,8 +1,7 @@
 .sidenav {
   width: 20%;
   height: 85%;
-  position: fixed;
-  z-index: 1;
+  position: absolute;
   background: linear-gradient(90deg, #2193b0 30%, #6dd5ed 70%);
   overflow-x: hidden;
 }

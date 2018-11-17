@@ -1,0 +1,8 @@
+#main-root {
+    position: absolute;
+    left: 20%;
+    height: 85%;
+    background-image: url('https://is5-ssl.mzstatic.com/image/thumb/Music115/v4/b2/bd/44/b2bd44e8-9072-4c8e-51bc-3c16bc42c952/source/1200x1200bb.jpg');
+    background-size: 100% 100%;
+    width: 80%;
+}
