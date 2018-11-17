@@ -13,7 +13,7 @@ class App extends Component {
           <a href="#contact">Link 4</a>
         </div>
 
-        <Main name="Asher"/>
+        <Main />
 
         <div className="StatusBar">
           <h1>"This is text."</h1>
