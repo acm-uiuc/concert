@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./App.scss";
-import Main from "./Main";
+import Main from "./main";
 import SideBar from "./SideBar";
 import StatusBar from "./StatusBar";
 
