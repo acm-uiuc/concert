@@ -1,0 +1,26 @@
+$status-bar-height: 10;
+
+.sidenav {
+    position: absolute;
+    background: linear-gradient(90deg, #2193b0 30%, #6dd5ed 70%);
+    overflow-x: hidden;
+    width: 15%;
+    height: 100 - $status-bar-height + %;
+  }
+  
+  .sidenav:hover{
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  }
+  
+  .sidenav a {
+    padding: 10px 20px 10px 40px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #2196f3;
+    display: block;
+    color: black;
+  }
+  
+  .sidenav a:hover {
+    color: #064579;
+  }
