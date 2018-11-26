@@ -8,8 +8,8 @@ $status-bar-height: 10;
   height: 100 - $status-bar-height + %;
 }
 
-.sidenav:hover{
-	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+.sidenav:hover {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 
 .sidenav a {
@@ -30,18 +30,18 @@ body {
 }
 
 .StatusBar {
-	position: absolute;
-	bottom: 0;
+  position: absolute;
+  bottom: 0;
   background-color: rgb(40, 40, 40);
   width: 100%;
   height: $status-bar-height + %;
 }
 
 .StatusBar:hover {
-	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 
 .StatusBar h1 {
-	color: white;
-	text-align: center;
+  color: white;
+  text-align: center;
 }
