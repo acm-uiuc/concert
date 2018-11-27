@@ -1,0 +1,11 @@
+{
+    "applinks": {
+        "apps": [],
+        "details": [
+            {
+                "appID": "8VNQTQM2L6.com.acm.office.ios",
+		"paths": [ "/*" ]
+            },
+        ]
+    }
+}
