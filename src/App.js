@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import "./App.scss";
-import Main from "./main";
-import SideBar from "./SideBar";
-import StatusBar from "./StatusBar";
+import Main from "./components/Main";
+import SideBar from "./components/SideBar";
+import StatusBar from "./components/StatusBar";
 
 class App extends Component {
   render() {
