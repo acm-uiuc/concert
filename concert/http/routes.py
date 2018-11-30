@@ -3,14 +3,16 @@ import json
 import requests
 from flask import Flask, Response, Blueprint, request, url_for, send_from_directory, render_template, redirect, url_for, current_app, session
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
+from flask_cors import CORS
 
 import concert
 from concert.models import User
-from concert.http.loginmanager import ConcertDBConnector
+from concert.http.loginmanager import ConcertDBConnector, load_user
 from concert.http.controller import ConcertHTTPServer
 
 # Flask-Login
 ConcertRESTRoutes = Blueprint('ConcertRESTRoutes', __name__)
+CORS(ConcertRESTRoutes)
 
 @ConcertRESTRoutes.route('/')
 def index():

@@ -200,7 +200,7 @@ class IntegrationAutosuggest extends React.Component {
           {...autosuggestProps}
           inputProps={{
             classes,
-            placeholder: "Search",
+            placeholder: this.props.loggedIn ? 'Search' : 'Please login to use.',
             value: this.state.single,
             onChange: this.handleChange("single")
           }}
