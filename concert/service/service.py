@@ -177,6 +177,7 @@ class ConcertService:
                 url = self.artwork_download_queue.pop(0)
                 try:
                     self.download_artwork(url)
+                    time.sleep(self.PLAYER_UPDATE_INTERVAL)
                     notifiers.notify_artwork_available(self.service_state())
                 except:
                     pass
@@ -189,4 +190,4 @@ class ConcertService:
         self.artwork_download_queue.append({"url": track["thumbnail_url"], "id": track["id"]})
 
     def download_artwork(self, download_info):
-        urlretrieve(download_info["url"], os.getcwd() + "/static/images/artwork/" + download_info["id"] + ".png")
+        urlretrieve(download_info["url"], os.getcwd() + "/public/static/images/artwork/" + download_info["id"] + ".png")

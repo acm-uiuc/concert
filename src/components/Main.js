@@ -3,28 +3,27 @@ import "./Main.scss";
 import ReactModalLogin from 'react-modal-login';
 import SearchBar from "./SearchBar";
 import { Button } from 'react-bootstrap';
+import {isURL} from '../helpers/helpers';
+import io from '../helpers/io';
 
 export default class Main extends Component {
 
   constructor(props) {
-    super(props);
+    super(props);    
 
     this.state = {
       showModal: false,
       loggedIn: false,
       loading: false,
-      error: null
+      error: null,
+      searchValue: null
     };
+
+    this.searchForm = React.createRef();
   }
 
-  async componentWillMount() {
-    const current_user = await fetch('http://0.0.0.0:5000/user', {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    console.log(current_user);
+  componentDidMount() {
+    this.searchForm.current.addEventListener('submit', this.handleSearchSubmit);
   }
 
   async onLogin() {
@@ -40,7 +39,7 @@ export default class Main extends Component {
     });
 
     if (loginAttempt.status !== 200) {
-      this.setState({error: 'ahhh'});
+      this.setState({error: true});
       return;
     }
 
@@ -63,22 +62,48 @@ export default class Main extends Component {
   }
 
   onLoginClicked() {
-    if (!this.state.loggedIn) {
-      this.openModal('login');
-      return;
-    }
+    this.openModal('login');
+  }
 
+  async onLogoutClicked() {
     this.setState({loggedIn: false});
+
+    const logoutAttempt = await fetch('http://0.0.0.0:5000/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    console.log(logoutAttempt);
+  }
+
+  handleSearchSubmit = (event) => {
+    event.preventDefault();
+
+    if (!isURL(this.state.searchValue) ||
+        (!this.state.searchValue.includes("youtube.com") &&
+         !this.state.searchValue.includes("soundcloud.com"))) {
+      alert("Please enter a valid url");
+    } else {
+        io.emit('c_queue_song', this.state.searchValue);
+    }
+  }
+
+  handleNewSearchValue = (newValue) => {
+    this.setState({searchValue: newValue});
   }
 
   render() {
     return (
-      <div id="main-root">
-        <SearchBar loggedIn={this.state.loggedIn}/>
+      <div id="main-root" style={{backgroundImage: `url(${this.props.artwork})`}}>
+        <form id="search-form" ref={this.searchForm}>
+          <SearchBar loggedIn={this.state.loggedIn} onChange={this.handleNewSearchValue}/>
+        </form>
 
         <Button
           id="login-btn"
-          onClick={this.onLoginClicked.bind(this)}>
+          onClick={this.state.loggedIn ? this.onLogoutClicked.bind(this) : this.onLoginClicked.bind(this)}>
           {this.state.loggedIn ? 'Logout' : 'Login'}
         </Button>
 
@@ -88,14 +113,14 @@ export default class Main extends Component {
           loading={this.state.loading}
           initialTab={this.state.initialTab}
           error={this.state.error}
-          startLoading={() => {this.setState({loading: true})}}
-          finishLoading={() => {this.setState({loading: false})}}
+          startLoading={() => this.setState({loading: true})}
+          finishLoading={() => this.setState({loading: false})}
           loginError={{label: "Invalid username or password. Please try again."}}
           form={{
             onLogin: this.onLogin.bind(this),
             loginBtn: {label: "Sign In"},
             loginInputs: [
-              {id: 'netid', placeholder: 'NetID'},
+              {name: 'username', id: 'netid', placeholder: 'NetID'},
               {type: 'password', id: 'password', placeholder: 'Password'}
             ]
           }}

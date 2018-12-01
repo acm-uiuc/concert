@@ -180,6 +180,8 @@ class IntegrationAutosuggest extends React.Component {
     this.setState({
       [name]: newValue
     });
+
+    this.props.onChange(newValue);
   };
 
   render() {
@@ -200,8 +202,9 @@ class IntegrationAutosuggest extends React.Component {
           {...autosuggestProps}
           inputProps={{
             classes,
-            placeholder: this.props.loggedIn ? 'Search' : 'Please login to use.',
+            placeholder: this.props.loggedIn ? 'Search' : 'Please sign in to use.',
             value: this.state.single,
+            disabled: !this.props.loggedIn,
             onChange: this.handleChange("single")
           }}
           theme={{

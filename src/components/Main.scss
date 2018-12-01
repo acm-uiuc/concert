@@ -2,7 +2,6 @@ $left-bound: 15;
 
 #main-root {
   position: absolute;
-  background-image: url("https://i.pinimg.com/originals/71/d7/4a/71d74adbc9715add11589197a50260c8.jpg");
   background-size: 100% 100%;
   display: flex;
   align-items: center;
@@ -20,4 +19,8 @@ $left-bound: 15;
   position: absolute;
   top: 20px;
   right: 20px;
+}
+
+#search-form {
+  width: 100%;
 }

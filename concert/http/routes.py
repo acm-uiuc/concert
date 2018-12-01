@@ -24,7 +24,7 @@ def apple():
 
 @ConcertRESTRoutes.route('/static/<path:path>')
 def serve_static_files(path):
-    return send_from_directory(os.getcwd() + "/static", path)
+    return send_from_directory(os.getcwd() + "/public/static", path)
 
 @ConcertRESTRoutes.route("/login", methods=['POST'])
 def login():
@@ -48,6 +48,7 @@ def login():
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     }
+
     payload = {
         "username": username,
         "password": password,
@@ -58,7 +59,9 @@ def login():
             }]
         }
     }
+
     resp = requests.post('https://api.acm.illinois.edu/session', headers=headers, json=payload)
+
     if resp.status_code != 200:
         return Response("Invalid Username/Password", status=400)
 

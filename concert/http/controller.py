@@ -5,7 +5,7 @@ from flask import Flask, Response, Blueprint, request, url_for, render_template,
 from concert.http.loginmanager import ConcertLoginManager
 from concert.dbconnector import MongoConnector
 
-ConcertHTTPServer = Flask(__name__, static_url_path=os.getcwd() + "/static", template_folder=os.getcwd() + "/templates")
+ConcertHTTPServer = Flask(__name__, static_url_path=os.getcwd() + "/public/static", template_folder=os.getcwd() + "/templates")
 ConcertHTTPServer.config['SECRET_KEY'] = binascii.hexlify(os.urandom(24))
 
 from concert.http.routes import ConcertRESTRoutes
