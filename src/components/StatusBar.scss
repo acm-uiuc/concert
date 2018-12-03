@@ -1,0 +1,18 @@
+$status-bar-height: 10;
+
+.StatusBar {
+	position: absolute;
+	bottom: 0;
+  background-color: #282828;
+  width: 100%;
+  height: $status-bar-height + %;
+}
+
+.StatusBar:hover {
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.StatusBar h1 {
+	color: white;
+	text-align: center;
+}

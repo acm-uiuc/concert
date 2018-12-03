@@ -1,22 +1,36 @@
 import React, { Component } from "react";
-import "./App.css";
+import "./App.scss";
+import Main from "./components/Main";
+import SideBar from "./components/SideBar";
+import StatusBar from "./components/StatusBar";
 
 class App extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      artwork: null
+    }
+
+    window.appComponent = this;
+  }
+
+  updateClient = (serverState) => {
+    if (serverState == null) {
+      return;
+    }
+
+    if (this.state.artwork !== serverState.player.current_track_info.thumbnail_url) {
+      this.setState({artwork: serverState.player.current_track_info.thumbnail_url});
+    }
+  }
+
   render() {
     return (
-      <div>
-
-        <div class="sidenav">
-        	<div class = "sidecontainer">
-          	<a href="#about">Link 1</a>
-          	<a href="#services">Link 2</a>
-          	<a href="#clients">Link 3</a>
-          	<a href="#contact">Link 4</a>
-         	 </div>
-        </div>
-        <div className="StatusBar">
-          <h1>"This is text."</h1>
-        </div>
+      <div id="main-container">
+          <SideBar />
+          <Main artwork={this.state.artwork}/>
+          <StatusBar />
       </div>
     );
   }

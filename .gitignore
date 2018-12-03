@@ -7,7 +7,7 @@ node_modules
 *.pyc
 config.py
 /.idea
-static/thumbnails
+/public/static/thumbnails
 .vscode
-/static/images/artwork/*
-!/static/images/artwork/example.png
+/public/static/images/artwork/*
+!/public/static/images/artwork/example.png

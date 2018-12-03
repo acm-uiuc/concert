@@ -1,0 +1,26 @@
+$left-bound: 15;
+
+#main-root {
+  position: absolute;
+  background-size: 100% 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 90%;
+  width: 100 - $left-bound + %;
+  left: $left-bound + %;
+
+  .RML-btn {
+    border: 1px solid black;
+  }
+}
+
+#login-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+#search-form {
+  width: 100%;
+}
