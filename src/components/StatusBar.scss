@@ -1,40 +1,75 @@
 $status-bar-height: 10;
 
 .StatusBar {
-	position: absolute;
-	bottom: 0;
+  position: absolute;
+  bottom: 0;
   background-color: #282828;
   width: 100%;
   height: $status-bar-height + %;
 }
 
 .StatusBar:hover {
-	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 
-.button {
-	border: none;
-	background-color: #282828;
-	color: grey;	
+#content #controls {
+  height: 50px;
+  margin-top: 10px;
+  display: flex;
+  display: -webkit-flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
 }
 
-.rewind {
-	margin-left: 42%;
+#content input {
+  width: 30%;
+
+  height: 2px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 8px;
+
+  background: -moz-linear-gradient(left, #203a43 0%, #2c5364 72%);
+  background: -webkit-linear-gradient(left, #203a43 0%, #2c5364 72%);
+  background: linear-gradient(to right, #203a43 0%, #2c5364 72%);
+
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
-.play-pause {
-	margin-top: 1%;
-	margin-left: 2%;
+#content input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 8px;
+  width: 8px;
+  border-radius: 10px;
+  background: #ffffff;
 }
 
-.forward {
-	margin-left: 2%;
+.column.active {
+  color: #9b59b6;
 }
 
-.shuffle {
-	margin-left: 2%;
+.column {
+  float: left;
+  color: white !important;
 }
 
-.queue {
-	margin-left: 25%;
+#content #controls .column:nth-child(even) {
+  font-size: 0.8em;
+}
+
+#controls .column:nth-child(3) {
+  font-size: 1.2em;
+}
+
+#controls .column.active {
+  color: #9b59b6;
+}
+
+#controls .column i {
+  margin: 0 15px;
+  cursor: pointer;
 }
