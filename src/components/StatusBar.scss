@@ -12,7 +12,29 @@ $status-bar-height: 10;
 	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 
-.StatusBar h1 {
-	color: white;
-	text-align: center;
+.button {
+	border: none;
+	background-color: #282828;
+	color: grey;	
+}
+
+.rewind {
+	margin-left: 42%;
+}
+
+.play-pause {
+	margin-top: 1%;
+	margin-left: 2%;
+}
+
+.forward {
+	margin-left: 2%;
+}
+
+.shuffle {
+	margin-left: 2%;
+}
+
+.queue {
+	margin-left: 25%;
 }
