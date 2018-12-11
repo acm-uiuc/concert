@@ -49,11 +49,11 @@ def register_handlers():
         
 
     @ConcertEventsSockets.on('c_queue_song')
-    @authenticated_only
+    # @authenticated_only
     def handle_queue_song(url):
         if not validators.url(url):
             notifiers.notify_failed_queue({'err': 'invalid url'})
-        user_name = current_user.first_name + " " + current_user.last_name
+        user_name = "Asher Dale" # current_user.first_name + " " + current_user.last_name
         concert.get_service().queue_new_song(url, user_name)
 
     @ConcertEventsSockets.on('c_clear')
