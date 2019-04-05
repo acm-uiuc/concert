@@ -10,3 +10,4 @@ static/thumbnails
 .vscode
 /static/images/artwork/*
 !/static/images/artwork/example.png
+node_modules
