@@ -142,12 +142,10 @@ body {
 
 .button.light:hover {
     box-shadow: inset 0 0 110px 110px rgba(255, 255, 255, 0.15);
-    text-decoration: underline;
 }
 
 .button.dark:hover {
     box-shadow: inset 0 0 110px 110px rgba(0, 0, 0, 0.15);
-    text-decoration: underline;
 }
 
 #login-btn {
@@ -200,7 +198,6 @@ body {
 
 #import-btn:hover {
     box-shadow: inset 0 0 110px 110px rgba(0, 0, 0, 0.15);
-    text-decoration: underline;
 }
 
 #import-btn:focus {
@@ -731,7 +728,6 @@ select.focus {
 
 #submit-btn:hover {
     box-shadow: inset 0 0 110px 110px rgba(255, 255, 255, 0.15);
-    text-decoration: underline;
 }
 
 #submit-btn:focus {
@@ -836,4 +832,18 @@ select.focus {
         transform: scaleY(1.0);
         -webkit-transform: scaleY(1.0);
     }
+}
+
+#loader {
+    display: none;
+    font-size: 30px;
+}
+
+#checkmark {
+    display: none;
+    font-size: 30px;
+}
+
+#checkmark.animate {
+    transition: all 0.75s;
 }

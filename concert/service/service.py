@@ -84,7 +84,7 @@ class ConcertService:
     '''
     def search(self, query, part, max_length, timeout):
         ''' Need to figure out rate limiting for youtube'''
-        return self.soundcloud_searcher.search(query, part, max_length) + self.youtube_searcher.search(query, part, max_length)
+        return self.youtube_searcher.search(query, part, max_length) + self.soundcloud_searcher.search(query, part, max_length)
 
     
     '''

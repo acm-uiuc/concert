@@ -17,6 +17,7 @@
         <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="static/css/style.css">
         <link rel="stylesheet" href="static/css/search.css">
         <link rel="stylesheet" href="static/css/playlist.css">
@@ -87,7 +88,11 @@
         <div class="search-container">
             <div id="search-bar">
                 <select id="url-textbox" class="js-example-responsive light" multiple="multiple" ></select>
-                <button type="submit" class="light" id="import-btn">Add</button>
+                <button type="submit" class="light" id="import-btn">
+                    <i id="loader" class="fa fa-circle-o-notch fa-spin"></i>
+                    <div id="checkmark" class="toggle-icon fa fa-check"></div>
+                    <span id="add-text">Add</span>
+                </button>
             </div>        
         </div>
 

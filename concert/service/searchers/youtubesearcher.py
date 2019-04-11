@@ -8,7 +8,7 @@ class YoutubeSearcher(Searcher):
 
     def search(self, query, part, max_results):
         # Get Youtube Serach results
-        search_url  = self.base_url + "/?q=" + query + "&part=" + part + "&maxResults=" + max_results + "&key=" + self.key
+        search_url  = self.base_url + "/?q=" + query + "&part=" + part + "&maxResults=" + max_results + "&key=" + self.key + "&order=viewCount"
         resp = requests.get(search_url)
         yt_tracks_temp = resp.json()["items"]
         yt_tracks = []
