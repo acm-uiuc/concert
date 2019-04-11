@@ -199,9 +199,9 @@ function playlistAction(obj) {
 }
 
 function get_handlers() {
-    windowUI.searchBar = $(".select2-container");
-    windowUI.searchText = $(".select2-search__field");
-    windowUI.search_selection = $(".select2-selection__choice");
+    // windowUI.searchBar = $(".select2-container");
+    // windowUI.searchText = $(".select2-search__field");
+    // windowUI.search_selection = $(".select2-selection__choice");
 }
 
 function color_style(button_color, bgColor) {
