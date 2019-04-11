@@ -1,4 +1,5 @@
 let socket;
+let isAdding = false;
 
 $(document).ready(() => {
     const urlProtocol = (location.hostname === "localhost" || location.hostname === "127.0.0.1") ?
@@ -74,6 +75,20 @@ $(document).ready(() => {
     //Add, Remove, Clear, Response
     socket.on('s_queue_changed', (serverState) => {
         reloadQueue(JSON.parse(serverState).queue);
+
+        if (isAdding) {
+            isAdding = false;
+
+            $('#loader').css("display", "none");
+            $('#checkmark').css("display", "block");
+            $('#checkmark').addClass("animate");
+
+            setTimeout(() => {
+                $('#checkmark').css("display", "none");
+                $('#checkmark').removeClass("animate");
+                $('#add-text').css("display", "block");
+            }, 1000);
+        }
     });
 
     /* Play Controls */
@@ -95,6 +110,11 @@ $(document).ready(() => {
 
     windowUI.importBtn.click((e) => {
         const inputVal = $('.select2-selection__choice').text() || $('.select2-search__field').val();
+
+        $('#add-text').css("display", "none");
+        $('#loader').css("display", "block");
+
+        isAdding = true;
 
         if (inputVal.trim() == "") {
             return;
