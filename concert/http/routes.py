@@ -68,7 +68,7 @@ def login():
         return Response("Invalid Session Token", status=400)
 
     user_data = user_resp.json()['user']
-    cur_user = User(user_data['name'], user_data['first-name'], user_data['last-name'])
+    cur_user = User(user_data['first-name'] + ' ' + user_data['last-name'], user_data['first-name'], user_data['last-name'])
 
     ConcertDBConnector.add_user_session(cur_user)
 
