@@ -105,8 +105,6 @@ class ConcertService:
             song["playedby"] = user
 
         print(song_info_list)
-        print(user)
-        self.queue.add_to_queue(song_info_list, user == "pgpraka2 pgpraka2" or user == "devyesh2 devyesh2" or user == "myc2 myc2" or user == "angiesc2 angiesc2")
 
         notifiers.notify_queue_change(self.service_state())
 
