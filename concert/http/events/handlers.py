@@ -56,6 +56,11 @@ def register_handlers():
         user_name = current_user.first_name + " " + current_user.last_name
         concert.get_service().queue_new_song(url, user_name)
 
+    @ConcertEventsSockets.on('c_requeue_song')
+    @authenticated_only
+    def handle_requeue_song(old, new):
+      concert.get_service().requeue_song(old, new)
+
     @ConcertEventsSockets.on('c_clear')
     @authenticated_only
     def handle_queue_clearing():
