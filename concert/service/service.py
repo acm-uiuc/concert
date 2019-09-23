@@ -105,6 +105,7 @@ class ConcertService:
             song["playedby"] = user
 
         print(song_info_list)
+        self.queue.add_to_queue(song_info_list)
 
         notifiers.notify_queue_change(self.service_state())
 
