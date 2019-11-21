@@ -185,6 +185,22 @@ function reloadQueue(serverQueue) {
         const newQueuedSong = createQueueItem(song.title, song.duration, song.id, song.playedby, false);
         queue.append(newQueuedSong);
     });
+
+    queue.sortable({
+      items: ".playlist-item",
+      start: function(e, ui) {
+          // creates a temporary attribute on the element with the old index
+          $(this).attr('data-previndex', ui.item.index());
+      },
+      update: function(e, ui) {
+          // gets the new and old index then removes the temporary attribute
+          const newIndex = ui.item.index() - 1;
+          const oldIndex = $(this).attr('data-previndex') - 1;
+          $(this).removeAttr('data-previndex');
+          console.log(`Moved song from position ${oldIndex} to ${newIndex}`);
+          socket.emit('c_requeue_song', oldIndex, newIndex);
+      }
+    });
 }
 
 function showTrackAttribute(obj, attr) {

@@ -6,7 +6,7 @@ class ConcertQueue():
     def __init__(self):
         self.queue = []
 
-    def add_to_queue(self, music):
+    def add_to_queue(self, music, prepend=False):
         if type(music) is list:
             for song in music:
                 song["id"] = self.generate_track_id(song)
@@ -14,13 +14,19 @@ class ConcertQueue():
                 print("Title: %s" % song['title'])
                 print("ID: %s" % song["id"])
                 print("------QUEUEING------")
-                self.queue.append(song)
+                if prepend:
+                    self.queue.insert(0, song)
+                else:
+                    self.queue.append(song)
         elif type(music) is dict:
             music["id"] = self.generate_track_id(music)
             print("------QUEUEING------")
             print("Title: %s" % music['title'])
             print("------QUEUEING------")
-            self.queue.append(music)
+            if prepend:
+                self.queue.insert(0, music)
+            else:
+                self.queue.append(music)
 
     def remove_song_from_queue(self, track_id):
         for i in range(len(self.queue)):
@@ -28,7 +34,11 @@ class ConcertQueue():
                 self.queue.pop(i)
                 print(self.queue)
                 return
-        
+
+    def requeue_song(self, old_id, new_id):
+        print("------REQUEUEING------")
+        print("Old Position: %s New Position: %s" % (old_id, new_id))
+        self.queue.insert(int(new_id), self.queue.pop(int(old_id)))
 
     def remove_last_song_from_queue(self):
         self.queue.pop()
